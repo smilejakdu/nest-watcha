@@ -38,6 +38,14 @@ export class Boards {
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 
+	@IsString()
+	@ApiProperty({
+		example: 'imagePath',
+		description: 'imagePath',
+	})
+	@Column('varchar', { name: 'imagePath', length: 250 })
+	image: string;
+
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
 

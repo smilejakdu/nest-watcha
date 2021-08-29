@@ -16,14 +16,12 @@ export class LocalSerializer extends PassportSerializer {
 
 	serializeUser(user: Users, done: CallableFunction) {
 		console.log(user);
-		done(null, user.id); // session id 만 여기다가 저장이 된다.
+		done(null, user.id); // session id 만 여기다가 저장 user.id
 	}
-
+	// session 에 저장되어있는 id 바탕으로 user 정보 가져오게 된다.
 	async deserializeUser(userId: string, done: CallableFunction) {
 		return await this.usersRepository
-			.findOneOrFail({
-				id: +userId,
-			})
+			.findOneOrFail({ id: +userId }, { select: ['id', 'nickname'] })
 			.then(user => {
 				console.log('user', user);
 				done(null, user); // req.user 가 된다.

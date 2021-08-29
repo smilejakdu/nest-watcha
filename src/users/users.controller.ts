@@ -23,6 +23,7 @@ import { Token } from 'src/common/decorator/token.decorator';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
+import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 
 @UseInterceptors(UndefinedToNullInterceptor)
 @ApiTags('USER')
@@ -46,6 +47,7 @@ export class UsersController {
 		description: '성공',
 		type: UserDto,
 	})
+	@UseGuards(new NotLoggedInGuard())
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto) {

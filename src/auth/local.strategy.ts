@@ -17,6 +17,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		return done(null, user);
 		// done(null, user); 부분에서
 		// local-auth.guard.ts 부분에 있는 await super.logIn(request)
-		// 가고 그이후 local.serializer.ts 에있는 serializeUser 로 간다 생각하면 된다.
+		// super.logIn(request) 가 되고나면 local.serializer.ts 에있는 serializeUser 로 간다 생각하면 된다.
 	}
 }

@@ -4,7 +4,6 @@ import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class SignUpRequestDto {
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(1)
 	@ApiProperty({
 		example: 'ash',
 		description: '닉네임',

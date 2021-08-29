@@ -4,17 +4,18 @@ import {
 	DeleteDateColumn,
 	Entity,
 	Index,
-	JoinTable,
-	ManyToMany,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Boards } from './Boards';
+import { Comments } from './Comments';
+import { Schedules } from './Schedules';
 
 @Index('nickname', ['nickname'], { unique: true })
-@Entity({ schema: 'sleact', name: 'users' })
+@Entity({ schema: 'nest_watcha', name: 'users' })
 export class Users {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
 	id: number;
@@ -41,4 +42,13 @@ export class Users {
 
 	@DeleteDateColumn()
 	deletedAt: Date | null;
+
+	@OneToMany(() => Boards, boards => boards.User)
+	UserToBoards: Boards[];
+
+	@OneToMany(() => Comments, comments => comments.User)
+	UserToComments: Comments[];
+
+	@OneToMany(() => Schedules, schedules => schedules.User)
+	UserToSchedules: Schedules[];
 }

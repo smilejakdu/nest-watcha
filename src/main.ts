@@ -16,8 +16,8 @@ async function bootstrap() {
 	app.useGlobalFilters(new HttpExceptionFilter());
 
 	const config = new DocumentBuilder()
-		.setTitle('Sleact API')
-		.setDescription('Sleact 개발을 위한 API 문서입니다.')
+		.setTitle('nestWatcha API')
+		.setDescription('nestWatcha Swagger')
 		.setVersion('1.0')
 		.addCookieAuth('connect.sid')
 		.build();

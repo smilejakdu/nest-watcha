@@ -25,7 +25,7 @@ export class Users {
 		example: 'ash',
 		description: 'nickname',
 	})
-	@Column('varchar', { name: 'nickname', length: 30 })
+	@Column('varchar', { name: 'nickname', length: 40 })
 	nickname: string;
 
 	@IsString()

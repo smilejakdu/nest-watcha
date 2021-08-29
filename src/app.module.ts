@@ -10,6 +10,8 @@ import { CommentsModule } from './comments/comments.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { UsersService } from './users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
@@ -17,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 			isGlobal: true,
 		}),
 		TypeOrmModule.forRoot(ormconfig),
+		AuthModule,
 		UsersModule,
 		BoardsModule,
 		CommentsModule,

@@ -26,12 +26,12 @@ export class Users {
 		example: 'ash',
 		description: 'nickname',
 	})
-	@Column('varchar', { name: 'nickname', length: 40 })
+	@Column('varchar', { name: 'nickname', length: 80 })
 	nickname: string;
 
 	@IsString()
 	@IsNotEmpty()
-	@Column('varchar', { name: 'password', length: 100, select: false }) // select: false 하면 password 빼고 불러온다.
+	@Column('varchar', { name: 'password', length: 150, select: false }) // select: false 하면 password 빼고 불러온다.
 	password: string;
 
 	@CreateDateColumn()

@@ -5,8 +5,8 @@ import { Users } from './src/entities/Users';
 dotenv.config();
 const config: TypeOrmModuleOptions = {
 	type: 'mysql',
-	host: 'localhost',
-	port: 3306,
+	host: process.env.DB_HOST,
+	port: Number(process.env.DB_PORT) as number,
 	username: process.env.DB_USERNAME,
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE,
@@ -16,7 +16,7 @@ const config: TypeOrmModuleOptions = {
 	cli: { migrationsDir: 'src/migrations' },
 	autoLoadEntities: true,
 	charset: 'utf8mb4',
-	synchronize: false, // 한번 만들고 나서는 false 로 해주는것이 좋다.
+	synchronize: true, // 한번 만들고 나서는 false 로 해주는것이 좋다.
 	logging: true, // typescript 작성하게 될때 orm 이 자동으로 sql 로 바꿔주게된다. 이게 비효율적으로 될 수도 있다. 그래서
 	// 항상 logging 을 켜두고 효율적으로 바꿔주는지 확인을 해봐야한다.
 	keepConnectionAlive: true,

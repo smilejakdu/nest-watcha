@@ -16,7 +16,6 @@ import { Users } from './Users';
 @Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class Boards {
-	// id title content createAt updatedAt UserId
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
 	id: number;
 

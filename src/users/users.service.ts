@@ -27,6 +27,7 @@ export class UsersService {
 			throw new Error('이미 존재하는 사용자');
 			// return false;
 		}
+
 		const createUser = await this.usersRepository.save({
 			nickname,
 			password: hashedPassword,

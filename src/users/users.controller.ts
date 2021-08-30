@@ -10,6 +10,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import {
+	ApiInternalServerErrorResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiResponse,
@@ -25,6 +26,9 @@ import { User } from 'src/common/decorator/user.decorator';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 
+@ApiInternalServerErrorResponse({
+	description: '서버 에러',
+})
 @UseInterceptors(UndefinedToNullInterceptor)
 @ApiTags('USER')
 @Controller('users')
@@ -71,6 +75,7 @@ export class UsersController {
 	@Post('logout')
 	logOut(@Req() req, @Res() res) {
 		req.logout();
+		res.clearCookie('connect.sid', { httpOnly: true });
 		res.send('ok');
 	}
 }

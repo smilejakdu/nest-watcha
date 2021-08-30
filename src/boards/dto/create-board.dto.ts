@@ -8,7 +8,7 @@ export class CreateBoardDto {
 		example: 'title',
 		description: 'title',
 	})
-	public title: string;
+	public readonly title: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -16,12 +16,12 @@ export class CreateBoardDto {
 		example: 'content',
 		description: 'content',
 	})
-	public content: string;
+	public readonly content: string;
 
 	@IsString()
 	@ApiProperty({
 		example: 'imagePath',
 		description: 'imagePath',
 	})
-	public imagePath: string;
+	public readonly imagePath: string;
 }

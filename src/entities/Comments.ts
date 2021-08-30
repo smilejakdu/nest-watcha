@@ -12,6 +12,7 @@ import {
 import { Boards } from './Boards';
 import { Users } from './Users';
 
+@Index('BoardId', ['BoardId'])
 @Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class Comments {

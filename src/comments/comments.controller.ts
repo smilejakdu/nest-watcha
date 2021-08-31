@@ -17,7 +17,6 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { CommentsService } from './comments.service';
-import { Index } from 'typeorm';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { Users } from 'src/entities/Users';
@@ -26,7 +25,7 @@ import { DeleteCommentDto } from './dto/delete-comment.dto';
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
 })
-@ApiTags('BOARD')
+@ApiTags('COMMENTS')
 @Controller('comments')
 export class CommentsController {
 	constructor(private commentsService: CommentsService) {}

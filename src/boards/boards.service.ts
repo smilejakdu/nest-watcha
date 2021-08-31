@@ -39,14 +39,12 @@ export class BoardsService {
 	async updateBoard(BoardId: number, title: string, content: string) {
 		console.log(BoardId, title, content);
 		const board = await this.boardsRepository.findOne({ where: { BoardId } });
-		console.log(board.id);
 
-		const boards = new Boards();
-		boards.id = board.id;
-		boards.title = title;
-		boards.content = content;
+		board.id = board.id;
+		board.title = title;
+		board.content = content;
 
-		await this.boardsRepository.save(boards);
+		await this.boardsRepository.save(board);
 	}
 
 	async deleteBoardOne(BoardId: number) {

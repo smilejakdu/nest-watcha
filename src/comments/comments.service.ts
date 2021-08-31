@@ -48,5 +48,27 @@ export class CommentsService {
 
 	async updateComment(content: string, commentId: number) {
 		console.log(content, commentId);
+
+		const commentObject = await this.commentsRepository.findOne({
+			id: commentId,
+		});
+		commentObject.content = content;
+		await this.commentsRepository.save(commentObject);
+	}
+
+	async deleteCommentOne(CommentId: number) {
+		console.log(CommentId);
+		const comment = await this.boardsRepository.findOne({
+			where: { id: CommentId },
+		});
+		// 이렇게 객체를 전부 넣어야하는걸까요 ??
+		// interger 만 넣고 하는방법이 없을까 ? --> delete
+		/*
+				remove(entities: Entity[], options?: RemoveOptions): Promise<Entity[]>;
+				remove(entity: Entity, options?: RemoveOptions): Promise<Entity>;
+		 */
+		// await this.boardsRepository.remove(boards); --> 객체 넣어야하는게 너무.. 이상한데.??
+		// --> delete 하면됨
+		const test = await this.boardsRepository.delete(comment);
 	}
 }

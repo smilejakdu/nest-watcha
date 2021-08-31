@@ -21,6 +21,7 @@ import { Index } from 'typeorm';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { Users } from 'src/entities/Users';
+import { DeleteCommentDto } from './dto/delete-comment.dto';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
@@ -67,5 +68,16 @@ export class CommentsController {
 		@Param('id', ParseIntPipe) id: number,
 	) {
 		return await this.updateComment(content, id);
+	}
+
+	@ApiOperation({ summary: '댓글 삭제' })
+	@Patch(':id')
+	@ApiOkResponse({
+		description: '성공',
+		type: DeleteCommentDto,
+	})
+	@UseGuards(new LoggedInGuard())
+	async deleteComment(@Param('id', ParseIntPipe) id: number) {
+		return await this.deleteComment(id);
 	}
 }

@@ -62,5 +62,5 @@ export class Boards {
 	User: Users;
 
 	@OneToMany(() => Comments, comments => comments.Board)
-	BoardToComments: Comments[];
+	Comments: Comments[];
 }

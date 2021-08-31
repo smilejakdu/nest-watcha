@@ -17,13 +17,9 @@ export class CommentsService {
 	async findBoardAndComments(boardId: number) {
 		return this.boardsRepository
 			.createQueryBuilder('board')
-			.innerJoinAndSelect(
-				'board.BoardToComments',
-				'commentsOfBoard',
-				'commentsOfBoard.BoardId =:BoardId',
-				{ boardId },
-			)
-			.orderBy('commentsOfBoard.createdAt', 'DESC')
+			.innerJoinAndSelect('board.Comments', 'comments')
+			.where('board.id=:BoardId', { BoardId: boardId })
+			.orderBy('comments.createdAt', 'DESC')
 			.getManyAndCount();
 	}
 

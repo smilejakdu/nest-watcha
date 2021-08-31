@@ -16,6 +16,7 @@ import {
 	ApiOkResponse,
 	ApiInternalServerErrorResponse,
 	ApiCreatedResponse,
+	ApiCookieAuth,
 } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
@@ -49,6 +50,7 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
+	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get()
@@ -61,10 +63,14 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
+	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@User() user: Users, data: CreateBoardDto) {
+	async createBoard(@User() user: Users, @Body() data: CreateBoardDto) {
+		console.log('게시판작성하기테스트');
+		console.log('board user : ', user);
+		console.log('board data : ', data);
 		return this.boardsService.createBoard(data.title, data.content, user.id);
 	}
 
@@ -73,13 +79,14 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
+	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id') // @Put(:id) 하는게 나을까 ?? 아니면 body 로 다 보낼까 ?
 	async updateBoard(
 		@User() user: Users,
 		@Param('id', ParseIntPipe) id: number,
-		data: UpdateBoardDto,
+		@Body() data: UpdateBoardDto,
 	) {
 		return this.boardsService.updateBoard(id, data.title, data.content);
 	}
@@ -89,6 +96,7 @@ export class BoardsController {
 		description: '성공',
 		type: DeleteBoardDto,
 	})
+	@ApiCookieAuth('connect.sid')
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
 	async deleteBoard(

@@ -69,6 +69,7 @@ export class UsersController {
 	logIn(@User() user) {
 		return user;
 	}
+	// 쿠키 : s%3ALhOONvvPb4ON002xqKXNQgsjWxpj5e6C.HyE6csW5MtgvAnO79XBCoiZAQVIixTD7pcvbnZl%2Ffk8
 
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '로그아웃' })

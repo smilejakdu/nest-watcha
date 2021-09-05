@@ -13,28 +13,19 @@ export class CommentsService {
 		@InjectRepository(Comments)
 		private commentsRepository: Repository<Comments>,
 	) {}
-
+    
 	async findBoardAndComments(boardId: number) {
 		return this.boardsRepository
 			.createQueryBuilder('board')
 			.innerJoinAndSelect(
-				'board.BoardToComments',
-				'commentsOfBoard',
-				'commentsOfBoard.BoardId =:BoardId',
-				{ boardId },
+			'board.Comments',
+			'Comments',
 			)
+			.where('board.id=:BoardId',{BoardId:boardId})
 			.orderBy('commentsOfBoard.createdAt', 'DESC')
 			.getManyAndCount();
 	}
 
-	// async findBoardAndComments(boardId: number) {
-	// 	return this.boardsRepository.findOne({
-	// 		where: { id: boardId },
-	// 		relations: ['BoardToComments'],
-	// 	});
-	// }
-	// 사실 이렇게 해도 되지만
-	// 차이점에 대해서 여쭤봐도 될까요 ??
 
 	async createComment(content: string, BoardId: number, UserId: number) {
 		console.log(BoardId, UserId, content);

@@ -1,4 +1,4 @@
-import { ApiProperty, PickType, PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { CreateBoardDto } from './create-board.dto';
 

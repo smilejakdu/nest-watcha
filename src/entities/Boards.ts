@@ -9,6 +9,7 @@ import {
 	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import { Comments } from './Comments';
 import { Users } from './Users';
@@ -51,7 +52,7 @@ export class Boards {
 	@CreateDateColumn()
 	createdAt: Date;
 
-	@CreateDateColumn()
+	@UpdateDateColumn()
 	updatedAt: Date;
 
 	@ManyToOne(() => Users, users => users.UserToBoards, {
@@ -62,5 +63,5 @@ export class Boards {
 	User: Users;
 
 	@OneToMany(() => Comments, comments => comments.Board)
-	BoardToComments: Comments[];
+	Comments: Comments[];
 }

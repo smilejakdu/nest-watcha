@@ -24,6 +24,14 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { DeleteBoardDto } from './dto/delete-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import { Boards } from 'src/entities/Boards';
+
+
+interface testResponse {
+	title: number;
+	content: number;
+	userId: number;
+  }
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
@@ -52,7 +60,8 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get()
-	async getMyBoards(@User() user: Users) {
+	async getMyBoards(@User() user: Users):Promise<object> {
+	// async getMyBoards(@User() user: Users) {
 		return this.boardsService.findMyBoard(user.id);
 	}
 
@@ -64,7 +73,8 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@User() user: Users, data: CreateBoardDto) {
+	async createBoard(@User() user: Users, data: CreateBoardDto){
+	// async createBoard(@User() user: Users, data: CreateBoardDto): Promise<CostResponse> {
 		return this.boardsService.createBoard(data.title, data.content, user.id);
 	}
 

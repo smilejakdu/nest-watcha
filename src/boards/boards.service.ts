@@ -4,14 +4,15 @@ import { Boards } from 'src/entities/Boards';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
 
-@Injectable()
+// @Injectable() 데코레이터는 BoardsService 클래스를 
+@Injectable() 
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Users) private usersRepository: Repository<Users>,
 	) {}
 
-	async findByNickname(nickname: string) {
+	async findByNickname(nickname: string):Promise<object> {
 		return this.usersRepository.findOne({
 			where: { nickname },
 			select: ['id', 'nickname'],
@@ -44,7 +45,7 @@ export class BoardsService {
 		board.title = title;
 		board.content = content;
 
-		await this.boardsRepository.save(board);
+		return await this.boardsRepository.save(board);
 	}
 
 	async deleteBoardOne(BoardId: number) {

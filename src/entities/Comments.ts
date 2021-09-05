@@ -48,7 +48,7 @@ export class Comments {
 	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
 	User: Users;
 
-	@ManyToOne(() => Boards, boards => boards.BoardToComments, {
+	@ManyToOne(() => Boards, boards => boards.Comments, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})

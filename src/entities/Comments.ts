@@ -10,16 +10,13 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Boards } from './Boards';
+import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
 @Index('BoardId', ['BoardId'])
 @Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'comments' })
-export class Comments {
-	// id content createAt updatedAt UserId BoardId
-	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
-
+export class Comments extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -34,12 +31,6 @@ export class Comments {
 
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
-
-	@CreateDateColumn()
-	createdAt: Date;
-
-	@CreateDateColumn()
-	updatedAt: Date;
 
 	@ManyToOne(() => Users, users => users.UserToComments, {
 		onDelete: 'SET NULL',

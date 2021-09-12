@@ -9,15 +9,12 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
 @Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
-export class Schedules {
-	// id title genre date createdAt updatedAt UserId
-	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
-
+export class Schedules extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -38,12 +35,6 @@ export class Schedules {
 
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
-
-	@CreateDateColumn()
-	createdAt: Date;
-
-	@CreateDateColumn()
-	updatedAt: Date;
 
 	@ManyToOne(() => Users, users => users.UserToSchedules, {
 		onDelete: 'SET NULL',

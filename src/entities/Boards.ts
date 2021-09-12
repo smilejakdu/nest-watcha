@@ -12,14 +12,12 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Comments } from './Comments';
+import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
 @Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'boards' })
-export class Boards {
-	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
-
+export class Boards extends CoreEntity{
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -48,12 +46,6 @@ export class Boards {
 
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
-
-	@CreateDateColumn()
-	createdAt: Date;
-
-	@UpdateDateColumn()
-	updatedAt: Date;
 
 	@ManyToOne(() => Users, users => users.UserToBoards, {
 		onDelete: 'SET NULL',

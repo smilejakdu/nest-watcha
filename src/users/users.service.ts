@@ -25,7 +25,6 @@ export class UsersService {
 		const user = await this.usersRepository.findOne({ where: { nickname } });
 		if (user) {
 			throw new Error('이미 존재하는 사용자');
-			// return false;
 		}
 
 		const createUser = await this.usersRepository.save({

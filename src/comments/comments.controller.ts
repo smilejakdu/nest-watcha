@@ -22,9 +22,7 @@ import { User } from 'src/common/decorator/user.decorator';
 import { Users } from 'src/entities/Users';
 import { DeleteCommentDto } from './dto/delete-comment.dto';
 
-@ApiInternalServerErrorResponse({
-	description: '서버 에러',
-})
+@ApiInternalServerErrorResponse({description: '서버 에러'})
 @ApiTags('COMMENTS')
 @Controller('comments')
 export class CommentsController {

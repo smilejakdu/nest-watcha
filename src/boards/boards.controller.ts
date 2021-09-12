@@ -27,13 +27,6 @@ import { DeleteBoardDto } from './dto/delete-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Boards } from 'src/entities/Boards';
 
-
-interface testResponse {
-	title: number;
-	content: number;
-	userId: number;
-  }
-
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
 })
@@ -44,7 +37,6 @@ export class BoardsController {
 
 	@ApiOperation({ summary: '게시판 정보 가져오기' })
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: CreateBoardDto,
 	})
@@ -63,12 +55,10 @@ export class BoardsController {
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get()
 	async getMyBoards(@User() user: Users):Promise<object> {
-	// async getMyBoards(@User() user: Users) {
 		return this.boardsService.findMyBoard(user.id);
 	}
 
 	@ApiCreatedResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: CreateBoardDto,
 	})
@@ -77,14 +67,10 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
 	async createBoard(@User() user: Users, @Body() data: CreateBoardDto) {
-		console.log('게시판작성하기테스트');
-		console.log('board user : ', user);
-		console.log('board data : ', data);
 		return this.boardsService.createBoard(data.title, data.content, user.id);
 	}
 
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: CreateBoardDto,
 	})
@@ -101,7 +87,6 @@ export class BoardsController {
 	}
 
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: DeleteBoardDto,
 	})

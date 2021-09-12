@@ -17,10 +17,8 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
-import { LoginRequestDto } from './dto/login.request.dto';
 import { SignUpRequestDto } from './dto/signup.request.dto';
 import { UsersService } from './users.service';
-import { Token } from 'src/common/decorator/token.decorator';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
@@ -37,7 +35,6 @@ export class UsersController {
 
 	@ApiOperation({ summary: '내정보조회' })
 	@ApiResponse({
-		// swagger 에서 에럭 response 가 났을경우
 		status: 500,
 		description: '서버 에러',
 	})
@@ -47,7 +44,6 @@ export class UsersController {
 	}
 
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: UserDto,
 	})
@@ -59,7 +55,6 @@ export class UsersController {
 	}
 
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: UserDto,
 	})
@@ -69,7 +64,6 @@ export class UsersController {
 	logIn(@User() user) {
 		return user;
 	}
-	// 쿠키 : s%3ALhOONvvPb4ON002xqKXNQgsjWxpj5e6C.HyE6csW5MtgvAnO79XBCoiZAQVIixTD7pcvbnZl%2Ffk8
 
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '로그아웃' })

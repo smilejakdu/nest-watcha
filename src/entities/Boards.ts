@@ -15,7 +15,6 @@ import { Comments } from './Comments';
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
-@Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class Boards extends CoreEntity{
 	@IsString()
@@ -42,11 +41,12 @@ export class Boards extends CoreEntity{
 		description: 'imagePath',
 	})
 	@Column('varchar', { name: 'imagePath', length: 250 })
-	image: string;
+	imagePath: string;
 
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
-
+	
+	@IsNotEmpty()
 	@ManyToOne(() => Users, users => users.UserToBoards, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',

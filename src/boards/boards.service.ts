@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { log } from 'console';
 import { Boards } from 'src/entities/Boards';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
@@ -20,12 +21,17 @@ export class BoardsService {
 	}
 
 	async findMyBoard(UserId: number) : Promise<object> {
-		return this.boardsRepository.find({
-			where: {
-				WorkspaceMembers: [{ userId: UserId }],
-			},
-		});
+		log("UserId test : " , UserId);
+		return this.boardsRepository.createQueryBuilder('boards')
+		.leftJoinAndSelect('boards.User' , 'user')
+		.where('boards.UserId = :UserId', { UserId: UserId })
+		.getOne();
 	}
+
+	// const user = await createQueryBuilder("user")
+	// .leftJoin("user.photos", "photo")
+	// .where("user.name = :name", { name: "Timber" })
+	// .getOne();
 
 	async createBoard(title: string, content: string, UserId: number) {
 		console.log(title, content, UserId);
@@ -33,6 +39,7 @@ export class BoardsService {
 
 		boards.title = title;
 		boards.content = content;
+		boards.imagePath = "";
 		boards.UserId = UserId;
 		await this.boardsRepository.save(boards);
 	}

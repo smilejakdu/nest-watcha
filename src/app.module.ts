@@ -29,8 +29,10 @@ import { AuthModule } from './auth/auth.module';
 	providers: [AppService],
 })
 
-export class AppModule implements NestModule {
-	configure(consumer: MiddlewareConsumer): any {
-		consumer.apply(LoggerMiddleware).forRoutes('*');
-	}
-}
+// export class AppModule implements NestModule {
+// 	configure(consumer: MiddlewareConsumer): any {
+// 		consumer.apply(LoggerMiddleware).forRoutes('*');
+// 	}
+// }
+
+export class AppModule {}

@@ -53,7 +53,7 @@ export class BoardsController {
 	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
-	@Get()
+	@Get('my_board')
 	async getMyBoards(@User() user: Users):Promise<object> {
 		return this.boardsService.findMyBoard(user.id);
 	}

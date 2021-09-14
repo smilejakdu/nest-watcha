@@ -8,14 +8,13 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Boards } from './Boards';
 import { Comments } from './Comments';
 import { Schedules } from './Schedules';
 import { CoreEntity } from './CoreEntity';
 
-@Index('nickname', ['nickname'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'users' })
 export class Users extends CoreEntity{
 	@IsString()

@@ -12,7 +12,6 @@ import {
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
-@Index('id', ['id'], { unique: true })
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
 export class Schedules extends CoreEntity {
 	@IsString()

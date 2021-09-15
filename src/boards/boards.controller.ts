@@ -41,12 +41,11 @@ export class BoardsController {
 		type: CreateBoardDto,
 	})
 	@Get()
-	getBoards() {
-		return;
+	async getBoards() :Promise<object> {
+		return this.boardsService.findAllBoards();
 	}
 
 	@ApiOkResponse({
-		// 알아서 status:200
 		description: '성공',
 		type: CreateBoardDto,
 	})

@@ -20,18 +20,23 @@ export class BoardsService {
 		});
 	}
 
-	async findMyBoard(UserId: number) : Promise<object> {
-		log("UserId test : " , UserId);
-		return this.boardsRepository.createQueryBuilder('boards')
-		.leftJoinAndSelect('boards.User' , 'user')
-		.where('boards.UserId = :UserId', { UserId: UserId })
-		.getOne();
+	async findAllBoards() : Promise<object>{
+		let board =  this.boardsRepository.createQueryBuilder('boards')
+		.leftJoin('boards.User' , 'user')
+		.groupBy('boards.id')
+		.getMany();
+		return board
 	}
 
-	// const user = await createQueryBuilder("user")
-	// .leftJoin("user.photos", "photo")
-	// .where("user.name = :name", { name: "Timber" })
-	// .getOne();
+	async findMyBoard(UserId: number) : Promise<object> {
+		return this.boardsRepository.createQueryBuilder('boards')
+		.addSelect('COUNT(boards.id) AS boardCount')
+		.leftJoinAndSelect('boards.User' , 'user')
+		.where('boards.UserId = :UserId', { UserId: UserId })
+		.groupBy('boards.id')
+		.getMany();
+	}
+
 
 	async createBoard(title: string, content: string, UserId: number) {
 		console.log(title, content, UserId);

@@ -10,10 +10,13 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
+	ManyToMany,
+	JoinTable
 } from 'typeorm';
 import { Comments } from './Comments';
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
+import { HashTag } from './HashTag';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class Boards extends CoreEntity{
@@ -56,4 +59,18 @@ export class Boards extends CoreEntity{
 
 	@OneToMany(() => Comments, comments => comments.Board)
 	Comments: Comments[];
+
+  @ManyToMany(() => HashTag, (hashTag) => hashTag.boards)
+  @JoinTable({
+    name: "boardhashtag",
+    joinColumn: {
+      name: "BoardId",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "HashId",
+      referencedColumnName: "id",
+    },
+  })
+  hashTag: HashTag[];
 }

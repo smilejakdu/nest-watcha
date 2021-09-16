@@ -12,6 +12,9 @@ import { UsersService } from './users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { HashtagController } from './hashtag/hashtag.controller';
+import { HashtagService } from './hashtag/hashtag.service';
+import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
 	imports: [
@@ -24,15 +27,16 @@ import { AuthModule } from './auth/auth.module';
 		BoardsModule,
 		CommentsModule,
 		SchedulesModule,
+		HashtagModule,
 	],
-	controllers: [AppController],
-	providers: [AppService],
+	controllers: [AppController, HashtagController],
+	providers: [AppService, HashtagService],
 })
 
-// export class AppModule implements NestModule {
-// 	configure(consumer: MiddlewareConsumer): any {
-// 		consumer.apply(LoggerMiddleware).forRoutes('*');
-// 	}
-// }
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer): any {
+		consumer.apply(LoggerMiddleware).forRoutes('*');
+	}
+}
 
-export class AppModule {}
+// export class AppModule {}

@@ -22,21 +22,19 @@ export class BoardsService {
 
 	async findAllBoards() : Promise<object>{
 		let board =  this.boardsRepository.createQueryBuilder('boards')
+		.select('boards.id')
 		.leftJoin('boards.User' , 'user')
-		.groupBy('boards.id')
+		.andWhere('boards.title IN (:...title)' ,{title : ['bob_title_1' , 'bob_title_2']})
 		.getMany();
 		return board
 	}
 
 	async findMyBoard(UserId: number) : Promise<object> {
 		return this.boardsRepository.createQueryBuilder('boards')
-		.addSelect('COUNT(boards.id) AS boardCount')
 		.leftJoinAndSelect('boards.User' , 'user')
 		.where('boards.UserId = :UserId', { UserId: UserId })
-		.groupBy('boards.id')
 		.getMany();
 	}
-
 
 	async createBoard(title: string, content: string, UserId: number) {
 		console.log(title, content, UserId);

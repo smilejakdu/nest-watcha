@@ -8,12 +8,8 @@ import { BoardsModule } from './boards/boards.module';
 import * as ormconfig from '../ormconfig';
 import { CommentsModule } from './comments/comments.module';
 import { SchedulesModule } from './schedules/schedules.module';
-import { UsersService } from './users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
-import { HashtagController } from './hashtag/hashtag.controller';
-import { HashtagService } from './hashtag/hashtag.service';
 import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
@@ -29,8 +25,8 @@ import { HashtagModule } from './hashtag/hashtag.module';
 		SchedulesModule,
 		HashtagModule,
 	],
-	controllers: [AppController, HashtagController],
-	providers: [AppService, HashtagService],
+	controllers: [AppController],
+	providers: [AppService],
 })
 
 export class AppModule implements NestModule {

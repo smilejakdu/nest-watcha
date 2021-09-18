@@ -19,6 +19,14 @@ export class CreateBoardDto {
 	public content: string;
 
 	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'hashtag',
+		description: 'hashtag',
+	})
+	public hashtag: string;
+
+	@IsString()
 	@ApiProperty({
 		example: 'imagePath',
 		description: 'imagePath',

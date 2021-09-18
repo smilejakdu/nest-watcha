@@ -43,7 +43,7 @@ export class CommentsService {
 		await this.commentsRepository.save(commentObject);
 	}
 
-	async deleteCommentOne(CommentId: number) {
+	async deleteComment(CommentId: number) {
 		console.log(CommentId);
 		const comment = await this.boardsRepository.findOne({
 			where: { id: CommentId },

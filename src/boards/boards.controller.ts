@@ -66,7 +66,7 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
 	async createBoard(@User() user: Users, @Body() data: CreateBoardDto) {
-		return this.boardsService.createBoard(data.title, data.content, user.id);
+		return this.boardsService.createBoard(data.title, data.content , data.hashtag, user.id);
 	}
 
 	@ApiOkResponse({
@@ -76,7 +76,7 @@ export class BoardsController {
 	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
-	@Put(':id') // @Put(:id) 하는게 나을까 ?? 아니면 body 로 다 보낼까 ?
+	@Put(':id') 
 	async updateBoard(
 		@User() user: Users,
 		@Param('id', ParseIntPipe) id: number,

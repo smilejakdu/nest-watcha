@@ -64,7 +64,7 @@ export class CommentsController {
 		@Body('content') content: string,
 		@Param('id', ParseIntPipe) id: number,
 	) {
-		return await this.updateComment(content, id);
+		return await this.commentsService.updateComment(content, id);
 	}
 
 	@ApiOperation({ summary: '댓글 삭제' })
@@ -75,6 +75,6 @@ export class CommentsController {
 	})
 	@UseGuards(new LoggedInGuard())
 	async deleteComment(@Param('id', ParseIntPipe) id: number) {
-		return await this.deleteComment(id);
+		return await this.commentsService.deleteComment(id);
 	}
 }

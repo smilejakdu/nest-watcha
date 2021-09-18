@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { log } from 'console';
+import { BoardHashTag } from 'src/entities/BoardHashTag';
 import { Boards } from 'src/entities/Boards';
 import { HashTag } from 'src/entities/HashTag';
 import { Users } from 'src/entities/Users';
@@ -12,6 +13,7 @@ export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(HashTag) private hashTagRepository: Repository<HashTag>,
+		@InjectRepository(BoardHashTag) private boardHashTagRepository: Repository<BoardHashTag>,
 		@InjectRepository(Users) private usersRepository: Repository<Users>,
 	) {}
 
@@ -37,41 +39,44 @@ export class BoardsService {
 	}
 
 	async createBoard(title: string, content: string, hashtag:string, UserId: number) {
-		console.log(title, content, UserId);
 		const hashtags : string[] = hashtag.match(/#[^\s#]+/g);
-		// '#노드 #nest'.match(/#[^\s#]+/g);
-		// ["#노드", "#nest"]
+		const hashId : number[] = [];
 		if(hashtags.length > 0){
 			const HashSliceLowcase = hashtags.map(v => v.slice(1).toLowerCase());
 			for(let i = 0; i < HashSliceLowcase.length; i++){
-				const result = this.hashTagRepository.find({
+				const result = this.hashTagRepository.findOne({
 					where: {hash : HashSliceLowcase[i]}
 				}) 
 
-				log("result : ",result);
-				if ((await result).length === 0){
-					this.hashTagRepository.createQueryBuilder('hashtag')	
+				if (!(await result)){
+					const hashTag = this.hashTagRepository.createQueryBuilder('hashtag')	
 						.insert()
 						.values([
 							{hash:HashSliceLowcase[i]}
 						])
 						.execute()
+						hashId.push((await hashTag).identifiers[0].id)
+				}else{
+						hashId.push((await result).id)
 				}
 			}
-
-			// this.hashTagRepository.createQueryBuilder('hashtag')
-			// 	.insert()
-			// 	.values([
-			// 		{hash : hashtag}
-			// 	])
-			// 	.execute();
 		}
-		this.boardsRepository.createQueryBuilder('boards')
+		const boards = this.boardsRepository.createQueryBuilder('boards')
 			.insert()
 			.values([
 				{title : title , content : content ,imagePath : "" , UserId : UserId}
 			])
 			.execute();
+		const boardId = (await boards).identifiers[0].id;
+		
+		for(let hash of hashId){
+			this.boardHashTagRepository.createQueryBuilder('boardHashTag')
+				.insert()
+				.values([
+					{BoardId :boardId ,  HashId : hash}
+				])
+				.execute();
+		}
 	}
 
 	async updateBoard(BoardId: number, title: string, content: string) {

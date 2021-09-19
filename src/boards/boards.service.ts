@@ -7,74 +7,81 @@ import { HashTag } from 'src/entities/HashTag';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
 
-// @Injectable() 데코레이터는 BoardsService 클래스를 
-@Injectable() 
+// @Injectable() 데코레이터는 BoardsService 클래스를
+@Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(HashTag) private hashTagRepository: Repository<HashTag>,
-		@InjectRepository(BoardHashTag) private boardHashTagRepository: Repository<BoardHashTag>,
+		@InjectRepository(BoardHashTag)
+		private boardHashTagRepository: Repository<BoardHashTag>,
 		@InjectRepository(Users) private usersRepository: Repository<Users>,
 	) {}
 
-	async findByNickname(nickname: string):Promise<object> {
+	async findByNickname(nickname: string): Promise<object> {
 		return this.usersRepository.findOne({
 			where: { nickname },
 			select: ['id', 'nickname'],
 		});
 	}
 
-	async findAllBoards() : Promise<object>{
-		let board =  this.boardsRepository.createQueryBuilder('boards')
-		.leftJoin('boards.User' , 'user')
-		.getMany();
-		return board
+	async findAllBoards(): Promise<object> {
+		let board = this.boardsRepository
+			.createQueryBuilder('boards')
+			.leftJoin('boards.User', 'user')
+			.getMany();
+		return board;
 	}
 
-	async findMyBoard(UserId: number) : Promise<object> {
-		return this.boardsRepository.createQueryBuilder('boards')
-		.leftJoinAndSelect('boards.User' , 'user')
-		.where('boards.UserId = :UserId', { UserId: UserId })
-		.getMany();
+	async findMyBoard(UserId: number): Promise<object> {
+		return this.boardsRepository
+			.createQueryBuilder('boards')
+			.leftJoinAndSelect('boards.User', 'user')
+			.where('boards.UserId = :UserId', { UserId: UserId })
+			.getMany();
 	}
 
-	async createBoard(title: string, content: string, hashtag:string, UserId: number) {
-		const hashtags : string[] = hashtag.match(/#[^\s#]+/g);
-		const hashId : number[] = [];
-		if(hashtags.length > 0){
+	async createBoard(
+		title: string,
+		content: string,
+		hashtag: string,
+		UserId: number,
+	) {
+		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
+		const hashId: number[] = [];
+		if (hashtags.length > 0) {
 			const HashSliceLowcase = hashtags.map(v => v.slice(1).toLowerCase());
-			for(let i = 0; i < HashSliceLowcase.length; i++){
+			for (let i = 0; i < HashSliceLowcase.length; i++) {
 				const result = this.hashTagRepository.findOne({
-					where: {hash : HashSliceLowcase[i]}
-				}) 
+					where: { hash: HashSliceLowcase[i] },
+				});
 
-				if (!(await result)){
-					const hashTag = this.hashTagRepository.createQueryBuilder('hashtag')	
+				if (!(await result)) {
+					const hashTag = this.hashTagRepository
+						.createQueryBuilder('hashtag')
 						.insert()
-						.values([
-							{hash:HashSliceLowcase[i]}
-						])
-						.execute()
-						hashId.push((await hashTag).identifiers[0].id)
-				}else{
-						hashId.push((await result).id)
+						.values([{ hash: HashSliceLowcase[i] }])
+						.execute();
+					hashId.push((await hashTag).identifiers[0].id);
+				} else {
+					hashId.push((await result).id);
 				}
 			}
 		}
-		const boards = this.boardsRepository.createQueryBuilder('boards')
+		const boards = this.boardsRepository
+			.createQueryBuilder('boards')
 			.insert()
 			.values([
-				{title : title , content : content ,imagePath : "" , UserId : UserId}
+				{ title: title, content: content, imagePath: '', UserId: UserId },
 			])
 			.execute();
 		const boardId = (await boards).identifiers[0].id;
-		
-		for(let hash of hashId){
-			this.boardHashTagRepository.createQueryBuilder('boardHashTag')
+
+		for (let hash of hashId) {
+			this.boardHashTagRepository
+				.createQueryBuilder('boardHashTag')
 				.insert()
-				.values([
-					{BoardId :boardId ,  HashId : hash}
-				])
+				.values([{ BoardId: boardId, HashId: hash }])
 				.execute();
 		}
 	}

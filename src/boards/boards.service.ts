@@ -41,12 +41,7 @@ export class BoardsService {
 			.getMany();
 	}
 
-	async createBoard(
-		title: string,
-		content: string,
-		hashtag: string,
-		UserId: number,
-	) {
+	async createBoard(title: string, content: string, hashtag: string, UserId: number) {
 		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
 		const hashId: number[] = [];
 		if (hashtags.length > 0) {
@@ -71,9 +66,7 @@ export class BoardsService {
 		const boards = this.boardsRepository
 			.createQueryBuilder('boards')
 			.insert()
-			.values([
-				{ title: title, content: content, imagePath: '', UserId: UserId },
-			])
+			.values([{ title: title, content: content, imagePath: '', UserId: UserId }])
 			.execute();
 		const boardId = (await boards).identifiers[0].id;
 

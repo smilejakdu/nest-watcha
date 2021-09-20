@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'bcrypt';
 import { log } from 'console';
 import { BoardHashTag } from 'src/entities/BoardHashTag';
 import { Boards } from 'src/entities/Boards';
@@ -43,40 +44,52 @@ export class BoardsService {
 
 	async createBoard(title: string, content: string, hashtag: string, UserId: number) {
 		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
-		const hashId: number[] = [];
-		if (hashtags.length > 0) {
-			const HashSliceLowcase = hashtags.map(v => v.slice(1).toLowerCase());
-			for (let i = 0; i < HashSliceLowcase.length; i++) {
-				const result = this.hashTagRepository.findOne({
-					where: { hash: HashSliceLowcase[i] },
-				});
+		const BoardIdhashId: any[] = [];
+		const doesNotHash: any[] = [];
 
-				if (!(await result)) {
-					const hashTag = this.hashTagRepository
-						.createQueryBuilder('hashtag')
-						.insert()
-						.values([{ hash: HashSliceLowcase[i] }])
-						.execute();
-					hashId.push((await hashTag).identifiers[0].id);
-				} else {
-					hashId.push((await result).id);
-				}
-			}
-		}
-		const boards = this.boardsRepository
+		const boards = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.insert()
 			.values([{ title: title, content: content, imagePath: '', UserId: UserId }])
 			.execute();
-		const boardId = (await boards).identifiers[0].id;
+		const boardId = boards.identifiers[0].id;
 
-		for (let hash of hashId) {
-			this.boardHashTagRepository
-				.createQueryBuilder('boardHashTag')
-				.insert()
-				.values([{ BoardId: boardId, HashId: hash }])
-				.execute();
+		if (hashtags.length > 0) {
+			const HashSliceLowcase: string[] = hashtags.map((v): string => v.slice(1).toLowerCase());
+			const hashResultStringList = await Promise.all(
+				HashSliceLowcase.map(hash =>
+					this.hashTagRepository
+						.createQueryBuilder('hashtag')
+						.select(['hashtag.id', 'hashtag.hash'])
+						.where('hashtag.hash=:hash', { hash: hash })
+						.getMany(),
+				),
+			);
+
+			hashResultStringList.forEach(function (element, index) {
+				if (element[0] === undefined) {
+					doesNotHash.push({ hash: HashSliceLowcase[index] });
+				} else {
+					BoardIdhashId.push({ BoardId: boardId, HashId: element[0].id });
+				}
+			});
+
+			if (doesNotHash.length > 0) {
+				const hashTag = await this.hashTagRepository
+					.createQueryBuilder('hashtag')
+					.insert()
+					.values(doesNotHash)
+					.execute();
+				for (const hashTagId of hashTag.identifiers) {
+					BoardIdhashId.push({ BoardId: boardId, HashId: hashTagId.id });
+				}
+			}
 		}
+		await this.boardHashTagRepository
+			.createQueryBuilder('boardHashTag')
+			.insert()
+			.values(BoardIdhashId)
+			.execute();
 	}
 
 	async updateBoard(BoardId: number, title: string, content: string) {

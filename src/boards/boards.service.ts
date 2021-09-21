@@ -61,7 +61,7 @@ export class BoardsService {
 					this.hashTagRepository
 						.createQueryBuilder('hashtag')
 						.select(['hashtag.id', 'hashtag.hash'])
-						.where('hashtag.hash=:hash', { hash: hash })
+						.where('hashtag.hash IN (:...hash)', { hash })
 						.getMany(),
 				),
 			);

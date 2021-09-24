@@ -8,7 +8,6 @@ import { HashTag } from 'src/entities/HashTag';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
 
-// @Injectable() 데코레이터는 BoardsService 클래스를
 @Injectable()
 export class BoardsService {
 	constructor(
@@ -39,7 +38,7 @@ export class BoardsService {
 			.createQueryBuilder('boards')
 			.leftJoinAndSelect('boards.User', 'user')
 			.where('boards.UserId = :UserId', { UserId: UserId })
-			.getMany();
+			.getManyAndCount();
 	}
 
 	async createBoard(title: string, content: string, hashtag: string, UserId: number) {
@@ -56,12 +55,13 @@ export class BoardsService {
 
 		if (hashtags.length > 0) {
 			const HashSliceLowcase: string[] = hashtags.map((v): string => v.slice(1).toLowerCase());
+			// where 문을 hashtag.hash IN (:...hash) 로바꿔보기
 			const hashResultStringList = await Promise.all(
 				HashSliceLowcase.map(hash =>
 					this.hashTagRepository
 						.createQueryBuilder('hashtag')
 						.select(['hashtag.id', 'hashtag.hash'])
-						.where('hashtag.hash IN (:...hash)', { hash })
+						.where('hashtag.hash=:hash', { hash: hash })
 						.getMany(),
 				),
 			);
@@ -93,7 +93,6 @@ export class BoardsService {
 	}
 
 	async updateBoard(BoardId: number, title: string, content: string) {
-		console.log(BoardId, title, content);
 		const board = await this.boardsRepository.findOne({ where: { BoardId } });
 
 		board.id = board.id;
@@ -104,7 +103,6 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(BoardId: number) {
-		console.log(BoardId);
 		const boards = new Boards();
 		boards.id = BoardId;
 		const test = await this.boardsRepository.delete(BoardId);

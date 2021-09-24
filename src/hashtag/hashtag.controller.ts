@@ -1,13 +1,11 @@
 import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 import {
-	ApiCreatedResponse,
 	ApiInternalServerErrorResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiTags,
 } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
-import { CreateHashtagDto } from './dto/create-hashtag.dto';
 import { SelectHashtagDto } from './dto/select-hashtag.dto';
 import { HashtagService } from './hashtag.service';
 

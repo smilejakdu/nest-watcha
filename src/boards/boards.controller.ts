@@ -41,7 +41,7 @@ export class BoardsController {
 		type: CreateBoardDto,
 	})
 	@Get()
-	async getBoards() :Promise<object> {
+	async getBoards(): Promise<object> {
 		return this.boardsService.findAllBoards();
 	}
 
@@ -53,7 +53,7 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get('my_board')
-	async getMyBoards(@User() user: Users):Promise<object> {
+	async getMyBoards(@User() user: Users): Promise<object> {
 		return this.boardsService.findMyBoard(user.id);
 	}
 
@@ -66,7 +66,7 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
 	async createBoard(@User() user: Users, @Body() data: CreateBoardDto) {
-		return this.boardsService.createBoard(data.title, data.content , data.hashtag, user.id);
+		return this.boardsService.createBoard(data.title, data.content, data.hashtag, user.id);
 	}
 
 	@ApiOkResponse({
@@ -76,7 +76,7 @@ export class BoardsController {
 	@ApiCookieAuth('connect.sid')
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
-	@Put(':id') 
+	@Put(':id')
 	async updateBoard(
 		@User() user: Users,
 		@Param('id', ParseIntPipe) id: number,
@@ -92,10 +92,7 @@ export class BoardsController {
 	@ApiCookieAuth('connect.sid')
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
-	async deleteBoard(
-		@User() user: Users,
-		@Param('id', ParseIntPipe) id: number,
-	) {
+	async deleteBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number) {
 		return this.boardsService.deleteBoardOne(id);
 	}
 }

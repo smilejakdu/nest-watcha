@@ -54,15 +54,11 @@ export class BoardsService {
 		if (hashtags.length > 0) {
 			const HashSliceLowcase: string[] = hashtags.map((v): string => v.slice(1).toLowerCase());
 			// where 문을 hashtag.hash IN (:...hash) 로바꿔보기
-			const hashResultStringList = await Promise.all(
-				HashSliceLowcase.map(hash =>
-					this.hashTagRepository
-						.createQueryBuilder('hashtag')
-						.select(['hashtag.id', 'hashtag.hash'])
-						.where('hashtag.hash=:hash', { hash: hash })
-						.getMany(),
-				),
-			);
+			const hashResultStringList = await this.hashTagRepository
+				.createQueryBuilder('hashtag')
+				.select(['hashtag.id', 'hashtag.hash'])
+				.where('hashtag.hash IN (:...HashSliceLowcase)', { HashSliceLowcase })
+				.getMany();
 
 			hashResultStringList.forEach(function (element, index) {
 				if (element[0] === undefined) {

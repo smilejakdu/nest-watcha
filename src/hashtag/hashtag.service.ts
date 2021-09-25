@@ -6,14 +6,11 @@ import { HashTag } from '../../src/entities/HashTag';
 import { BoardHashTag } from '../../src/entities/BoardHashTag';
 import { Boards } from '../../src/entities/Boards';
 
-import { log } from 'console';
-
 @Injectable()
 export class HashtagService {
 	constructor(@InjectRepository(Boards) private boardRepository: Repository<Boards>) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<object> {
-		log('hashtag : ', hashtag);
 		return this.boardRepository
 			.createQueryBuilder('Boards')
 			.select('Boards.*')

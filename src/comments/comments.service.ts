@@ -13,7 +13,7 @@ export class CommentsService {
 		@InjectRepository(Comments)
 		private commentsRepository: Repository<Comments>,
 	) {}
-    
+
 	async findBoardAndComments(boardId: number) {
 		return this.boardsRepository
 			.createQueryBuilder('board')
@@ -24,7 +24,6 @@ export class CommentsService {
 	}
 
 	async createComment(content: string, BoardId: number, UserId: number) {
-		console.log(BoardId, UserId, content);
 		const comment = new Comments();
 
 		comment.content = content;
@@ -34,8 +33,6 @@ export class CommentsService {
 	}
 
 	async updateComment(content: string, commentId: number) {
-		console.log(content, commentId);
-
 		const commentObject = await this.commentsRepository.findOne({
 			id: commentId,
 		});
@@ -44,7 +41,6 @@ export class CommentsService {
 	}
 
 	async deleteComment(CommentId: number) {
-		console.log(CommentId);
 		const comment = await this.boardsRepository.findOne({
 			where: { id: CommentId },
 		});

@@ -7,17 +7,13 @@ import { log } from 'console';
 
 @Injectable()
 export class AuthService {
-	constructor(
-		@InjectRepository(Users) private usersRepository: Repository<Users>,
-	) {}
+	constructor(@InjectRepository(Users) private usersRepository: Repository<Users>) {}
 
 	async validateUser(nickname: string, password: string) {
 		const user = await this.usersRepository.findOne({
 			where: { nickname },
 			select: ['id', 'nickname', 'password'],
 		});
-		// console.log(nickname, password, user);
-		log(nickname, password, user); // user 안에 id 가 들어있어야한다.
 		if (!user) {
 			return null;
 		}

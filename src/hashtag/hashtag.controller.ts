@@ -5,6 +5,7 @@ import {
 	ApiOperation,
 	ApiTags,
 } from '@nestjs/swagger';
+import { log } from 'console';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { SelectHashtagDto } from './dto/select-hashtag.dto';
 import { HashtagService } from './hashtag.service';

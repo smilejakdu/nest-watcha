@@ -1,25 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	Index,
-	JoinColumn,
-	ManyToOne,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn,
-	ManyToMany,
-	JoinTable
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Comments } from './Comments';
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 import { HashTag } from './HashTag';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
-export class Boards extends CoreEntity{
+export class Boards extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -48,7 +36,7 @@ export class Boards extends CoreEntity{
 
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
-	
+
 	@IsNotEmpty()
 	@ManyToOne(() => Users, users => users.UserToBoards, {
 		onDelete: 'SET NULL',
@@ -60,17 +48,17 @@ export class Boards extends CoreEntity{
 	@OneToMany(() => Comments, comments => comments.Board)
 	Comments: Comments[];
 
-  @ManyToMany(() => HashTag, (hashTag) => hashTag.boards)
-  @JoinTable({
-    name: "boardhashtag",
-    joinColumn: {
-      name: "BoardId",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "HashId",
-      referencedColumnName: "id",
-    },
-  })
-  hashTag: HashTag[];
+	@ManyToMany(() => HashTag, hashTag => hashTag.boards)
+	@JoinTable({
+		name: 'boardhashtag',
+		joinColumn: {
+			name: 'BoardId',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'HashId',
+			referencedColumnName: 'id',
+		},
+	})
+	hashTag: HashTag[];
 }

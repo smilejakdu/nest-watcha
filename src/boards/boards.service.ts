@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { hash } from 'bcrypt';
-import { log } from 'console';
 import { BoardHashTag } from 'src/entities/BoardHashTag';
 import { Boards } from 'src/entities/Boards';
 import { HashTag } from 'src/entities/HashTag';

@@ -1,31 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HashTag } from 'src/entities/HashTag';
-import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
-import { Boards } from 'src/entities/Boards';
+
+import { HashTag } from '../../src/entities/HashTag';
+import { BoardHashTag } from '../../src/entities/BoardHashTag';
+import { Boards } from '../../src/entities/Boards';
+
+import { log } from 'console';
 
 @Injectable()
 export class HashtagService {
-	constructor(
-		@InjectRepository(HashTag) private hashtagRepository: Repository<HashTag>,
-		@InjectRepository(Boards) private boardRepository: Repository<Boards>,
-	) {}
+	constructor(@InjectRepository(Boards) private boardRepository: Repository<Boards>) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<object> {
+		log('hashtag : ', hashtag);
 		return this.boardRepository
-			.createQueryBuilder('board')
-			.select(
-				`
-				board.* from boards	
-			`,
-			)
-			.innerJoin('board.hashTag', 'hashtag', 'hashtag.id = :BoardId', {})
-			.innerJoin('hashtag.boards', 'boards', 'boards.id = :BoardId', {})
-			.where('hashtag.hash=:(...hashtag)', { hashtag })
-			.groupBy('board.id')
-			.getMany();
+			.createQueryBuilder('Boards')
+			.select('Boards.*')
+			.innerJoin(BoardHashTag, 'BoardHashTag', 'BoardHashTag.BoardId = Boards.id')
+			.innerJoin(HashTag, 'HashTag', 'HashTag.id = BoardHashTag.HashId')
+			.where('HashTag.hash IN (:...hashtag)', { hashtag })
+			.groupBy('Boards.id')
+			.getRawMany();
 	}
 }
-// select boards.* from boards
-// inner join hashtag as h inner join boardhashtag as bht where h.hash in ("노드","test") group by boards.id;

@@ -1,14 +1,5 @@
 import { UndefinedToNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
-import {
-	Body,
-	Controller,
-	Get,
-	Post,
-	Req,
-	Res,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiInternalServerErrorResponse,
 	ApiOkResponse,

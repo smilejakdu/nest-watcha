@@ -6,10 +6,7 @@ import { Users } from 'src/entities/Users';
 
 @Injectable()
 export class UsersService {
-	// 비지니스 로직인 서비스랑 테이블 entity 사이를 Repositoy 가 이어준다.
-	constructor(
-		@InjectRepository(Users) private usersRepository: Repository<Users>,
-	) {}
+	constructor(@InjectRepository(Users) private usersRepository: Repository<Users>) {}
 
 	async findByNickname(nickname: string) {
 		return this.usersRepository.findOne({

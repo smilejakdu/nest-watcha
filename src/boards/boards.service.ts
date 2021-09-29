@@ -99,8 +99,7 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(BoardId: number) {
-		const boards = new Boards();
-		boards.id = BoardId;
-		const test = await this.boardsRepository.delete(BoardId);
+		const deleteResult = await this.boardsRepository.delete(BoardId);
+		return deleteResult;	
 	}
 }

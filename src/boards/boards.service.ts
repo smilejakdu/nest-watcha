@@ -1,3 +1,4 @@
+import { size } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardHashTag } from 'src/entities/BoardHashTag';
@@ -24,7 +25,7 @@ export class BoardsService {
 	}
 
 	async findAllBoards(): Promise<object> {
-		let board = this.boardsRepository
+		let board = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.leftJoin('boards.User', 'user')
 			.getMany();
@@ -32,11 +33,12 @@ export class BoardsService {
 	}
 
 	async findMyBoard(UserId: number): Promise<object> {
-		return this.boardsRepository
+		const findMyBoardResult = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.leftJoinAndSelect('boards.User', 'user')
 			.where('boards.UserId = :UserId', { UserId: UserId })
 			.getManyAndCount();
+		return findMyBoardResult;
 	}
 
 	async createBoard(title: string, content: string, hashtag: string, UserId: number) {

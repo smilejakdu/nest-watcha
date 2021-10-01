@@ -95,4 +95,9 @@ export class BoardsController {
 	async deleteBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number) {
 		return this.boardsService.deleteBoardOne(id);
 	}
+	
+	@Get('nickname')
+	async findByNickname(@Body() data) {
+		return this.boardsService.findByNickname(data.nickname);
+	}
 }

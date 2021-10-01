@@ -18,10 +18,12 @@ export class BoardsService {
 	) {}
 
 	async findByNickname(nickname: string): Promise<object> {
-		return this.usersRepository.findOne({
+		const findByNicknameResult:Users = await this.usersRepository.findOne({
 			where: { nickname },
 			select: ['id', 'nickname'],
 		});
+		console.log("findByNicknameResult :" , findByNicknameResult);
+		return findByNicknameResult;
 	}
 
 	async findAllBoards(): Promise<object> {
@@ -55,7 +57,6 @@ export class BoardsService {
 
 		if (hashtags.length > 0) {
 			const HashSliceLowcase: string[] = hashtags.map((v): string => v.slice(1).toLowerCase());
-			// where 문을 hashtag.hash IN (:...hash) 로바꿔보기
 			const hashResultStringList = await this.hashTagRepository
 				.createQueryBuilder('hashtag')
 				.select(['hashtag.id', 'hashtag.hash'])
@@ -89,13 +90,16 @@ export class BoardsService {
 	}
 
 	async updateBoard(BoardId: number, title: string, content: string) {
-		const board = await this.boardsRepository.findOne({ where: { BoardId } });
-
-		board.id = board.id;
-		board.title = title;
-		board.content = content;
-
-		return await this.boardsRepository.save(board);
+		const board:Boards = await this.boardsRepository.findOne({ where: { BoardId } });
+		await this.boardsRepository
+			.createQueryBuilder('board')
+			.update<Boards>(Boards, {
+				id: board.id,
+				title: title,
+				content: content,
+			})
+      .where('board.id = :id', { id: board.id })
+      .execute();
 	}
 
 	async deleteBoardOne(BoardId: number) {

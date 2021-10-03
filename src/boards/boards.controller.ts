@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import {
 	ApiOperation,
-	ApiResponse,
 	ApiTags,
 	ApiOkResponse,
 	ApiInternalServerErrorResponse,
@@ -15,7 +14,6 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { DeleteBoardDto } from './dto/delete-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { Boards } from 'src/entities/Boards';
 import { ImageService } from '../image/image.service';
 import { HashtagService } from '../hashtag/hashtag.service';
 

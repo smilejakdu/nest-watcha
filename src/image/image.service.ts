@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Boards } from 'src/entities/Boards';
 import { createImageURL } from 'src/lib/multerOptions';
 import { Repository } from 'typeorm';
 import { BoardImage } from 'src/entities/BoardImage';

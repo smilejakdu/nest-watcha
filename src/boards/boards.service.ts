@@ -1,22 +1,15 @@
-import { size, isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BoardHashTag } from 'src/entities/BoardHashTag';
 import { Boards } from 'src/entities/Boards';
 import { HashTag } from 'src/entities/HashTag';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
-import { BoardImage } from '../entities/BoardImage';
-import { log } from 'console';
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
-		@InjectRepository(BoardImage) private boardImageRepository: Repository<BoardImage>,
 		@InjectRepository(HashTag) private hashTagRepository: Repository<HashTag>,
-		@InjectRepository(BoardHashTag)
-		private boardHashTagRepository: Repository<BoardHashTag>,
 		@InjectRepository(Users) private usersRepository: Repository<Users>,
 	) {}
 

@@ -1,4 +1,4 @@
-import { size, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -42,7 +42,6 @@ export class HashtagService {
 		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
 		if (!isEmpty(hashtags)) {
 			const HashSliceLowcase: string[] = hashtags.map((v: string) => v.slice(1).toLowerCase());
-			console.log('HashSliceLowcase : ', HashSliceLowcase);
 			const hashEntityList: HashTag[] = await this.hashTagRepository
 				.createQueryBuilder('hashtag')
 				.select(['hashtag.id', 'hashtag.hash'])
@@ -64,7 +63,6 @@ export class HashtagService {
 				}
 			} else {
 				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
-				const unionHash = HashSliceLowcase.filter(value => hashTagResultList.includes(value));
 				const differencehashList = differenceHash.map(function (hashtag) {
 					return { hash: hashtag };
 				});
@@ -73,10 +71,6 @@ export class HashtagService {
 				for (const hashTag of hashtagInsertedList.identifiers) {
 					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
 				}
-
-				const unionHashList = differenceHash.map(function (hashtag) {
-					return { hash: hashtag };
-				});
 
 				for (const hashTag of hashEntityList) {
 					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });

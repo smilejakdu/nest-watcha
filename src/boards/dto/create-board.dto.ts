@@ -31,5 +31,5 @@ export class CreateBoardDto {
 		example: 'imagePath',
 		description: 'imagePath',
 	})
-	public imagePath: string;
+	public imagePath: string[];
 }

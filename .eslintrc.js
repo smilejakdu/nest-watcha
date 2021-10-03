@@ -26,7 +26,14 @@ module.exports =  {
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      'quotes': ['error', 'single'],
+      'semi': ['error', 'always'],
+      'semi-spacing': ['error', {
+        'before': false,
+        'after': true,
+      }],
+      'max-len': ["error", { 'code': 300 }],
     },
     settings:  {
       react:  {

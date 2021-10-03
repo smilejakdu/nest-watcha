@@ -5,6 +5,7 @@ import { Comments } from './Comments';
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 import { HashTag } from './HashTag';
+import { BoardImage } from './BoardImage';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class Boards extends CoreEntity {
@@ -26,14 +27,6 @@ export class Boards extends CoreEntity {
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 
-	@IsString()
-	@ApiProperty({
-		example: 'imagePath',
-		description: 'imagePath',
-	})
-	@Column('varchar', { name: 'imagePath', length: 250 })
-	imagePath: string;
-
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
 
@@ -44,6 +37,9 @@ export class Boards extends CoreEntity {
 	})
 	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
 	User: Users;
+
+	@OneToMany(() => BoardImage, boardImage => boardImage.imagePath)
+	Images: BoardImage[];
 
 	@OneToMany(() => Comments, comments => comments.Board)
 	Comments: Comments[];

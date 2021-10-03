@@ -11,6 +11,7 @@ import { SchedulesModule } from './schedules/schedules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { HashtagModule } from './hashtag/hashtag.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { HashtagModule } from './hashtag/hashtag.module';
 		CommentsModule,
 		SchedulesModule,
 		HashtagModule,
+		ImageModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

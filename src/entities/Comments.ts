@@ -1,16 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	Index,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Boards } from './Boards';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { CoreEntity } from './CoreEntity';
+import { Boards } from './Boards';
 import { Users } from './Users';
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })

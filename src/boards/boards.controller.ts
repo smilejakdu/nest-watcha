@@ -1,14 +1,4 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	ParseIntPipe,
-	Post,
-	Put,
-	UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
@@ -26,6 +16,8 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { DeleteBoardDto } from './dto/delete-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Boards } from 'src/entities/Boards';
+import { ImageService } from '../image/image.service';
+import { HashtagService } from '../hashtag/hashtag.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
@@ -33,7 +25,11 @@ import { Boards } from 'src/entities/Boards';
 @ApiTags('BOARD')
 @Controller('boards')
 export class BoardsController {
-	constructor(private boardsService: BoardsService) {}
+	constructor(
+		private boardsService: BoardsService,
+		private imageService: ImageService,
+		private hashtagService: HashtagService,
+	) {}
 
 	@ApiOperation({ summary: '게시판 정보 가져오기' })
 	@ApiOkResponse({
@@ -65,8 +61,10 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@User() user: Users, @Body() data: CreateBoardDto) {
-		return this.boardsService.createBoard(data.title, data.content, data.hashtag, user.id);
+	async createBoard(@User() user: Users, @Body() data) {
+		const boardId = await this.boardsService.createBoard(data.title, data.content, user.id);
+		await this.imageService.insertImages(boardId, data.imagePath);
+		await this.hashtagService.insertHashTag(boardId, data.hashtag);
 	}
 
 	@ApiOkResponse({
@@ -77,11 +75,7 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id')
-	async updateBoard(
-		@User() user: Users,
-		@Param('id', ParseIntPipe) id: number,
-		@Body() data: UpdateBoardDto,
-	) {
+	async updateBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number, @Body() data: UpdateBoardDto) {
 		return this.boardsService.updateBoard(id, data.title, data.content);
 	}
 
@@ -95,7 +89,7 @@ export class BoardsController {
 	async deleteBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number) {
 		return this.boardsService.deleteBoardOne(id);
 	}
-	
+
 	@Get('nickname')
 	async findByNickname(@Body() data) {
 		return this.boardsService.findByNickname(data.nickname);

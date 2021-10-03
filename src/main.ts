@@ -1,17 +1,22 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
 
 declare const module: any;
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	// const app = await NestFactory.create(AppModule);
+	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
 	const port = process.env.PORT || 3000;
+	console.log('port:', port);
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -35,6 +40,9 @@ async function bootstrap() {
 			},
 		}),
 	);
+
+	app.use('/public', express.static(join(__dirname, '../public')));
+
 	app.use(passport.initialize());
 	app.use(passport.session());
 	await app.listen(port);

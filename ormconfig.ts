@@ -5,6 +5,7 @@ import { HashTag } from './src/entities/HashTag';
 import { Comments } from 'src/entities/Comments';
 import { BoardHashTag } from 'src/entities/BoardHashTag';
 import { CoreEntity } from 'src/entities/CoreEntity';
+import { BoardImage } from 'src/entities/BoardImage';
 
 dotenv.config();
 
@@ -16,13 +17,7 @@ const config: TypeOrmModuleOptions = {
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE,
 	// entities: ['entities/*.ts'], // 이렇게 하나거나 하나씩 import 하는 방법도 있다.
-	entities: [
-		Users,
-		HashTag,
-		CoreEntity,
-		Comments,
-		BoardHashTag
-	], // 사용할 entity
+	entities: [Users, HashTag, CoreEntity, Comments, BoardHashTag, BoardImage], // 사용할 entity
 	migrations: [__dirname + '/src/migrations/*.ts'],
 	cli: { migrationsDir: 'src/migrations' },
 	autoLoadEntities: true,

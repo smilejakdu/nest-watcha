@@ -64,7 +64,7 @@ export class BoardsController {
 	async createBoard(@User() user: Users, @Body() data) {
 		const boardId = await this.boardsService.createBoard(data.title, data.content, user.id);
 		await this.imageService.insertImages(boardId, data.imagePath);
-		await this.hashtagService.insertHashTag(boardId, data.hashtag);
+		await this.hashtagService.createHashTag(boardId, data.hashtag);
 	}
 
 	@ApiOkResponse({

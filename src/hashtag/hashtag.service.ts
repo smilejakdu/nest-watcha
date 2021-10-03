@@ -62,27 +62,27 @@ export class HashtagService {
 				for (const hashTag of hashtagInsertedList.identifiers) {
 					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
 				}
-
 			} else {
-				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value.));
-				// 아직 hash table 에 존재하지 않는 hash
-			}
-
-			const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
-			// 아직 hash table 에 존재하지 않는 hash
-
-			if (isEmpty(hashTagResultList)) {
-				//
-				const hashList = hashTagResultList.map(function (hashtag) {
+				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
+				const unionHash = HashSliceLowcase.filter(value => hashTagResultList.includes(value));
+				const differencehashList = differenceHash.map(function (hashtag) {
 					return { hash: hashtag };
 				});
-
-				const hashtagInsertedList = await this.insertHashtagList(hashList);
+				const hashtagInsertedList = await this.insertHashtagList(differencehashList);
 
 				for (const hashTag of hashtagInsertedList.identifiers) {
 					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
 				}
-			} else {
+
+				const unionHashList = differenceHash.map(function (hashtag) {
+					return { hash: hashtag };
+				});
+
+				for (const hashTag of hashEntityList) {
+					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
+				}
+
+				await this.boardHashTagRepository.createQueryBuilder('boardHashTag').insert().values(BoardIdhashId).execute();
 			}
 		}
 	}

@@ -1,12 +1,6 @@
 import { UndefinedToNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-	ApiInternalServerErrorResponse,
-	ApiOkResponse,
-	ApiOperation,
-	ApiResponse,
-	ApiTags,
-} from '@nestjs/swagger';
+import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
 import { SignUpRequestDto } from './dto/signup.request.dto';
 import { UsersService } from './users.service';
@@ -14,6 +8,7 @@ import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
+import { UserFindRequestDto } from './dto/userFind.request.dto';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
@@ -32,6 +27,16 @@ export class UsersController {
 	@Get()
 	getUsers(@User() user) {
 		return user || false;
+	}
+
+	@ApiOkResponse({
+		description: '성공',
+	})
+	@ApiOperation({ summary: '회원검색' })
+	@Get('findUser')
+	async findUser(@Body() data: UserFindRequestDto) {
+		const { id, nickname } = data;
+		return await this.usersService.findByNickname({ id, nickname });
 	}
 
 	@ApiOkResponse({

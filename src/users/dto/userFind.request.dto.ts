@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { CoreEntity } from 'src/entities/CoreEntity';
 
-export class SignUpRequestDto extends CoreEntity {
+export class UserFindRequestDto extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -10,12 +10,4 @@ export class SignUpRequestDto extends CoreEntity {
 		description: '닉네임',
 	})
 	public nickname: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: '123123123',
-		description: '비밀번호',
-	})
-	public password: string;
 }

@@ -16,7 +16,7 @@ import { Schedules } from './Schedules';
 import { CoreEntity } from './CoreEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'users' })
-export class Users extends CoreEntity{
+export class Users extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -32,11 +32,11 @@ export class Users extends CoreEntity{
 	password: string;
 
 	@OneToMany(() => Boards, boards => boards.User)
-	UserToBoards: Boards[];
+	Boards: Boards[];
 
 	@OneToMany(() => Comments, comments => comments.User)
-	UserToComments: Comments[];
+	Comments: Comments[];
 
 	@OneToMany(() => Schedules, schedules => schedules.User)
-	UserToSchedules: Schedules[];
+	Schedules: Schedules[];
 }

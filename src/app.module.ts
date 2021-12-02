@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middlewares';
 import { UsersModule } from './users/users.module';
 import { BoardsModule } from './boards/boards.module';
-import * as ormconfig from '../ormconfig';
+import ormconfig from '../ormconfig';
 import { CommentsModule } from './comments/comments.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';

@@ -27,15 +27,14 @@ export class Boards extends CoreEntity {
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 
-	@Column('int', { name: 'UserId', nullable: true })
-	UserId: number | null;
+	@Column('int', { name: 'userId', nullable: true })
+	userId: number | null;
 
-	@IsNotEmpty()
-	@ManyToOne(() => Users, users => users.UserToBoards, {
+	@ManyToOne(() => Users, users => users.Boards, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: Users;
 
 	@OneToMany(() => BoardImage, boardImage => boardImage.imagePath)
@@ -48,11 +47,11 @@ export class Boards extends CoreEntity {
 	@JoinTable({
 		name: 'boardhashtag',
 		joinColumn: {
-			name: 'BoardId',
+			name: 'boardId',
 			referencedColumnName: 'id',
 		},
 		inverseJoinColumn: {
-			name: 'HashId',
+			name: 'hashId',
 			referencedColumnName: 'id',
 		},
 	})

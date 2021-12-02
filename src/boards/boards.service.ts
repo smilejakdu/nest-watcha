@@ -26,11 +26,11 @@ export class BoardsService {
 		return board;
 	}
 
-	async findMyBoard(UserId: number): Promise<object> {
+	async findMyBoard(userId: number): Promise<object> {
 		const findMyBoardResult = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.leftJoinAndSelect('boards.User', 'user')
-			.where('boards.UserId = :UserId', { UserId: UserId })
+			.where('boards.userId = :userId', { userId })
 			.getManyAndCount();
 		return findMyBoardResult;
 	}
@@ -44,18 +44,18 @@ export class BoardsService {
 		return hashtagInsertedList;
 	}
 
-	async createBoard(title: string, content: string, UserId: number) {
+	async createBoard(title: string, content: string, userId: number) {
 		const boards = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.insert()
-			.values([{ title: title, content: content, UserId: UserId }])
+			.values([{ title: title, content: content, userId: userId }])
 			.execute();
 
 		return boards.identifiers[0].id;
 	}
 
-	async updateBoard(BoardId: number, title: string, content: string) {
-		const board: Boards = await this.boardsRepository.findOne({ where: { BoardId } });
+	async updateBoard(boardId: number, title: string, content: string) {
+		const board: Boards = await this.boardsRepository.findOne({ where: { boardId } });
 		await this.boardsRepository
 			.createQueryBuilder('board')
 			.update<Boards>(Boards, {
@@ -67,8 +67,8 @@ export class BoardsService {
 			.execute();
 	}
 
-	async deleteBoardOne(BoardId: number) {
-		const deleteResult = await this.boardsRepository.delete(BoardId);
+	async deleteBoardOne(boardId: number) {
+		const deleteResult = await this.boardsRepository.delete(boardId);
 		return deleteResult;
 	}
 }

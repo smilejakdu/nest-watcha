@@ -17,23 +17,23 @@ export class Comments extends CoreEntity {
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 
-	@Column('int', { name: 'BoardId', nullable: true })
-	BoardId: number | null;
+	@Column('int', { name: 'boardId', nullable: true })
+	boardId: number | null;
 
-	@Column('int', { name: 'UserId', nullable: true })
-	UserId: number | null;
+	@Column('int', { name: 'userId', nullable: true })
+	userId: number | null;
 
-	@ManyToOne(() => Users, users => users.UserToComments, {
+	@ManyToOne(() => Users, users => users.Comments, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: Users;
 
 	@ManyToOne(() => Boards, boards => boards.Comments, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'BoardId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
 	Board: Boards;
 }

@@ -20,8 +20,8 @@ export class HashtagService {
 		return this.boardRepository
 			.createQueryBuilder('Boards')
 			.select('Boards.*')
-			.innerJoin(BoardHashTag, 'BoardHashTag', 'BoardHashTag.BoardId = Boards.id')
-			.innerJoin(HashTag, 'HashTag', 'HashTag.id = BoardHashTag.HashId')
+			.innerJoin(BoardHashTag, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
+			.innerJoin(HashTag, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
 			.where('HashTag.hash IN (:...hashtag)', { hashtag })
 			.groupBy('Boards.id')
 			.getRawMany();
@@ -59,7 +59,7 @@ export class HashtagService {
 				const hashtagInsertedList = await this.insertHashtagList(hashList);
 
 				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
+					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 			} else {
 				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
@@ -69,11 +69,11 @@ export class HashtagService {
 				const hashtagInsertedList = await this.insertHashtagList(differencehashList);
 
 				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
+					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 
 				for (const hashTag of hashEntityList) {
-					BoardIdhashId.push({ BoardId: boardId, HashId: hashTag.id });
+					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 
 				await this.boardHashTagRepository.createQueryBuilder('boardHashTag').insert().values(BoardIdhashId).execute();

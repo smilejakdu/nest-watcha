@@ -1,14 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	Index,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CoreEntity } from './CoreEntity';
 import { Users } from './Users';
 
@@ -35,7 +27,7 @@ export class Schedules extends CoreEntity {
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
 
-	@ManyToOne(() => Users, users => users.UserToSchedules, {
+	@ManyToOne(() => Users, users => users.Schedules, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})

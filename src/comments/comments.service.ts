@@ -18,17 +18,17 @@ export class CommentsService {
 		return this.boardsRepository
 			.createQueryBuilder('board')
 			.innerJoinAndSelect('board.Comments', 'comments')
-			.where('board.id=:BoardId', { BoardId: boardId })
+			.where('board.id=:boardId', { boardId })
 			.orderBy('comments.createdAt', 'DESC')
 			.getManyAndCount();
 	}
 
-	async createComment(content: string, BoardId: number, UserId: number) {
+	async createComment(content: string, boardId: number, userId: number) {
 		const comment = new Comments();
 
 		comment.content = content;
-		comment.BoardId = BoardId;
-		comment.UserId = UserId;
+		comment.boardId = boardId;
+		comment.userId = userId;
 		await this.commentsRepository.save(comment);
 	}
 

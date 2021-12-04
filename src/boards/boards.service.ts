@@ -14,25 +14,31 @@ export class BoardsService {
 	) {}
 
 	async findByNickname(nickname: string): Promise<object> {
-		const findByNicknameResult: Users = await this.usersRepository.findOne({
-			where: { nickname },
-			select: ['id', 'nickname'],
-		});
-		return findByNicknameResult;
+		const foundByNickname: Users = await this.usersRepository
+			.createQueryBuilder('user')
+			.where('user.nickname =:nickname', { nickname })
+			.execute();
+
+		return foundByNickname;
 	}
 
-	async findAllBoards(): Promise<object> {
-		let board = await this.boardsRepository.createQueryBuilder('boards').leftJoin('boards.User', 'user').getMany();
-		return board;
+	async findAllBoards(): Promise<Boards[]> {
+		const foundAllBoards: Boards[] = await this.boardsRepository
+			.createQueryBuilder('boards')
+			.leftJoin('boards.User', 'user')
+			.getMany();
+
+		return foundAllBoards;
 	}
 
-	async findMyBoard(userId: number): Promise<object> {
-		const findMyBoardResult = await this.boardsRepository
+	async findMyBoard(userId: number): Promise<[Boards[], number]> {
+		const foundMyBoardResponse: [Boards[], number] = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.leftJoinAndSelect('boards.User', 'user')
 			.where('boards.userId = :userId', { userId })
 			.getManyAndCount();
-		return findMyBoardResult;
+
+		return foundMyBoardResponse;
 	}
 
 	async insertHashtagList(hashTagList) {
@@ -41,6 +47,7 @@ export class BoardsService {
 			.insert()
 			.values(hashTagList)
 			.execute();
+
 		return hashtagInsertedList;
 	}
 
@@ -56,6 +63,7 @@ export class BoardsService {
 
 	async updateBoard(boardId: number, title: string, content: string) {
 		const board: Boards = await this.boardsRepository.findOne({ where: { boardId } });
+
 		await this.boardsRepository
 			.createQueryBuilder('board')
 			.update<Boards>(Boards, {
@@ -68,7 +76,6 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(boardId: number) {
-		const deleteResult = await this.boardsRepository.delete(boardId);
-		return deleteResult;
+		return await this.boardsRepository.delete(boardId);
 	}
 }

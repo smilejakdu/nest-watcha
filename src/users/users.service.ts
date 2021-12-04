@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import bcrypt from 'bcrypt';
-import { pickBy, isNil, negate } from 'lodash';
-
+// Entity
 import { Users } from '../entities/Users';
-import { log } from 'console';
-import { pbkdf2 } from 'crypto';
 
 export interface UserFindOneOptions {
 	id?: number;
@@ -19,7 +15,7 @@ export class UsersService {
 	constructor(@InjectRepository(Users) private usersRepository: Repository<Users>) {}
 
 	async findByNickname({ id, nickname }: UserFindOneOptions = {}) {
-		const qb = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.UserToBoards', 'userBoards');
+		const qb = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.Board', 'boards');
 
 		if (id) qb.andWhere('user.id = :id', { id });
 		if (nickname) qb.andWhere('user.nickname = :nickname', { nickname });

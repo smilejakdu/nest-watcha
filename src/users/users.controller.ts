@@ -1,6 +1,13 @@
 import { UndefinedToNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBadRequestResponse,
+	ApiInternalServerErrorResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
 import { SignUpRequestDto } from './dto/signup.request.dto';
 import { UsersService } from './users.service';
@@ -14,12 +21,14 @@ import { UserFindRequestDto } from './dto/userFind.request.dto';
 	description: '서버 에러',
 })
 @UseInterceptors(UndefinedToNullInterceptor)
+@ApiBadRequestResponse({ description: '잘못된 요청 파라미터' })
 @ApiTags('USER')
 @Controller('users')
 export class UsersController {
 	constructor(private usersService: UsersService) {}
 
 	@ApiOperation({ summary: '내정보조회' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@ApiResponse({
 		status: 500,
 		description: '서버 에러',
@@ -31,8 +40,10 @@ export class UsersController {
 
 	@ApiOkResponse({
 		description: '성공',
+		type: UserDto,
 	})
 	@ApiOperation({ summary: '회원검색' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
 	async findUser(@Body() data: UserFindRequestDto) {
 		const { id, nickname } = data;
@@ -63,6 +74,7 @@ export class UsersController {
 
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '로그아웃' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Post('logout')
 	logOut(@Req() req, @Res() res) {
 		req.logout();

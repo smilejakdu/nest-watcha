@@ -35,7 +35,7 @@ export class BoardsService {
 		const foundMyBoardResponse: [Boards[], number] = await this.boardsRepository
 			.createQueryBuilder('boards')
 			.leftJoinAndSelect('boards.User', 'user')
-			.where('boards.userId = :userId', { userId })
+			.where('boards.userId =:userId', { userId })
 			.getManyAndCount();
 
 		return foundMyBoardResponse;
@@ -62,7 +62,10 @@ export class BoardsService {
 	}
 
 	async updateBoard(boardId: number, title: string, content: string) {
-		const board: Boards = await this.boardsRepository.findOne({ where: { boardId } });
+		const board: Boards = await this.boardsRepository
+			.createQueryBuilder('board')
+			.where('board.boardId =:boardId', { boardId })
+			.getOne();
 
 		await this.boardsRepository
 			.createQueryBuilder('board')
@@ -76,6 +79,10 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(boardId: number) {
-		return await this.boardsRepository.delete(boardId);
+		return await this.boardsRepository
+			.createQueryBuilder('board')
+			.delete()
+			.where('board.boardId =:boardId', { boardId })
+			.execute();
 	}
 }

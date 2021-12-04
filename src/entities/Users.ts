@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+// Entity
 import { Boards } from './Boards';
 import { Comments } from './Comments';
 import { Schedules } from './Schedules';

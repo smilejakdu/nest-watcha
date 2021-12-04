@@ -6,6 +6,7 @@ import {
 	ApiInternalServerErrorResponse,
 	ApiCreatedResponse,
 	ApiCookieAuth,
+	ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
@@ -20,6 +21,7 @@ import { HashtagService } from '../hashtag/hashtag.service';
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
 })
+@ApiBadRequestResponse({ description: '잘못된 요청 파라미터' })
 @ApiTags('BOARD')
 @Controller('boards')
 export class BoardsController {

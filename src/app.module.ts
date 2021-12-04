@@ -1,7 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middlewares';
 import { UsersModule } from './users/users.module';
 import { BoardsModule } from './boards/boards.module';
@@ -27,8 +25,8 @@ import { ImageModule } from './image/image.module';
 		HashtagModule,
 		ImageModule,
 	],
-	controllers: [AppController],
-	providers: [AppService],
+	controllers: [],
+	providers: [],
 })
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {

@@ -1,10 +1,8 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 import { CreateCommentDto } from './create-comment.dto';
 
-export class UpdateCommentDto extends PickType(CreateCommentDto, [
-	'content',
-] as const) {
+export class UpdateCommentDto extends PickType(CreateCommentDto, ['content'] as const) {
 	@IsNumber()
 	@IsNotEmpty()
 	@ApiProperty({

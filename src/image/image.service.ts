@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createImageURL } from 'src/lib/multerOptions';
 import { Repository } from 'typeorm';
-import { BoardImage } from 'src/entities/BoardImage';
+import { BoardImageEntity } from 'src/entities/BoardImageEntity';
 
 @Injectable()
 export class ImageService {
-	constructor(@InjectRepository(BoardImage) private boardImageRepository: Repository<BoardImage>) {}
+	constructor(@InjectRepository(BoardImageEntity) private boardImageRepository: Repository<BoardImageEntity>) {}
 
 	async uploadFiles(files: File[]) {
 		const generatedFiles: string[] = [];

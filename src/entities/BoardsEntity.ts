@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
-import { Comments } from './Comments';
+import { CommentsEntity } from './CommentsEntity';
 import { CoreEntity } from './CoreEntity';
-import { Users } from './Users';
-import { HashTag } from './HashTag';
-import { BoardImage } from './BoardImage';
+import { UsersEntity } from './UsersEntity';
+import { HashTagEntity } from './HashTagEntity';
+import { BoardImageEntity } from './BoardImageEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
-export class Boards extends CoreEntity {
+export class BoardsEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -30,20 +30,20 @@ export class Boards extends CoreEntity {
 	@Column('int', { name: 'userId', nullable: true })
 	userId: number | null;
 
-	@ManyToOne(() => Users, users => users.Boards, {
+	@ManyToOne(() => UsersEntity, users => users.Boards, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
-	User: Users;
+	User: UsersEntity;
 
-	@OneToMany(() => BoardImage, boardImage => boardImage.imagePath)
-	Images: BoardImage[];
+	@OneToMany(() => BoardImageEntity, boardImage => boardImage.imagePath)
+	Images: BoardImageEntity[];
 
-	@OneToMany(() => Comments, comments => comments.Board)
-	Comments: Comments[];
+	@OneToMany(() => CommentsEntity, comments => comments.Board)
+	Comments: CommentsEntity[];
 
-	@ManyToMany(() => HashTag, hashTag => hashTag.boards)
+	@ManyToMany(() => HashTagEntity, hashTag => hashTag.boards)
 	@JoinTable({
 		name: 'boardhashtag',
 		joinColumn: {
@@ -55,5 +55,5 @@ export class Boards extends CoreEntity {
 			referencedColumnName: 'id',
 		},
 	})
-	hashTag: HashTag[];
+	hashTag: HashTagEntity[];
 }

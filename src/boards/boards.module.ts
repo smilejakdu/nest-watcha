@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Users } from '../entities/Users';
-import { Boards } from '../entities/Boards';
-import { HashTag } from '../entities/HashTag';
+import { UsersEntity } from '../entities/UsersEntity';
+import { BoardsEntity } from '../entities/BoardsEntity';
+import { HashTagEntity } from '../entities/HashTagEntity';
 
 import { BoardsService } from './boards.service';
 import { BoardsController } from './boards.controller';
 import { ImageService } from 'src/image/image.service';
 import { HashtagService } from 'src/hashtag/hashtag.service';
-import { BoardImage } from 'src/entities/BoardImage';
-import { BoardHashTag } from 'src/entities/BoardHashTag';
+import { BoardImageEntity } from 'src/entities/BoardImageEntity';
+import { BoardHashTagEntity } from 'src/entities/BoardHashTagEntity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Users, Boards, HashTag, BoardImage, BoardHashTag])],
+	imports: [TypeOrmModule.forFeature([UsersEntity, BoardsEntity, HashTagEntity, BoardImageEntity, BoardHashTagEntity])],
 	providers: [BoardsService, ImageService, HashtagService],
 	controllers: [BoardsController],
 })

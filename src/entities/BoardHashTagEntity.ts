@@ -1,27 +1,27 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './CoreEntity';
-import { Boards } from './Boards';
-import { HashTag } from './HashTag';
+import { BoardsEntity } from './BoardsEntity';
+import { HashTagEntity } from './HashTagEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'boardhashtag' })
-export class BoardHashTag extends CoreEntity {
+export class BoardHashTagEntity extends CoreEntity {
 	@Column('int', { name: 'boardId' })
 	boardId: number;
 
 	@Column('int', { name: 'hashId' })
 	hashId: number;
 
-	@ManyToOne(() => Boards, boards => boards.hashTag, {
+	@ManyToOne(() => BoardsEntity, boards => boards.hashTag, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
-	Boards: Boards;
+	Boards: BoardsEntity;
 
-	@ManyToOne(() => HashTag, hashTag => hashTag.boards, {
+	@ManyToOne(() => HashTagEntity, hashTag => hashTag.boards, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'hashId', referencedColumnName: 'id' }])
-	Hashtag: HashTag;
+	Hashtag: HashTagEntity;
 }

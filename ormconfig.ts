@@ -1,11 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
-import { Users } from './src/entities/Users';
-import { HashTag } from './src/entities/HashTag';
-import { Comments } from 'src/entities/Comments';
-import { BoardHashTag } from 'src/entities/BoardHashTag';
+import { UsersEntity } from './src/entities/UsersEntity';
+import { HashTagEntity } from './src/entities/HashTagEntity';
+import { CommentsEntity } from 'src/entities/CommentsEntity';
+import { BoardHashTagEntity } from 'src/entities/BoardHashTagEntity';
 import { CoreEntity } from 'src/entities/CoreEntity';
-import { BoardImage } from 'src/entities/BoardImage';
+import { BoardImageEntity } from 'src/entities/BoardImageEntity';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const config: TypeOrmModuleOptions = {
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE,
 	// entities: ['entities/*.ts'], // 이렇게 하나거나 하나씩 import 하는 방법도 있다.
-	entities: [Users, HashTag, CoreEntity, Comments, BoardHashTag, BoardImage], // 사용할 entity
+	entities: [UsersEntity, HashTagEntity, CoreEntity, CommentsEntity, BoardImageEntity, BoardHashTagEntity], // 사용할 entity
 	migrations: [__dirname + '/src/migrations/*.ts'],
 	cli: { migrationsDir: 'src/migrations' },
 	autoLoadEntities: true,

@@ -3,10 +3,10 @@ import { IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from './CoreEntity';
-import { Boards } from './Boards';
+import { BoardsEntity } from './BoardsEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'images' })
-export class BoardImage extends CoreEntity {
+export class BoardImageEntity extends CoreEntity {
 	@IsString()
 	@ApiProperty({
 		example: 'imagePath',
@@ -18,10 +18,10 @@ export class BoardImage extends CoreEntity {
 	@Column('int', { name: 'boardId', nullable: true })
 	boardId: number;
 
-	@ManyToOne(() => Boards, boards => boards.Images, {
+	@ManyToOne(() => BoardsEntity, boards => boards.Images, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
-	Board: Boards;
+	Board: BoardsEntity;
 }

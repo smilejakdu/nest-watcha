@@ -2,26 +2,26 @@ import { isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { HashTag } from '../../src/entities/HashTag';
-import { BoardHashTag } from '../../src/entities/BoardHashTag';
-import { Boards } from '../../src/entities/Boards';
+// Entity
+import { HashTagEntity } from '../entities/HashTagEntity';
+import { BoardHashTagEntity } from '../entities/BoardHashTagEntity';
+import { BoardsEntity } from '../entities/BoardsEntity';
 
 @Injectable()
 export class HashtagService {
 	constructor(
-		@InjectRepository(Boards) private boardRepository: Repository<Boards>,
-		@InjectRepository(HashTag) private hashTagRepository: Repository<HashTag>,
-		@InjectRepository(BoardHashTag)
-		private boardHashTagRepository: Repository<BoardHashTag>,
+		@InjectRepository(BoardsEntity) private boardRepository: Repository<BoardsEntity>,
+		@InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
+		@InjectRepository(BoardHashTagEntity)
+		private boardHashTagRepository: Repository<BoardHashTagEntity>,
 	) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<object> {
 		return this.boardRepository
 			.createQueryBuilder('Boards')
 			.select('Boards.*')
-			.innerJoin(BoardHashTag, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
-			.innerJoin(HashTag, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
+			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
+			.innerJoin(HashTagEntity, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
 			.where('HashTag.hash IN (:...hashtag)', { hashtag })
 			.groupBy('Boards.id')
 			.getRawMany();
@@ -42,7 +42,7 @@ export class HashtagService {
 		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
 		if (!isEmpty(hashtags)) {
 			const HashSliceLowcase: string[] = hashtags.map((v: string) => v.slice(1).toLowerCase());
-			const hashEntityList: HashTag[] = await this.hashTagRepository
+			const hashEntityList: HashTagEntity[] = await this.hashTagRepository
 				.createQueryBuilder('hashtag')
 				.select(['hashtag.id', 'hashtag.hash'])
 				.where('hashtag.hash IN (:...HashSliceLowcase)', { HashSliceLowcase })

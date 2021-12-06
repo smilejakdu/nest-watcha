@@ -11,13 +11,13 @@ import {
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
-import { Boards } from './Boards';
-import { Comments } from './Comments';
-import { Schedules } from './Schedules';
+import { BoardsEntity } from './BoardsEntity';
+import { CommentsEntity } from './CommentsEntity';
+import { Schedules } from './SchedulesEntity';
 import { CoreEntity } from './CoreEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'users' })
-export class Users extends CoreEntity {
+export class UsersEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -32,11 +32,11 @@ export class Users extends CoreEntity {
 	@Column('varchar', { name: 'password', length: 150, select: false }) // select: false 하면 password 빼고 불러온다.
 	password: string;
 
-	@OneToMany(() => Boards, boards => boards.User)
-	Boards: Boards[];
+	@OneToMany(() => BoardsEntity, boards => boards.User)
+	Boards: BoardsEntity[];
 
-	@OneToMany(() => Comments, comments => comments.User)
-	Comments: Comments[];
+	@OneToMany(() => CommentsEntity, comments => comments.User)
+	Comments: CommentsEntity[];
 
 	@OneToMany(() => Schedules, schedules => schedules.User)
 	Schedules: Schedules[];

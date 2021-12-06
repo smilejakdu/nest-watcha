@@ -1,17 +1,18 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Boards } from 'src/entities/Boards';
-import { Users } from 'src/entities/Users';
-import { Repository } from 'typeorm';
-import { Comments } from 'src/entities/Comments';
+// Entity
+import { BoardsEntity } from 'src/entities/BoardsEntity';
+import { UsersEntity } from 'src/entities/UsersEntity';
+import { CommentsEntity } from 'src/entities/CommentsEntity';
 
 @Injectable()
 export class CommentsService {
 	constructor(
-		@InjectRepository(Users) private usersRepository: Repository<Users>,
-		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
-		@InjectRepository(Comments)
-		private commentsRepository: Repository<Comments>,
+		@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>,
+		@InjectRepository(BoardsEntity) private boardsRepository: Repository<BoardsEntity>,
+		@InjectRepository(CommentsEntity)
+		private commentsRepository: Repository<CommentsEntity>,
 	) {}
 
 	async findBoardAndComments(boardId: number) {
@@ -24,7 +25,7 @@ export class CommentsService {
 	}
 
 	async createComment(content: string, boardId: number, userId: number) {
-		const comment = new Comments();
+		const comment = new CommentsEntity();
 
 		comment.content = content;
 		comment.boardId = boardId;

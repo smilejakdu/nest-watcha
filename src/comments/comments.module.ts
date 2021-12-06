@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Boards } from 'src/entities/Boards';
-import { Comments } from 'src/entities/Comments';
-import { Users } from 'src/entities/Users';
+import { BoardsEntity } from 'src/entities/BoardsEntity';
+import { CommentsEntity } from 'src/entities/CommentsEntity';
+import { UsersEntity } from 'src/entities/UsersEntity';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Users, Boards, Comments])],
+	imports: [TypeOrmModule.forFeature([UsersEntity, BoardsEntity, CommentsEntity])],
 	controllers: [CommentsController],
 	providers: [CommentsService],
 })

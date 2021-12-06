@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CoreEntity } from './CoreEntity';
-import { Users } from './Users';
+import { UsersEntity } from './UsersEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
 export class Schedules extends CoreEntity {
@@ -27,10 +27,10 @@ export class Schedules extends CoreEntity {
 	@Column('int', { name: 'UserId', nullable: true })
 	UserId: number | null;
 
-	@ManyToOne(() => Users, users => users.Schedules, {
+	@ManyToOne(() => UsersEntity, users => users.Schedules, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
-	User: Users;
+	User: UsersEntity;
 }

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 // Entity
-import { Users } from '../entities/Users';
+import { UsersEntity } from '../entities/UsersEntity';
 
 export interface UserFindOneOptions {
 	id?: number;
@@ -12,7 +12,7 @@ export interface UserFindOneOptions {
 
 @Injectable()
 export class UsersService {
-	constructor(@InjectRepository(Users) private usersRepository: Repository<Users>) {}
+	constructor(@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>) {}
 
 	async findByNickname({ id, nickname }: UserFindOneOptions = {}) {
 		const qb = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.Board', 'boards');

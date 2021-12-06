@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Users } from '../entities/Users';
+import { UsersEntity } from '../entities/UsersEntity';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class LocalSerializer extends PassportSerializer {
 	constructor(
 		private readonly authService: AuthService,
-		@InjectRepository(Users) private usersRepository: Repository<Users>,
+		@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>,
 	) {
 		super();
 	}
 
-	serializeUser(user: Users, done: CallableFunction) {
+	serializeUser(user: UsersEntity, done: CallableFunction) {
 		done(null, user.id); // session id 만 여기다가 저장 user.id
 	}
 	// session 에 저장되어있는 id 바탕으로 user 정보 가져오게 된다.

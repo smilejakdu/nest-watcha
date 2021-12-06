@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
-import { Users } from 'src/entities/Users';
+import { UsersEntity } from 'src/entities/UsersEntity';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { DeleteBoardDto } from './dto/delete-board.dto';
@@ -49,7 +49,7 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get('my_board')
-	async getMyBoards(@User() user: Users): Promise<object> {
+	async getMyBoards(@User() user: UsersEntity): Promise<object> {
 		return this.boardsService.findMyBoard(user.id);
 	}
 
@@ -61,7 +61,7 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@User() user: Users, @Body() data) {
+	async createBoard(@User() user: UsersEntity, @Body() data) {
 		const boardId = await this.boardsService.createBoard(data.title, data.content, user.id);
 		await this.imageService.insertImages(boardId, data.imagePath);
 		await this.hashtagService.createHashTag(boardId, data.hashtag);
@@ -75,7 +75,7 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id')
-	async updateBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number, @Body() data: UpdateBoardDto) {
+	async updateBoard(@User() user: UsersEntity, @Param('id', ParseIntPipe) id: number, @Body() data: UpdateBoardDto) {
 		return this.boardsService.updateBoard(id, data.title, data.content);
 	}
 
@@ -86,7 +86,7 @@ export class BoardsController {
 	@ApiCookieAuth('connect.sid')
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
-	async deleteBoard(@User() user: Users, @Param('id', ParseIntPipe) id: number) {
+	async deleteBoard(@User() user: UsersEntity, @Param('id', ParseIntPipe) id: number) {
 		return this.boardsService.deleteBoardOne(id);
 	}
 

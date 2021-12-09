@@ -14,7 +14,8 @@ lerna-debug.log*
 # OS
 .DS_Store
 .env
-.eslintrc.js
+.eslintrc
+.prettierrc
 # Tests
 /coverage
 /.nyc_output

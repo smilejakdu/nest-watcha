@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SignUpRequestDto } from 'src/users/dto/signup.request.dto';
 
-export class UserDto extends SignUpRequestDto {
+export class UserDto {
 	@ApiProperty({
 		required: true,
 		example: 1,

@@ -13,19 +13,13 @@ import { HttpExceptionFilter } from './http-exception.filter';
 declare const module: any;
 
 async function bootstrap() {
-	// const app = await NestFactory.create(AppModule);
 	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
 	const port = process.env.PORT || 3000;
-	console.log('port:', port);
+
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 
-	const config = new DocumentBuilder()
-		.setTitle('nestWatcha API')
-		.setDescription('nestWatcha Swagger')
-		.setVersion('1.0')
-		.addCookieAuth('connect.sid')
-		.build();
+	const config = new DocumentBuilder().setTitle('nestWatcha API').setDescription('nestWatcha Swagger').setVersion('1.0').addCookieAuth('connect.sid').build();
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document);
@@ -47,6 +41,7 @@ async function bootstrap() {
 	app.use(passport.initialize());
 	app.use(passport.session());
 	await app.listen(port);
+
 	if (module.hot) {
 		module.hot.accept();
 		module.hot.dispose(() => app.close());

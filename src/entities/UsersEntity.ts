@@ -1,13 +1,4 @@
-import {
-	Column,
-	CreateDateColumn,
-	DeleteDateColumn,
-	Entity,
-	Index,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -29,7 +20,7 @@ export class UsersEntity extends CoreEntity {
 
 	@IsString()
 	@IsNotEmpty()
-	@Column('varchar', { name: 'password', length: 150, select: false }) // select: false 하면 password 빼고 불러온다.
+	@Column('varchar', { name: 'password', length: 150 }) // select: false 하면 password 빼고 불러온다.
 	password: string;
 
 	@OneToMany(() => BoardsEntity, boards => boards.User)

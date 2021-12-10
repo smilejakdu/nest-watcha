@@ -1,7 +1,9 @@
+import bcrypt from 'bcrypt';
+import { isNil } from 'lodash';
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import bcrypt from 'bcrypt';
 // Entity
 import { UsersEntity } from '../entities/UsersEntity';
 
@@ -23,7 +25,7 @@ export class UsersService {
 		return qb.getOne();
 	}
 
-	async signUp(nickname: string, password: string) {
+	async signUp(nickname: string, password: string): Promise<UsersEntity> {
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const user = await this.usersRepository.findOne({ where: { nickname } });
 
@@ -35,6 +37,25 @@ export class UsersService {
 			nickname,
 			password: hashedPassword,
 		});
+		delete createUser.password;
+
 		return createUser;
+	}
+
+	async logIn(nickname: string, password: string): Promise<UsersEntity | string> {
+		const foundUser = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).getOne();
+
+		if (isNil(foundUser)) {
+			throw new Error('존재하지 않는 사용자 입니다.');
+		}
+
+		const result = await bcrypt.compare(password, foundUser.password);
+
+		if (result) {
+			delete foundUser.password;
+			return foundUser;
+		}
+
+		return '비밀번호가 틀립니다.';
 	}
 }

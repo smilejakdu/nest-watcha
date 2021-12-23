@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 // Entity
 import { UsersEntity } from '../entities/UsersEntity';
+import { SignUpRequestDto } from './dto/signUpDto/signUp.request.dto';
+import { LoginRequestDto } from './dto/logInDto/logIn.request.dto';
 
 export interface UserFindOneOptions {
 	id?: number;
@@ -25,7 +27,9 @@ export class UsersService {
 		return qb.getOne();
 	}
 
-	async signUp(nickname: string, password: string): Promise<UsersEntity> {
+	async signUp(signUpData: SignUpRequestDto): Promise<UsersEntity> {
+		const { nickname, password } = signUpData;
+
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const user = await this.usersRepository.findOne({ where: { nickname } });
 
@@ -42,7 +46,8 @@ export class UsersService {
 		return createUser;
 	}
 
-	async logIn(nickname: string, password: string): Promise<UsersEntity | string> {
+	async logIn(logInData: LoginRequestDto): Promise<UsersEntity | string> {
+		const { nickname, password } = logInData;
 		const foundUser = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).getOne();
 
 		if (isNil(foundUser)) {

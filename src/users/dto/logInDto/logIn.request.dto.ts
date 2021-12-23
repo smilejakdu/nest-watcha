@@ -7,7 +7,7 @@ export class LoginRequestDto {
 		example: 'ash',
 		description: '닉네임',
 	})
-	public nickname: string;
+	public nickname!: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -15,5 +15,5 @@ export class LoginRequestDto {
 		example: '123123123',
 		description: '비밀번호',
 	})
-	public password: string;
+	public password!: string;
 }

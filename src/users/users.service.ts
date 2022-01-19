@@ -27,9 +27,7 @@ export class UsersService {
 		return qb.getOne();
 	}
 
-	async signUp(signUpData: SignUpRequestDto): Promise<UsersEntity> {
-		const { nickname, password } = signUpData;
-
+	async signUp(nickname: string, password: string): Promise<UsersEntity> {
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const user = await this.usersRepository.findOne({ where: { nickname } });
 
@@ -46,8 +44,7 @@ export class UsersService {
 		return createUser;
 	}
 
-	async logIn(logInData: LoginRequestDto): Promise<UsersEntity | string> {
-		const { nickname, password } = logInData;
+	async logIn(nickname: string, password: string): Promise<UsersEntity | string> {
 		const foundUser = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).getOne();
 
 		if (isNil(foundUser)) {

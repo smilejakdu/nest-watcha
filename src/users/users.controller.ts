@@ -29,10 +29,6 @@ export class UsersController {
 
 	@ApiOperation({ summary: '내정보조회' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@ApiResponse({
-		status: 500,
-		description: 'server error',
-	})
 	@UseGuards(new LocalAuthGuard())
 	@Get()
 	getUsers(@User() user) {
@@ -88,7 +84,7 @@ export class UsersController {
 		try {
 			const usersServiceResponse = await this.usersService.logIn(data.nickname, data.password);
 
-			res.status(HttpStatus.OK).json({
+			return res.status(HttpStatus.OK).json({
 				user: usersServiceResponse,
 			});
 		} catch (error) {

@@ -1,4 +1,3 @@
-import { IsString } from 'class-validator';
 import { DeleteDateColumn, UpdateDateColumn, CreateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Index('id', ['id'], { unique: true })

@@ -1,13 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
-import {
-	ApiOperation,
-	ApiTags,
-	ApiOkResponse,
-	ApiInternalServerErrorResponse,
-	ApiCreatedResponse,
-	ApiCookieAuth,
-	ApiBadRequestResponse,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiCookieAuth, ApiBadRequestResponse } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { UsersEntity } from 'src/entities/UsersEntity';
@@ -25,11 +17,7 @@ import { HashtagService } from '../hashtag/hashtag.service';
 @ApiTags('BOARD')
 @Controller('boards')
 export class BoardsController {
-	constructor(
-		private boardsService: BoardsService,
-		private imageService: ImageService,
-		private hashtagService: HashtagService,
-	) {}
+	constructor(private boardsService: BoardsService, private imageService: ImageService, private hashtagService: HashtagService) {}
 
 	@ApiOperation({ summary: '게시판 정보 가져오기' })
 	@ApiOkResponse({
@@ -49,8 +37,9 @@ export class BoardsController {
 	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get('my_board')
-	async getMyBoards(@User() user: UsersEntity): Promise<object> {
-		return this.boardsService.findMyBoard(user.id);
+	async getMyBoards(@User() user: UsersEntity) {
+		const responseFoundMyBoard = await this.boardsService.findMyBoard(user.id);
+		return responseFoundMyBoard;
 	}
 
 	@ApiCreatedResponse({

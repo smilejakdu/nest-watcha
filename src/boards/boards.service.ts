@@ -14,20 +14,12 @@ export class BoardsService {
 	) {}
 
 	async findByNickname(nickname: string): Promise<object> {
-		const foundByNickname: UsersEntity = await this.usersRepository
-			.createQueryBuilder('user')
-			.where('user.nickname =:nickname', { nickname })
-			.execute();
-
+		const foundByNickname: UsersEntity = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).execute();
 		return foundByNickname;
 	}
 
 	async findAllBoards(): Promise<BoardsEntity[]> {
-		const foundAllBoards: BoardsEntity[] = await this.boardsRepository
-			.createQueryBuilder('boards')
-			.leftJoin('boards.User', 'user')
-			.getMany();
-
+		const foundAllBoards: BoardsEntity[] = await this.boardsRepository.createQueryBuilder('boards').leftJoin('boards.User', 'user').getMany();
 		return foundAllBoards;
 	}
 
@@ -37,16 +29,11 @@ export class BoardsService {
 			.leftJoinAndSelect('boards.User', 'user')
 			.where('boards.userId =:userId', { userId })
 			.getManyAndCount();
-
 		return foundMyBoardResponse;
 	}
 
 	async insertHashtagList(hashTagList) {
-		const hashtagInsertedList = await this.hashTagRepository
-			.createQueryBuilder('hashtag')
-			.insert()
-			.values(hashTagList)
-			.execute();
+		const hashtagInsertedList = await this.hashTagRepository.createQueryBuilder('hashtag').insert().values(hashTagList).execute();
 
 		return hashtagInsertedList;
 	}
@@ -62,10 +49,7 @@ export class BoardsService {
 	}
 
 	async updateBoard(boardId: number, title: string, content: string) {
-		const board: BoardsEntity = await this.boardsRepository
-			.createQueryBuilder('board')
-			.where('board.boardId =:boardId', { boardId })
-			.getOne();
+		const board: BoardsEntity = await this.boardsRepository.createQueryBuilder('board').where('board.boardId =:boardId', { boardId }).getOne();
 
 		await this.boardsRepository
 			.createQueryBuilder('board')
@@ -79,10 +63,6 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(boardId: number) {
-		return await this.boardsRepository
-			.createQueryBuilder('board')
-			.delete()
-			.where('board.boardId =:boardId', { boardId })
-			.execute();
+		return await this.boardsRepository.createQueryBuilder('board').delete().where('board.boardId =:boardId', { boardId }).execute();
 	}
 }

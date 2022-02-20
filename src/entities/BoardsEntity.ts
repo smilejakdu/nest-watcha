@@ -45,7 +45,7 @@ export class BoardsEntity extends CoreEntity {
 
 	@ManyToMany(() => HashTagEntity, hashTag => hashTag.boards)
 	@JoinTable({
-		name: 'boardhashtag',
+		name: 'board_hashtag',
 		joinColumn: {
 			name: 'boardId',
 			referencedColumnName: 'id',

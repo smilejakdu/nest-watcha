@@ -38,7 +38,7 @@ export class MovieEntity extends CoreEntity{
     joinColumn:{
       name:'movieId',
       referencedColumnName:'id',
-    },
+  },
     inverseJoinColumn:{
       name:'genreId',
       referencedColumnName:'id',

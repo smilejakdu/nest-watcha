@@ -3,25 +3,25 @@ import { CoreEntity } from './CoreEntity';
 import { GenreEntity } from './GenreEntity';
 import { MovieEntity } from './MovieEntity';
 
-@Entity({ schema: 'nest_watcha', name: 'genremovie' })
-export class GenreMovieEntity extends CoreEntity {
+@Entity({ schema: 'nest_watcha', name: 'genre_movie' })
+export class GenreMovieEntity extends CoreEntity{
   @Column('int', { name: 'genreId' })
   genreId: number;
 
   @Column('int', { name: 'movieId' })
   movieId: number;
 
-  @ManyToOne(() => GenreEntity, genre => genre.movies, {
+  @ManyToOne(() => GenreEntity, genre => genre.Genremovie, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: 'genreId', referencedColumnName: 'id' }])
+  @JoinColumn({name:'genreId'})
   Genre: GenreEntity;
 
-  @ManyToOne(() => MovieEntity, movie => movie.genre, {
+  @ManyToOne(() => MovieEntity, movie => movie.Genremovie, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: 'movieId', referencedColumnName: 'id' }])
+  @JoinColumn({name:'movieId'})
   Movie: MovieEntity;
 }

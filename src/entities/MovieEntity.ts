@@ -1,7 +1,8 @@
 import { CoreEntity } from './CoreEntity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, JoinTable, ManyToMany} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { AgeLimitStatus, GenreEntity } from './GenreEntity';
+import { GenreMovieEntity } from './GenreMovieEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -16,10 +17,16 @@ export class MovieEntity extends CoreEntity{
   @Column()
   movieImage:string;
 
-  @Column()
+  @Column({
+    type: 'text',
+    nullable:false
+  })
   director:string[]
 
-  @Column()
+  @Column({
+   type: 'text',
+    nullable:false
+  })
   appearance:string[];
 
   @Column({
@@ -27,22 +34,9 @@ export class MovieEntity extends CoreEntity{
     enum: AgeLimitStatus,
     default:AgeLimitStatus.FIFTEEN_MORE_THAN
   })
-  ageLimitStatus:number;
+  ageLimitStatus:AgeLimitStatus;
 
-  @Column('int', { name: 'genreId', nullable: false })
-  genreId: number;
-
-  @ManyToMany(()=>GenreEntity,genre => genre.movies)
-  @JoinTable({
-    name:'genremovie',
-    joinColumn:{
-      name:'movieId',
-      referencedColumnName:'id',
-  },
-    inverseJoinColumn:{
-      name:'genreId',
-      referencedColumnName:'id',
-    },
-  })
-  genre:GenreEntity[];
+  @OneToMany(()=>GenreMovieEntity,
+    genreMovie => genreMovie.Movie)
+  Genremovie!:GenreMovieEntity[];
 }

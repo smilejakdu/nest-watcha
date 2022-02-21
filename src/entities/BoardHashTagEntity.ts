@@ -11,17 +11,17 @@ export class BoardHashTagEntity extends CoreEntity {
 	@Column('int', { name: 'hashId' })
 	hashId: number;
 
-	@ManyToOne(() => BoardsEntity, boards => boards.hashTag, {
+	@ManyToOne(() => BoardsEntity, boards => boards.boardHashTag, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
+	@JoinColumn({name:'boardId'})
 	Boards: BoardsEntity;
 
-	@ManyToOne(() => HashTagEntity, hashTag => hashTag.boards, {
+	@ManyToOne(() => HashTagEntity, hashTag => hashTag.boardHashTag, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'hashId', referencedColumnName: 'id' }])
+	@JoinColumn({name:'hashId'})
 	Hashtag: HashTagEntity;
 }

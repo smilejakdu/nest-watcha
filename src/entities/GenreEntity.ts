@@ -1,12 +1,12 @@
 import {
     Column,
     Entity,
-    ManyToMany,
+    OneToMany
 } from 'typeorm';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 // Entity
 import { CoreEntity } from './CoreEntity';
-import { MovieEntity } from './MovieEntity';
+import { GenreMovieEntity } from './GenreMovieEntity';
 
 export enum AgeLimitStatus {
     ADLUT_MORE_THAN = 19,
@@ -20,6 +20,6 @@ export class GenreEntity extends CoreEntity {
     @Column('varchar', { name: 'genreName', length: 150 })
     genreName: string;
 
-    @ManyToMany(() => MovieEntity, movies => movies.genre)
-    movies: MovieEntity[];
+    @OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Genre)
+    Genremovie!: GenreMovieEntity[];
 }

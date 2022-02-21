@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { Column, Entity, ManyToMany } from 'typeorm';
-import { BoardsEntity } from './BoardsEntity';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { CoreEntity } from './CoreEntity';
+import { BoardHashTagEntity } from './BoardHashTagEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'hashtag' })
 export class HashTagEntity extends CoreEntity {
@@ -14,6 +14,6 @@ export class HashTagEntity extends CoreEntity {
 	@Column('varchar', { name: 'hash', length: 100 })
 	hash: string;
 
-	@ManyToMany(() => BoardsEntity, boards => boards.hashTag)
-	boards: BoardsEntity[];
+	@OneToMany(() => BoardHashTagEntity, BoardHashTagEntity => BoardHashTagEntity.Hashtag)
+	boardHashTag: BoardHashTagEntity[];
 }

@@ -6,6 +6,7 @@ import { CoreEntity } from './CoreEntity';
 import { UsersEntity } from './UsersEntity';
 import { HashTagEntity } from './HashTagEntity';
 import { BoardImageEntity } from './BoardImageEntity';
+import { BoardHashTagEntity } from './BoardHashTagEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class BoardsEntity extends CoreEntity {
@@ -43,17 +44,6 @@ export class BoardsEntity extends CoreEntity {
 	@OneToMany(() => CommentsEntity, comments => comments.Board)
 	Comments: CommentsEntity[];
 
-	@ManyToMany(() => HashTagEntity, hashTag => hashTag.boards)
-	@JoinTable({
-		name: 'board_hashtag',
-		joinColumn: {
-			name: 'boardId',
-			referencedColumnName: 'id',
-		},
-		inverseJoinColumn: {
-			name: 'hashId',
-			referencedColumnName: 'id',
-		},
-	})
-	hashTag: HashTagEntity[];
+	@OneToMany(() => BoardHashTagEntity, boardHashTagEntity => boardHashTagEntity.Boards)
+	boardHashTag: BoardHashTagEntity[];
 }

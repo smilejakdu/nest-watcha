@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany} from 'typeorm';
 import { CommentsEntity } from './CommentsEntity';
 import { CoreEntity } from './CoreEntity';
 import { UsersEntity } from './UsersEntity';
-import { HashTagEntity } from './HashTagEntity';
 import { BoardImageEntity } from './BoardImageEntity';
 import { BoardHashTagEntity } from './BoardHashTagEntity';
 
@@ -12,19 +11,11 @@ import { BoardHashTagEntity } from './BoardHashTagEntity';
 export class BoardsEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
-	@ApiProperty({
-		example: 'title',
-		description: 'title',
-	})
 	@Column('varchar', { name: 'title', length: 100 })
 	title: string;
 
 	@IsString()
 	@IsNotEmpty()
-	@ApiProperty({
-		example: 'content',
-		description: 'content',
-	})
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 

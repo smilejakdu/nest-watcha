@@ -1,8 +1,9 @@
 import { CoreEntity } from './CoreEntity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { AgeLimitStatus, GenreEntity } from './GenreEntity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { AgeLimitStatus} from './GenreEntity';
 import { GenreMovieEntity } from './GenreMovieEntity';
+import { CartEntity } from './CartEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -39,4 +40,10 @@ export class MovieEntity extends CoreEntity{
   @OneToMany(()=>GenreMovieEntity,
     genreMovie => genreMovie.Movie)
   Genremovie!:GenreMovieEntity[];
+
+  @ManyToOne(() =>CartEntity,
+    cart => cart.id,
+    {nullable: false},
+  )
+  cart : CartEntity;
 }

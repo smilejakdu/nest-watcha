@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './CoreEntity';
 import { UsersEntity } from './UsersEntity';
 
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
-export class Schedules extends CoreEntity {
+export class SchedulesEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -24,13 +24,13 @@ export class Schedules extends CoreEntity {
 	@Column('varchar', { name: 'genre', length: 100 })
 	genre: string;
 
-	@Column('int', { name: 'UserId', nullable: true })
-	UserId: number | null;
+	@Column('int', { name: 'userId', nullable: true })
+	userId: number | null;
 
 	@ManyToOne(() => UsersEntity, users => users.Schedules, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: UsersEntity;
 }

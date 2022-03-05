@@ -3,10 +3,10 @@ import { SchedulesService } from './schedules.service';
 import { SchedulesController } from './schedules.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/UsersEntity';
-import { Schedules } from '../entities/SchedulesEntity';
+import { SchedulesEntity } from '../entities/SchedulesEntity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([UsersEntity, Schedules])],
+	imports: [TypeOrmModule.forFeature([UsersEntity, SchedulesEntity])],
 	providers: [SchedulesService],
 	controllers: [SchedulesController],
 })

@@ -27,6 +27,6 @@ module.exports =  {
         'before': false,
         'after': true,
       }],
-      'max-len': ['error', { 'code': 130 }],
+      'max-len': ['warn', { 'code': 150 }],
     },
   };

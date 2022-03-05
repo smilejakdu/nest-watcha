@@ -1,7 +1,14 @@
-import { DeleteDateColumn, UpdateDateColumn, CreateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	BaseEntity,
+	CreateDateColumn,
+	DeleteDateColumn,
+	Index,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn
+} from 'typeorm';
 
 @Index('id', ['id'], { unique: true })
-export class CoreEntity {
+export class CoreEntity extends BaseEntity{
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
 	id: number;
 

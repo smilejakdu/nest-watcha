@@ -4,6 +4,8 @@ import { UsersEntity } from './UsersEntity';
 
 @Entity({schema:'nest_watcha',name: 'user_auth'})
 export class UserAuthEntity extends CoreEntity{
+  @Column('int', { name: 'userId', nullable: true })
+  userId: number | null;
 
   @OneToOne(
     () => UsersEntity,
@@ -24,5 +26,4 @@ export class UserAuthEntity extends CoreEntity{
     nullable: true,
   })
   kakaoAuthId: string;
-
 }

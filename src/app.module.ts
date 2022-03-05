@@ -1,15 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerMiddleware } from './middlewares/logger.middlewares';
-import { UsersModule } from './users/users.module';
-import { BoardsModule } from './boards/boards.module';
+import { LoggerMiddleware } from './shared/middlewares/logger.middlewares';
+import { UsersModule } from './module/users.module';
+import { BoardsModule } from './module/boards.module';
 import ormconfig from '../ormconfig';
-import { CommentsModule } from './comments/comments.module';
-import { SchedulesModule } from './schedules/schedules.module';
+import { CommentsModule } from './module/comments.module';
+import { SchedulesModule } from './module/schedules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { HashtagModule } from './hashtag/hashtag.module';
-import { ImageModule } from './image/image.module';
+import { AuthModule } from './module/auth.module';
+import { HashtagModule } from './module/hashtag.module';
+import { ImageModule } from './module/image.module';
 
 @Module({
 	imports: [

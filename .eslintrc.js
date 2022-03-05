@@ -1,5 +1,5 @@
 module.exports =  {
-    parser:  '@typescript-eslint/parser',  
+    parser:  '@typescript-eslint/parser',
     extends:  [
       'plugin:@typescript-eslint/recommended', // 타입스크립트 추천 룰셋
     ],

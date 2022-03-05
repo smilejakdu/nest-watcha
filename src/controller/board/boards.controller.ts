@@ -33,7 +33,7 @@ export class BoardsController {
 		type: CreateBoardDto,
 	})
 	@Get()
-	async getBoards(): Promise<object> {
+	async getBoards() {
 		return this.boardsService.findAllBoards();
 	}
 

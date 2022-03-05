@@ -33,7 +33,15 @@ export class GenreEntity extends CoreEntity {
 
     static findByid(id: number, queryRunner?: QueryRunner) {
         return this.makeQueryBuilder(queryRunner)
-          .where('genre.id = :id ', {id})
+          .where('genre.id=:id ', {id})
           .andWhere('genre.deletedAt is NULL');
+    }
+
+    static createGenre(genreName : string) {
+        this.makeQueryBuilder()
+          .insert()
+          .values({
+            genreName:genreName,
+          });
     }
 }

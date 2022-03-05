@@ -4,7 +4,7 @@ import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } 
 
 import { LoggedInGuard } from 'src/shared/auth/logged-in.guard';
 import { SelectHashtagDto } from './hashtag.controller.dto/select-hashtag.dto';
-import { HashtagService } from '../../service/hashtag.service';
+import { HashtagService } from '../../database/service/hashtag.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

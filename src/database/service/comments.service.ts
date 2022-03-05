@@ -2,9 +2,9 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 // Entity
-import { BoardsEntity } from 'src/entities/BoardsEntity';
-import { UsersEntity } from 'src/entities/UsersEntity';
-import { CommentsEntity } from 'src/entities/CommentsEntity';
+import { BoardsEntity } from 'src/database/entities/BoardsEntity';
+import { UsersEntity } from 'src/database/entities/UsersEntity';
+import { CommentsEntity } from 'src/database/entities/CommentsEntity';
 
 @Injectable()
 export class CommentsService {

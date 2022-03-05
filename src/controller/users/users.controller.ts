@@ -12,7 +12,7 @@ import { Response } from 'express';
 import { UserDto } from 'src/shared/common/dto/user.dto';
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
 import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.request.dto';
-import { UsersService } from '../../service/users.service';
+import { UsersService } from '../../database/service/users.service';
 import { LocalAuthGuard } from 'src/shared/auth/local-auth.guard';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { LoggedInGuard } from 'src/shared/auth/logged-in.guard';

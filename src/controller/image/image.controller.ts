@@ -4,7 +4,7 @@ import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } 
 import { UndefinedToNullInterceptor } from 'src/shared/common/interceptors/undefinedToNull.interceptor';
 import { multerOptions } from 'src/shared/lib/multerOptions';
 import { imageUploadRequest } from './image.controller.dto/image.upload.dto';
-import { ImageService } from '../../service/image.service';
+import { ImageService } from '../../database/service/image.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

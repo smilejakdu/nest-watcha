@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BoardsEntity } from 'src/entities/BoardsEntity';
-import { HashTagEntity } from 'src/entities/HashTagEntity';
-import { UsersEntity } from 'src/entities/UsersEntity';
+import { BoardsEntity } from 'src/database/entities/BoardsEntity';
+import { HashTagEntity } from 'src/database/entities/HashTagEntity';
+import { UsersEntity } from 'src/database/entities/UsersEntity';
 import { Repository } from 'typeorm';
 
 @Injectable()

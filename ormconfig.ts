@@ -1,17 +1,17 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
-import { UsersEntity } from './src/entities/UsersEntity';
-import { HashTagEntity } from './src/entities/HashTagEntity';
-import { CommentsEntity } from 'src/entities/CommentsEntity';
-import { BoardHashTagEntity } from 'src/entities/BoardHashTagEntity';
-import { CoreEntity } from 'src/entities/CoreEntity';
-import { BoardImageEntity } from 'src/entities/BoardImageEntity';
-import { MovieEntity } from './src/entities/MovieEntity';
-import { GenreEntity } from './src/entities/GenreEntity';
-import { GenreMovieEntity } from './src/entities/GenreMovieEntity';
-import { UserAuthEntity } from './src/entities/UserAuthEntity';
-import { OrderEntity } from './src/entities/OrderEntity';
-import { OrderClaimEntity } from './src/entities/OrderClaimEntity';
+import { UsersEntity } from './src/database/entities/UsersEntity';
+import { HashTagEntity } from './src/database/entities/HashTagEntity';
+import { CommentsEntity } from 'src/database/entities/CommentsEntity';
+import { BoardHashTagEntity } from 'src/database/entities/BoardHashTagEntity';
+import { CoreEntity } from 'src/database/entities/CoreEntity';
+import { BoardImageEntity } from 'src/database/entities/BoardImageEntity';
+import { MovieEntity } from './src/database/entities/MovieEntity';
+import { GenreEntity } from './src/database/entities/GenreEntity';
+import { GenreMovieEntity } from './src/database/entities/GenreMovieEntity';
+import { UserAuthEntity } from './src/database/entities/UserAuthEntity';
+import { OrderEntity } from './src/database/entities/OrderEntity';
+import { OrderClaimEntity } from './src/database/entities/OrderClaimEntity';
 
 dotenv.config();
 

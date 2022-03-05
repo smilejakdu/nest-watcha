@@ -3,6 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 // Entity
 import { CoreEntity } from './CoreEntity';
 import { GenreMovieEntity } from './GenreMovieEntity';
+import { MovieEntity } from './MovieEntity';
 
 export enum AgeLimitStatus {
     ADLUT_MORE_THAN = 19,
@@ -16,8 +17,11 @@ export class GenreEntity extends CoreEntity {
     @Column('varchar', { name: 'genreName', length: 150 })
     genreName: string;
 
-    @OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Genre)
-    Genremovie!: GenreMovieEntity[];
+    @OneToMany(
+      () => GenreMovieEntity,
+        genreMovie => genreMovie.Genre
+    )
+    Genremovie: GenreMovieEntity[];
 
     static makeQueryBuilder(queryRunner?: QueryRunner) {
         if (queryRunner) {
@@ -33,6 +37,7 @@ export class GenreEntity extends CoreEntity {
 
     static findByid(id: number, queryRunner?: QueryRunner) {
         return this.makeQueryBuilder(queryRunner)
+          .innerJoinAndSelect(MovieEntity,'Movie')
           .where('genre.id=:id ', {id})
           .andWhere('genre.deletedAt is NULL');
     }
@@ -42,6 +47,6 @@ export class GenreEntity extends CoreEntity {
           .insert()
           .values({
             genreName:genreName,
-          });
+          }).execute();
     }
 }

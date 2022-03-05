@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './module/auth.module';
 import { HashtagModule } from './module/hashtag.module';
 import { ImageModule } from './module/image.module';
+import { GenreModule } from './module/genre.module';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { ImageModule } from './module/image.module';
 		SchedulesModule,
 		HashtagModule,
 		ImageModule,
+		GenreModule,
 	],
 	controllers: [],
 	providers: [],

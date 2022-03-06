@@ -8,7 +8,7 @@ import {
 	ApiOperation,
 	ApiTags
 } from '@nestjs/swagger';
-import { LoggedInGuard } from 'src/shared/auth/logged-in.guard';
+import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { UsersEntity } from 'src/database/entities/UsersEntity';
 import { BoardsService } from '../../database/service/boards.service';

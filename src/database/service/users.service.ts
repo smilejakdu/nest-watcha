@@ -16,9 +16,9 @@ export interface UserFindOneOptions {
 export class UsersService {
 	constructor(@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>) {}
 
-	async findByNickname({ id, nickname }: UserFindOneOptions = {}) {
-		const qb = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.Board', 'boards');
-
+	async findByNickname(data : UserFindOneOptions) {
+		const { id , nickname}= data;
+		const qb = await UsersEntity.makeQueryBuilder().leftJoinAndSelect('users.Board','boards');
 		if (id) qb.andWhere('user.id = :id', { id });
 		if (nickname) qb.andWhere('user.nickname = :nickname', { nickname });
 
@@ -27,7 +27,7 @@ export class UsersService {
 
 	async signUp(nickname: string, password: string): Promise<UsersEntity> {
 		const hashedPassword = await bcrypt.hash(password, 12);
-		const user = await this.usersRepository.findOne({ where: { nickname } });
+		const user = await UsersEntity.findByNickname(nickname).getOne();
 
 		if (user) {
 			throw new Error('이미 존재하는 사용자');

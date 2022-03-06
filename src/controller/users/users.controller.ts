@@ -13,10 +13,10 @@ import { UserDto } from 'src/shared/common/dto/user.dto';
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
 import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.request.dto';
 import { UsersService } from '../../database/service/users.service';
-import { LocalAuthGuard } from 'src/shared/auth/local-auth.guard';
+import { LocalAuthGuard } from 'src/shared/auth/guard/local-auth.guard';
 import { User } from 'src/shared/common/decorator/user.decorator';
-import { LoggedInGuard } from 'src/shared/auth/logged-in.guard';
-import { NotLoggedInGuard } from 'src/shared/auth/not-logged-in.guard';
+import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
+import { NotLoggedInGuard } from 'src/shared/auth/guard/not-logged-in.guard';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 
@@ -47,10 +47,9 @@ export class UsersController {
 	@ApiOperation({ summary: '회원검색' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
-	async findUser(@Body() data: UserFindRequestDto) {
+	async findUser(@Body() data: UserFindRequestDto,@Res() res:Response) {
 		try {
-			const { id, nickname } = data;
-			return await this.usersService.findByNickname({ id, nickname });
+			return  await this.usersService.findByNickname(data);
 		} catch (err) {
 			console.error(err);
 		}
@@ -67,12 +66,12 @@ export class UsersController {
 		try {
 			const usersServiceResponse = await this.usersService.signUp(data.nickname, data.password);
 
-			res.status(HttpStatus.OK).json({
+			return res.status(HttpStatus.OK).json({
 				user: usersServiceResponse,
 			});
 		} catch (err) {
 			console.error(err);
-			res.status(HttpStatus.BAD_REQUEST).json({
+			return res.status(HttpStatus.BAD_REQUEST).json({
 				error: BAD_REQUEST,
 			});
 		}

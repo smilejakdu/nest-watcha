@@ -2,7 +2,7 @@ import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { LoggedInGuard } from 'src/shared/auth/logged-in.guard';
+import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
 import { SelectHashtagDto } from './hashtag.controller.dto/select-hashtag.dto';
 import { HashtagService } from '../../database/service/hashtag.service';
 

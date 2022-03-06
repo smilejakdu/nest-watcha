@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -43,4 +43,24 @@ export class UsersEntity extends CoreEntity {
 
 	@OneToMany(() => OrderClaimEntity, orderClaim => orderClaim.User)
 	OrderClaims: OrderClaimEntity[];
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(UsersEntity, 'users');
+		} else {
+			return this.createQueryBuilder('users');
+		}
+	}
+
+	static findByid(id: number, queryRunner?: QueryRunner) {
+		return this.makeQueryBuilder(queryRunner)
+			.where('users.id=:id ', {id})
+			.andWhere('users.deletedAt is NULL');
+	}
+
+	static findByNickname(nickname: string, queryRunner?: QueryRunner) {
+		return this.makeQueryBuilder(queryRunner)
+			.where('users.nickname=:nickname ',{nickname})
+			.andWhere('users.deletedAt is NULL');
+	}
 }

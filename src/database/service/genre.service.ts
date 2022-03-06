@@ -7,7 +7,8 @@ import { isNil } from 'lodash';
 export class GenreService {
 
   async findById(id: number): Promise<CoreResponse> {
-    const genre = await GenreEntity.findByid(id).getOne();
+    const genre = await GenreEntity.findByid(id).getMany();
+    console.log('genre:',genre);
     if(isNil(genre)){
       return {
         statusCode: HttpStatus.BAD_REQUEST,

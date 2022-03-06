@@ -2,7 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { AgeLimitStatus } from '../../../database/entities/GenreEntity';
 
-export class createMovieDto {
+export class CreateMovieDto {
+  @IsNotEmpty()
+  @ApiProperty({
+    example:1,
+    description:'genreId'
+  })
+  genreId: number;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -22,10 +29,10 @@ export class createMovieDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example:4.5,
-    description:'movieScore'
+    example: 'url_image_string',
+    description:'movieImage'
   })
-  movieImage: {mainImage:string, subImage:string};
+  movieImage:string;
 
   @IsNotEmpty()
   @ApiProperty({ type: [String] })
@@ -36,6 +43,10 @@ export class createMovieDto {
   appearance:string[]
 
   @IsNotEmpty()
-  @ApiProperty({enum :AgeLimitStatus})
+  @ApiProperty({
+    enum :AgeLimitStatus,
+    isArray:true,
+    example : AgeLimitStatus.ADLUT_MORE_THAN
+  })
   ageLimitStatus:AgeLimitStatus;
 }

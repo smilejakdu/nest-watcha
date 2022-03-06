@@ -1,10 +1,17 @@
-import { Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Res } from '@nestjs/common';
-import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Res } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
 import { MoviesService } from '../../database/service/movies.service';
 import { GetGenreDto } from '../genre/genre.controller.dto/getGenre.dto';
 import { Response } from 'express';
-import { createMovieDto } from './movie.controller.dto/createMovie.dto';
 import { CoreResponse } from '../../shared/CoreResponse';
+import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
+import { GenreMovieEntity } from '../../database/entities/GenreMovieEntity';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
@@ -12,7 +19,7 @@ import { CoreResponse } from '../../shared/CoreResponse';
 export class MoviesController{
   constructor(private movieService : MoviesService) {}
 
-  @ApiOperation({summary:'모든 장르 가져오기'})
+  @ApiOperation({summary:'해당 영화 가져오기'})
   @ApiOkResponse({
     description:'성공',
     type:GetGenreDto,
@@ -27,12 +34,21 @@ export class MoviesController{
     });
   }
 
+  @ApiOperation({summary:'영화 만들기'})
+  @ApiCreatedResponse({ description:'성공'})
   @Post()
-  async createMovie(createMovieDto:createMovieDto):Promise<CoreResponse> {
-    const responseCreatedMovie = await this.movieService.createMovie(createMovieDto);
+  async createMovie(@Body() body:CreateMovieDto):Promise<CoreResponse> {
+    const {genreId , ...movieDto} = body;
+    const responseCreatedMovie = await this.movieService.createMovie(movieDto);
+    await GenreMovieEntity.createGenreMovie(
+      {
+        genreId: genreId,
+        movieId :responseCreatedMovie.movieId,
+      }
+    );
     return {
-      statusCode:responseCreatedMovie.statusCode,
-      message:responseCreatedMovie.message,
+      statusCode : HttpStatus.CREATED,
+      message : 'SUCCESS',
     };
   }
 }

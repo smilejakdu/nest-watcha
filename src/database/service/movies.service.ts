@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { MovieEntity } from '../entities/MovieEntity';
 import { isNil } from 'lodash';
 import { CoreResponse } from '../../shared/CoreResponse';
-import { createMovieDto } from '../../controller/movies/movie.controller.dto/createMovie.dto';
 
 @Injectable()
 export class MoviesService{
@@ -23,11 +22,13 @@ export class MoviesService{
     };
   }
 
-  async createMovie(createMovieDto : createMovieDto) {
-    await MovieEntity.createMovie(createMovieDto);
+  async createMovie(createMovieDto) {
+    const result = await MovieEntity.makeQueryBuilder()
+      .insert()
+      .values(createMovieDto)
+      .execute();
     return {
-      statusCode : HttpStatus.CREATED,
-      message : 'SUCCESS',
+      movieId: result.raw.insertId
     };
   }
 }

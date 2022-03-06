@@ -11,6 +11,8 @@ import { AuthModule } from './module/auth.module';
 import { HashtagModule } from './module/hashtag.module';
 import { ImageModule } from './module/image.module';
 import { GenreModule } from './module/genre.module';
+import { GenreMovieEntity } from './database/entities/GenreMovieEntity';
+import { MovieModule } from './module/movie.module';
 
 @Module({
 	imports: [
@@ -26,6 +28,8 @@ import { GenreModule } from './module/genre.module';
 		HashtagModule,
 		ImageModule,
 		GenreModule,
+		MovieModule,
+		GenreMovieEntity,
 	],
 	controllers: [],
 	providers: [],

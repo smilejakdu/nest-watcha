@@ -37,7 +37,8 @@ export class GenreEntity extends CoreEntity {
 
     static findByid(id: number, queryRunner?: QueryRunner) {
         return this.makeQueryBuilder(queryRunner)
-          .innerJoinAndSelect(MovieEntity,'Movie')
+          .leftJoinAndSelect(GenreMovieEntity,'genreMovie')
+          .leftJoinAndSelect(MovieEntity ,'movie')
           .where('genre.id=:id ', {id})
           .andWhere('genre.deletedAt is NULL');
     }

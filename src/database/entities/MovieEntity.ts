@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
 import { AgeLimitStatus, GenreEntity } from './GenreEntity';
 import { GenreMovieEntity } from './GenreMovieEntity';
-import { createMovieDto } from '../../controller/movies/movie.controller.dto/createMovie.dto';
+import { JsonTransformer } from '../transformer';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -15,18 +15,23 @@ export class MovieEntity extends CoreEntity{
   @Column('decimal', { precision: 5, scale: 2 })
   movieScore:number;
 
-  @Column('simple-json')
-  movieImage:{ mainImage: string, subImage: string };
+  @Column('varchar',{
+    name:'movieImage',
+    nullable: false,
+  })
+  movieImage: string;
 
   @Column({
     type: 'text',
-    nullable:false
+    nullable: true,
+    transformer: JsonTransformer,
   })
   director:string[]
 
   @Column({
-   type: 'text',
-    nullable:false
+    type: 'text',
+    nullable: true,
+    transformer: JsonTransformer,
   })
   appearance:string[];
 
@@ -60,12 +65,5 @@ export class MovieEntity extends CoreEntity{
       .innerJoinAndSelect(GenreEntity,'genre')
       .where('movie.id=:id ', {id})
       .andWhere('movie.deletedAt is NULL');
-  }
-
-  static createMovie(createMovieDto : createMovieDto) {
-    this.makeQueryBuilder()
-      .insert()
-      .values(createMovieDto)
-      .execute();
   }
 }

@@ -6,35 +6,43 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 // Entity
 import { UsersEntity } from '../entities/UsersEntity';
+import { SignUpRequestDto } from '../../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 
 export interface UserFindOneOptions {
 	id?: number;
-	nickname?: string;
+	username?: string;
 }
 
 @Injectable()
 export class UsersService {
 	constructor(@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>) {}
 
-	async findByNickname(data : UserFindOneOptions) {
-		const { id , nickname}= data;
+	async findByUsername(data : UserFindOneOptions) {
+		const { id , username}= data;
 		const qb = await UsersEntity.makeQueryBuilder().leftJoinAndSelect('users.Board','boards');
 		if (id) qb.andWhere('user.id = :id', { id });
-		if (nickname) qb.andWhere('user.nickname = :nickname', { nickname });
+		if (username) qb.andWhere('user.username = :username', { username });
 
 		return qb.getOne();
 	}
 
-	async signUp(nickname: string, password: string): Promise<UsersEntity> {
+	async kakaoSignUp(signUpDto :SignUpRequestDto){
+		const createUser = await this.usersRepository.save(signUpDto);
+		delete createUser.password;
+		return createUser;
+	}
+
+	async signUp(signUpDto :SignUpRequestDto): Promise<UsersEntity> {
+		const {password , username}= signUpDto;
 		const hashedPassword = await bcrypt.hash(password, 12);
-		const user = await UsersEntity.findByNickname(nickname).getOne();
+		const user = await UsersEntity.findByUsername(username).getOne();
 
 		if (user) {
 			throw new Error('이미 존재하는 사용자');
 		}
 
 		const createUser = await this.usersRepository.save({
-			nickname,
+			username,
 			password: hashedPassword,
 		});
 		delete createUser.password;
@@ -42,8 +50,8 @@ export class UsersService {
 		return createUser;
 	}
 
-	async logIn(nickname: string, password: string): Promise<UsersEntity | string> {
-		const foundUser = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).getOne();
+	async logIn(username: string, password: string): Promise<UsersEntity | string> {
+		const foundUser = await this.usersRepository.createQueryBuilder('user').where('user.username =:username', { username }).getOne();
 
 		if (isNil(foundUser)) {
 			throw new Error('존재하지 않는 사용자 입니다.');

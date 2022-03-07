@@ -6,9 +6,10 @@ import { UsersEntity } from '../database/entities/UsersEntity';
 import { AuthService } from '../database/service/auth.service';
 import { LocalSerializer } from '../shared/auth/local.serializer';
 import { LocalStrategy } from '../shared/auth/strategy/local.strategy';
+import { UsersService } from '../database/service/users.service';
 
 @Module({
 	imports: [PassportModule.register({ session: true }), TypeOrmModule.forFeature([UsersEntity])],
-	providers: [AuthService, LocalStrategy, LocalSerializer],
+	providers: [AuthService, UsersService, LocalStrategy, LocalSerializer],
 })
 export class AuthModule {}

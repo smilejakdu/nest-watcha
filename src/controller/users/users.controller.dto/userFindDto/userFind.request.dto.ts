@@ -7,7 +7,7 @@ export class UserFindRequestDto extends CoreEntity {
 	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash',
-		description: '닉네임',
+		description: 'username',
 	})
-	public nickname: string;
+	public username: string;
 }

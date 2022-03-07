@@ -6,9 +6,17 @@ export class SignUpRequestDto {
 	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash',
-		description: '닉네임',
+		description: 'username',
 	})
-	public nickname: string;
+	public username: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'ash@gmail.com',
+		description: 'email',
+	})
+	public email: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -17,4 +25,36 @@ export class SignUpRequestDto {
 		description: '비밀번호',
 	})
 	public password: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'phonenumber',
+		description: 'phone',
+	})
+	public phone: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'kakao_auth_id',
+		description: 'kakao_auth_id',
+	})
+	public kakao_auth_id?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'naver_auth_id',
+		description: 'naver_auth_id',
+	})
+	public naver_auth_id?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'google_auth_id',
+		description: 'google_auth_id',
+	})
+	public google_auth_id?: string;
 }

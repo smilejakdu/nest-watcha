@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // 토큰이 유효하지 않으면 401 응답
   // 유효하면 validate 함수 실행
   async validate(payload: JwtPayload): Promise<any> {
-    const user = await this.authService.validateUser(payload); // payload nickname 사용
+    const user = await this.authService.validateUser(payload); // payload username 사용
     if (!user) {
       throw new HttpException('invalid token', HttpStatus.UNAUTHORIZED);
     }

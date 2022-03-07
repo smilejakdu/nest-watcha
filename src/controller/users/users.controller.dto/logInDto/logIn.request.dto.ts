@@ -5,9 +5,9 @@ export class LoginRequestDto {
 	@IsString()
 	@ApiProperty({
 		example: 'ash',
-		description: '닉네임',
+		description: 'username',
 	})
-	public nickname!: string;
+	public username!: string;
 
 	@IsString()
 	@IsNotEmpty()

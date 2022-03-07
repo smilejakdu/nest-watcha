@@ -9,7 +9,6 @@ import { BoardImageEntity } from 'src/database/entities/BoardImageEntity';
 import { MovieEntity } from './src/database/entities/MovieEntity';
 import { GenreEntity } from './src/database/entities/GenreEntity';
 import { GenreMovieEntity } from './src/database/entities/GenreMovieEntity';
-import { UserAuthEntity } from './src/database/entities/UserAuthEntity';
 import { OrderEntity } from './src/database/entities/OrderEntity';
 import { OrderClaimEntity } from './src/database/entities/OrderClaimEntity';
 
@@ -32,7 +31,6 @@ const config: TypeOrmModuleOptions = {
 		GenreEntity,
 		GenreMovieEntity,
 		MovieEntity ,
-		UserAuthEntity,
 		OrderEntity,
 		OrderClaimEntity], // 사용할 entity
 	migrations: [__dirname + '/src/migrations/*.ts'],

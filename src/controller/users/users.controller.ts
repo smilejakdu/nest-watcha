@@ -49,7 +49,7 @@ export class UsersController {
 	@Get('findUser')
 	async findUser(@Body() data: UserFindRequestDto,@Res() res:Response) {
 		try {
-			return  await this.usersService.findByNickname(data);
+			return  await this.usersService.findByUsername(data);
 		} catch (err) {
 			console.error(err);
 		}
@@ -63,8 +63,9 @@ export class UsersController {
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
+		const {username , password , phone , email} = data;
 		try {
-			const usersServiceResponse = await this.usersService.signUp(data.nickname, data.password);
+			const usersServiceResponse = await this.usersService.signUp(data);
 
 			return res.status(HttpStatus.OK).json({
 				user: usersServiceResponse,
@@ -86,7 +87,7 @@ export class UsersController {
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
 		try {
-			const usersServiceResponse = await this.usersService.logIn(data.nickname, data.password);
+			const usersServiceResponse = await this.usersService.logIn(data.username, data.password);
 
 			return res.status(HttpStatus.OK).json({
 				user: usersServiceResponse,

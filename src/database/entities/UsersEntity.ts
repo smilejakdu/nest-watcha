@@ -9,16 +9,31 @@ import { OrderEntity } from './OrderEntity';
 import { SchedulesEntity } from './SchedulesEntity';
 import { OrderClaimEntity } from './OrderClaimEntity';
 
+export enum LoginType {
+	NAVER = 'naver',
+	KAKAO = 'kakao',
+	GOOGLE = 'google',
+}
+
 @Entity({ schema: 'nest_watcha', name: 'users' })
 export class UsersEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash',
-		description: 'nickname',
+		description: 'username',
 	})
-	@Column('varchar', { name: 'nickname', length: 150 })
-	nickname: string;
+	@Column('varchar', { name: 'username', length: 150 })
+	username: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'ash@gmail.com',
+		description: 'email',
+	})
+	@Column('varchar', { name: 'email', length: 150 })
+	email: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -58,9 +73,35 @@ export class UsersEntity extends CoreEntity {
 			.andWhere('users.deletedAt is NULL');
 	}
 
-	static findByNickname(nickname: string, queryRunner?: QueryRunner) {
+	static findByUsername(username: string, queryRunner?: QueryRunner) {
 		return this.makeQueryBuilder(queryRunner)
-			.where('users.nickname=:nickname ',{nickname})
+			.where('users.username=:username ',{username})
 			.andWhere('users.deletedAt is NULL');
+	}
+
+
+	static findAuthId(id, type, queryRunner?: QueryRunner) {
+		let user_auth = this.makeQueryBuilder(queryRunner)
+			.select(['users.id', 'users.status']);
+
+		if (type == LoginType.NAVER) {
+			user_auth = user_auth.where('users.naver_auth_id = :id', {id});
+		} else if (type == LoginType.KAKAO) {
+			user_auth = user_auth.where('users.kakao_auth_id = :id', {id});
+		} else if (type == LoginType.GOOGLE) {
+			user_auth = user_auth.where('users.google_auth_id = :id', {id});
+		} else {
+			return null;
+		}
+
+		return user_auth;
+	}
+
+	static findAuthLoginId(id, queryRunner?: QueryRunner) {
+		const user_auth = this.makeQueryBuilder(queryRunner)
+			.select(['users.id', 'users.status'])
+			.where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
+
+		return user_auth;
 	}
 }

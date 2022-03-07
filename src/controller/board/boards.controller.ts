@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCookieAuth,
@@ -87,8 +87,8 @@ export class BoardsController {
 		return this.boardsService.deleteBoardOne(id);
 	}
 
-	@Get('nickname')
-	async findByNickname(@Body() data) {
-		return this.boardsService.findByNickname(data.nickname);
+	@Get('username')
+	async findByUsername(@Query() query) {
+		return this.boardsService.findByUsername(query.username);
 	}
 }

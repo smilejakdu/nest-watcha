@@ -13,9 +13,9 @@ export class BoardsService {
 		@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>,
 	) {}
 
-	async findByNickname(nickname: string): Promise<object> {
-		const foundByNickname: UsersEntity = await this.usersRepository.createQueryBuilder('user').where('user.nickname =:nickname', { nickname }).execute();
-		return foundByNickname;
+	async findByUsername(username: string): Promise<any> {
+		const foundByUsername: UsersEntity = await this.usersRepository.createQueryBuilder('user').where('user.username =:username', { username }).execute();
+		return foundByUsername;
 	}
 
 	async findAllBoards(): Promise<BoardsEntity[]> {

@@ -5,8 +5,6 @@ import { UsersEntity } from '../../../database/entities/UsersEntity';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {
-  constructor() {
-  }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
@@ -18,7 +16,7 @@ export class UserAuthGuard implements CanActivate {
       console.log('cookies access-token', accessToken);
     }
 
-    // const cookieDomain = process.env.DB_HOST === 'local' ? 'localhost' : '.socialclub.co.kr';
+    // const cookieDomain = process.env.DB_HOST === 'local' ? 'localhost' : '.domain.co.kr';
 
     let user: any;
 
@@ -74,7 +72,7 @@ export class UserAuthGuardOptional implements CanActivate {
       accessToken = req.cookies.accessToken;
     }
 
-    const cookieDomain = process.env.STAGE === 'local' ? 'localhost' : '.socialclub.co.kr';
+    const cookieDomain = process.env.STAGE === 'local' ? 'localhost' : '.domain.co.kr';
 
     let user: any;
 

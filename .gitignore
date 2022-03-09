@@ -19,7 +19,8 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
-
+ormconfig.ts
+tsconfig.json
 # IDEs and editors
 /.idea
 .project

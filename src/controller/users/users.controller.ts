@@ -1,5 +1,5 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -17,6 +17,7 @@ import { UsersService } from '../../database/service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { isNil } from 'lodash';
+import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 
 export const BAD_REQUEST = 'bad request';
 
@@ -75,10 +76,10 @@ export class UsersController {
 
 	@ApiOperation({ summary: '로그아웃' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Post('logout')
-	logOut(@Req() req, @Res() res: Response) {
-		req.logout();
-		res.clearCookie('connect.sid', { httpOnly: true });
+	@UseGuards(UserAuthGuard)
+	@Get('logout')
+	async logOut(@Req() req:any, @Res() res: Response) {
+		console.log('userdata :', req.user);
 		res.send('ok');
 	}
 }

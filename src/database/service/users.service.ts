@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from "@nestjs/common";
 // Entity
 import { SignUpRequestDto } from '../../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../repository/user.repository';
 import { LoginRequestDto } from '../../controller/users/users.controller.dto/logInDto/logIn.request.dto';
+import { Response } from "express";
 
 export interface UserFindOneOptions {
 	id?: number;

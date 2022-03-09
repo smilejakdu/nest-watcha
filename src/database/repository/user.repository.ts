@@ -2,12 +2,13 @@ import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 't
 import { LoginType, UsersEntity } from '../entities/UsersEntity';
 import { CoreResponse } from '../../shared/CoreResponse';
 import { HttpStatus } from '@nestjs/common';
-import { isNil } from '@nestjs/common/utils/shared.utils';
 import { UserFindOneOptions } from '../service/users.service';
 import { SignUpRequestDto } from '../../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import bcrypt from 'bcrypt';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 import { LoginRequestDto } from '../../controller/users/users.controller.dto/logInDto/logIn.request.dto';
+import * as Jwt from 'jsonwebtoken';
+import { isNil } from 'lodash';
 
 @EntityRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity>{
@@ -151,6 +152,8 @@ export class UserRepository extends Repository<UsersEntity>{
       };
     }
     const result = await bcrypt.compare(password, foundUser.password);
+    const payload = {username: foundUser.username};
+    const jwt = await Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
 
     if (result) {
       delete foundUser.password;
@@ -158,7 +161,10 @@ export class UserRepository extends Repository<UsersEntity>{
         ok:true,
         statusCode:HttpStatus.OK,
         message:'SUCCESS',
-        data:foundUser
+        data:{
+          user : foundUser,
+          jwt : jwt
+        }
       };
     }
     return {
@@ -166,6 +172,9 @@ export class UserRepository extends Repository<UsersEntity>{
       statusCode:HttpStatus.BAD_REQUEST,
       message:'username 과 password 를 확인하세요'
     };
+  }
+
+  async kakaoSignUp(){
 
   }
 }

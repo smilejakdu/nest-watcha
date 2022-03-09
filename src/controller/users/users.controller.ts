@@ -1,7 +1,8 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Post, Req, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
+	ApiCreatedResponse,
 	ApiInternalServerErrorResponse,
 	ApiOkResponse,
 	ApiOperation,
@@ -15,6 +16,7 @@ import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.
 import { UsersService } from '../../database/service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
+import { isNil } from 'lodash';
 
 export const BAD_REQUEST = 'bad request';
 
@@ -35,17 +37,16 @@ export class UsersController {
 	@ApiOperation({ summary: '회원검색' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
-	async findByUsername(@Body() data: UserFindRequestDto,@Res() res:Response) {
+	async findByUsername(@Body() data: UserFindRequestDto) {
 		return await this.usersService.findByUsername(data);
 	}
 
-	@ApiOkResponse({
+	@ApiCreatedResponse({
 		description: 'success',
-		type: UserDto,
 	})
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
-	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
+	async signUp(@Body() data: SignUpRequestDto,@Res() res:Response) {
 		return await this.usersService.signUp(data);
 	}
 
@@ -55,8 +56,21 @@ export class UsersController {
 	})
 	@ApiOperation({ summary: '로그인' })
 	@Post('login')
-	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
-		return await this.usersService.logIn(data);
+	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
+		const responseLogIn =  await this.usersService.logIn(data);
+		if(isNil(responseLogIn.data)) {
+			return res.status(HttpStatus.BAD_REQUEST).json({
+				ok: responseLogIn.ok,
+				statusCode: responseLogIn.statusCode,
+				message: responseLogIn.message
+			});
+		}
+		return res.status(HttpStatus.OK).json({
+			ok:responseLogIn.ok,
+			statusCode : responseLogIn.statusCode,
+			message: responseLogIn.message,
+			data:responseLogIn.data
+		});
 	}
 
 	@ApiOperation({ summary: '로그아웃' })

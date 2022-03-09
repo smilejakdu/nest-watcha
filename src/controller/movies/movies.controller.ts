@@ -47,6 +47,7 @@ export class MoviesController{
       }
     );
     return {
+      ok :true,
       statusCode : HttpStatus.CREATED,
       message : 'SUCCESS',
     };

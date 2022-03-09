@@ -22,6 +22,7 @@ export class AuthService {
 			throw new HttpException('invalid token', HttpStatus.UNAUTHORIZED);
 		}
 		return {
+			ok:true,
 			statusCode: HttpStatus.OK,
 			message: 'SUCCESS',
 			data: foundUser,

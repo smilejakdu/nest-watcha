@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Res } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -23,13 +23,8 @@ export class GenreController {
     type:GetGenreDto,
   })
   @Get()
-  async findAllGenre(@Res() res:Response) {
-    const responseAllGenre = await this.genreService.findAllGenre();
-    return res.status(HttpStatus.OK).json({
-      statusCode:responseAllGenre.statusCode,
-      message : responseAllGenre.message,
-      data : responseAllGenre.data,
-    });
+  async findAllGenre() {
+    return this.genreService.findAllGenre();
   }
 
   @ApiOperation({summary:'장르 가져오기'})
@@ -38,13 +33,18 @@ export class GenreController {
     type:GetGenreDto,
   })
   @Get(':id')
-  async findOneGenre(@Param('id',ParseIntPipe) id :number, @Res() res:Response) {
-    const responseGenre = await this.genreService.findById(id);
-    return res.status(HttpStatus.OK).json({
-      statusCode:responseGenre.statusCode,
-      message : responseGenre.message,
-      data : responseGenre.data,
-    });
+  async findOneGenre(@Param('id',ParseIntPipe) id :number) {
+    return await this.genreService.findById(id);
+  }
+
+  @ApiOperation({summary:'장르와 영화 가져오기'})
+  @ApiOkResponse({
+    description:'성공',
+    type:GetGenreDto,
+  })
+  @Get(':id')
+  async findWithMovieById(@Param('id',ParseIntPipe) id :number) {
+    return await this.genreService.findWithMovieById(id);
   }
 
   @ApiOperation({summary:'장르 만들기'})
@@ -53,11 +53,7 @@ export class GenreController {
     type:GetGenreDto,
   })
   @Post()
-  async createGenre(@Body() body:createGenreDto, @Res() res: Response) {
-    const responseCreatedGenre = await this.genreService.createGenre(body.genreName);
-    return res.status(HttpStatus.CREATED).json({
-      statusCode : responseCreatedGenre.statusCode,
-      message : responseCreatedGenre.message,
-    });
+  async createGenre(@Body() body:createGenreDto) {
+    return await this.genreService.createGenre(body.genreName);
   }
 }

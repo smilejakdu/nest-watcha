@@ -16,6 +16,10 @@ export class GenreService {
     return await this.genreRepository.findAll();
   }
 
+  async findWithMovieById(genreId:number):Promise<CoreResponse>{
+    return await this.genreRepository.findWithMovieById(genreId);
+  }
+
   async createGenre(genreName : string):Promise<CoreResponse> {
     return await this.genreRepository.createGenre(genreName);
   }

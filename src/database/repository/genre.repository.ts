@@ -51,12 +51,13 @@ export class GenreRepository extends Repository<GenreEntity> {
     };
   }
 
-  async findWithMovieById(id:number):Promise<CoreResponse>{
+  async findWithMovieById(genreId:number):Promise<CoreResponse>{
     const foundGenreWithMovies = await this.makeQueryBuilder()
       .leftJoinAndSelect(GenreMovieEntity,'genreMovie')
       .leftJoinAndSelect(MovieEntity ,'movie')
-      .where('genre.id=:id ', {id})
+      .where('genre.id=:id ', {id:genreId})
       .andWhere('genre.deletedAt is NULL');
+
       if (isNil(foundGenreWithMovies)) {
         return {
           ok : false,
@@ -64,6 +65,7 @@ export class GenreRepository extends Repository<GenreEntity> {
           message: 'NOT_FOUND_GENRE',
         };
       }
+
       return {
         ok:true,
         statusCode : HttpStatus.OK,

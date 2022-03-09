@@ -1,41 +1,22 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { GenreEntity } from '../entities/GenreEntity';
+import { Injectable } from '@nestjs/common';
 import { CoreResponse } from '../../shared/CoreResponse';
-import { isNil } from 'lodash';
+import { GenreRepository } from '../repository/genre.repository';
 
 @Injectable()
 export class GenreService {
+  constructor(
+    private readonly genreRepository : GenreRepository,
+  ) {}
 
   async findById(id: number): Promise<CoreResponse> {
-    const genre = await GenreEntity.findByid(id).getMany();
-    console.log('genre:',genre);
-    if(isNil(genre)){
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'BAD_REQUEST',
-      };
-    }
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'SUCCESS',
-      data: genre,
-    };
+    return await this.genreRepository.findById(id);
   }
 
   async findAllGenre(): Promise<CoreResponse> {
-    const allGenre = await GenreEntity.findAll();
-    return {
-      statusCode : HttpStatus.OK,
-      message:'SUCCESS',
-      data:allGenre,
-    };
+    return await this.genreRepository.findAll();
   }
 
   async createGenre(genreName : string):Promise<CoreResponse> {
-    await GenreEntity.createGenre(genreName);
-    return {
-      statusCode : HttpStatus.CREATED,
-      message : 'SUCCESS',
-    };
+    return await this.genreRepository.createGenre(genreName);
   }
 }

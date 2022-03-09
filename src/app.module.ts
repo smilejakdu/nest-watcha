@@ -7,7 +7,6 @@ import ormconfig from '../ormconfig';
 import { CommentsModule } from './module/comments.module';
 import { SchedulesModule } from './module/schedules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './module/auth.module';
 import { HashtagModule } from './module/hashtag.module';
 import { ImageModule } from './module/image.module';
 import { GenreModule } from './module/genre.module';
@@ -20,7 +19,6 @@ import { MovieModule } from './module/movie.module';
 			isGlobal: true,
 		}),
 		TypeOrmModule.forRoot(ormconfig),
-		AuthModule,
 		UsersModule,
 		BoardsModule,
 		CommentsModule,

@@ -7,7 +7,7 @@ export class LoginRequestDto {
 		example: 'ash',
 		description: 'username',
 	})
-	public username!: string;
+	public username: string;
 
 	@IsString()
 	@IsNotEmpty()

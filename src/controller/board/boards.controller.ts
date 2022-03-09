@@ -1,14 +1,12 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
-	ApiCookieAuth,
 	ApiCreatedResponse,
 	ApiInternalServerErrorResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiTags
 } from '@nestjs/swagger';
-import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { UsersEntity } from 'src/database/entities/UsersEntity';
 import { BoardsService } from '../../database/service/boards.service';
@@ -41,8 +39,6 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
-	@ApiCookieAuth('connect.sid')
-	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get('my_board')
 	async getMyBoards(@User() user: UsersEntity) {
@@ -54,8 +50,6 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
-	@ApiCookieAuth('connect.sid')
-	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
 	async createBoard(@User() user: UsersEntity, @Body() data) {
@@ -68,8 +62,6 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
-	@ApiCookieAuth('connect.sid')
-	@UseGuards(new LoggedInGuard())
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id')
 	async updateBoard(@User() user: UsersEntity, @Param('id', ParseIntPipe) id: number, @Body() data: UpdateBoardDto) {
@@ -80,7 +72,6 @@ export class BoardsController {
 		description: '성공',
 		type: DeleteBoardDto,
 	})
-	@ApiCookieAuth('connect.sid')
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
 	async deleteBoard(@User() user: UsersEntity, @Param('id', ParseIntPipe) id: number) {

@@ -4,12 +4,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtPayload } from '../interface/payload.interface';
 import 'dotenv/config';
 import { UsersService } from '../../../database/service/users.service';
-import { AuthService } from '../../../database/service/auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) {
     super({

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -29,7 +29,7 @@ export class UsersEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'ash@gmail.com',
+		example: 'ash@email.com',
 		description: 'email',
 	})
 	@Column('varchar', { name: 'email', length: 150 })
@@ -43,6 +43,35 @@ export class UsersEntity extends CoreEntity {
 	})
 	@Column('varchar', { name: 'password', length: 150 }) // select: false 하면 password 빼고 불러온다.
 	password: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'ash@kakao.com',
+		description: 'kakao_auth_id',
+	})
+	@Column('varchar', { name: 'kakao_auth_id', length: 150 })
+	kakao_auth_id: string;
+
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'ash@naver.com',
+		description: 'naver_auth_id',
+	})
+	@Column('varchar', { name: 'naver_auth_id', length: 150 })
+	naver_auth_id: string;
+
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: 'ash@gmail.com',
+		description: 'google_auth_id',
+	})
+	@Column('varchar', { name: 'google_auth_id', length: 150 })
+	google_auth_id: string;
 
 	@OneToMany(() => BoardsEntity, boards => boards.User)
 	Boards: BoardsEntity[];
@@ -58,50 +87,4 @@ export class UsersEntity extends CoreEntity {
 
 	@OneToMany(() => OrderClaimEntity, orderClaim => orderClaim.User)
 	OrderClaims: OrderClaimEntity[];
-
-	static makeQueryBuilder(queryRunner?: QueryRunner) {
-		if (queryRunner) {
-			return queryRunner.manager.createQueryBuilder(UsersEntity, 'users');
-		} else {
-			return this.createQueryBuilder('users');
-		}
-	}
-
-	static findByid(id: number, queryRunner?: QueryRunner) {
-		return this.makeQueryBuilder(queryRunner)
-			.where('users.id=:id ', {id})
-			.andWhere('users.deletedAt is NULL');
-	}
-
-	static findByUsername(username: string, queryRunner?: QueryRunner) {
-		return this.makeQueryBuilder(queryRunner)
-			.where('users.username=:username ',{username})
-			.andWhere('users.deletedAt is NULL');
-	}
-
-
-	static findAuthId(id, type, queryRunner?: QueryRunner) {
-		let user_auth = this.makeQueryBuilder(queryRunner)
-			.select(['users.id', 'users.status']);
-
-		if (type == LoginType.NAVER) {
-			user_auth = user_auth.where('users.naver_auth_id = :id', {id});
-		} else if (type == LoginType.KAKAO) {
-			user_auth = user_auth.where('users.kakao_auth_id = :id', {id});
-		} else if (type == LoginType.GOOGLE) {
-			user_auth = user_auth.where('users.google_auth_id = :id', {id});
-		} else {
-			return null;
-		}
-
-		return user_auth;
-	}
-
-	static findAuthLoginId(id, queryRunner?: QueryRunner) {
-		const user_auth = this.makeQueryBuilder(queryRunner)
-			.select(['users.id', 'users.status'])
-			.where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
-
-		return user_auth;
-	}
 }

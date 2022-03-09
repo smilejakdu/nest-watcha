@@ -2,7 +2,6 @@ import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
 import { SelectHashtagDto } from './hashtag.controller.dto/select-hashtag.dto';
 import { HashtagService } from '../../database/service/hashtag.service';
 
@@ -15,7 +14,6 @@ export class HashtagController {
 	constructor(private hashTagService: HashtagService) {}
 
 	@ApiOperation({ summary: '해시태그 불러오기' })
-	@UseGuards(new LoggedInGuard())
 	@ApiOkResponse({
 		description: '성공',
 		type: SelectHashtagDto,

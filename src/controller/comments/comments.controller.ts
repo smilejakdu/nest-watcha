@@ -3,7 +3,6 @@ import { CreateCommentDto } from './comments.controller.dto/create-comment.dto';
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentsService } from '../../database/service/comments.service';
-import { LoggedInGuard } from 'src/shared/auth/guard/logged-in.guard';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { UsersEntity } from 'src/database/entities/UsersEntity';
 import { DeleteCommentDto } from './comments.controller.dto/delete-comment.dto';
@@ -29,7 +28,6 @@ export class CommentsController {
 		description: '성공',
 		type: CreateCommentDto,
 	})
-	@UseGuards(new LoggedInGuard())
 	@Post(':id')
 	async postComments(
 		@Param('id', ParseIntPipe) id: number,
@@ -45,7 +43,6 @@ export class CommentsController {
 		description: '성공',
 		type: UpdateCommentDto,
 	})
-	@UseGuards(new LoggedInGuard())
 	async updateComment(@Body('content') content: string, @Param('id', ParseIntPipe) id: number) {
 		return await this.commentsService.updateComment(content, id);
 	}
@@ -56,7 +53,6 @@ export class CommentsController {
 		description: '성공',
 		type: DeleteCommentDto,
 	})
-	@UseGuards(new LoggedInGuard())
 	async deleteComment(@Param('id', ParseIntPipe) id: number) {
 		return await this.commentsService.deleteComment(id);
 	}

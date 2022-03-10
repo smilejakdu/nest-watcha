@@ -16,8 +16,6 @@ export class UserAuthGuard implements CanActivate {
       console.log('cookies access-token', accessToken);
     }
 
-    // const cookieDomain = process.env.DB_HOST === 'local' ? 'localhost' : '.domain.co.kr';
-
     let user: any;
 
     try {

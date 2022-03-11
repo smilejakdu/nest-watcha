@@ -108,35 +108,39 @@ export class UserRepository extends Repository<UsersEntity>{
       redirect_uri: redirectURI,
       code: query.code,
     };
-    const token_res = await axios.post(url, data , {
+    let responseToken;
+    await axios.post(url, data , {
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    }).then(res=> {
+      console.log(res);
+      responseToken = {res:res};
     })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    .catch(error=> {
+      console.log(error);
+    });
 
     const get_profile_url = 'https://kapi.kakao.com/v2/user/me';
 
     const getProfileHeaders = {
-      Authorization: `Bearer ${token_res.data.access_token}`,
+      // Authorization: `Bearer ${token_res.data.access_token}`,
+      Authorization: `Bearer ${responseToken.res.data.access_token}`,
     };
 
-    const profile_res = await axios.post(get_profile_url, null , {
+    let profileResponse;
+
+    await axios.post(get_profile_url, null , {
       headers: getProfileHeaders,
     }).then(res=>{
+      profileResponse = {res:res};
         console.log(res);
       }).catch(error=>{
         console.log(error);
       });
-
-    if (!profile_res.data.id) {
+    if (!profileResponse.res.data.id) {
       throw new HttpException('Kakao login error',
                                         HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return profile_res.data;
+    return profileResponse.res.data;
   }
 }

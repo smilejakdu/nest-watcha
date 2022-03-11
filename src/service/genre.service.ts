@@ -6,7 +6,7 @@ import { isNil } from 'lodash';
 @Injectable()
 export class GenreService {
   constructor(
-    private readonly genreRepository : GenreRepository,
+    private readonly genreRepository: GenreRepository,
   ) {}
 
   async findById(id: number): Promise<CoreResponse> {
@@ -26,16 +26,6 @@ export class GenreService {
       statusCode :!isNil(foundAllGenre) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
       message: !isNil(foundAllGenre) ?'SUCCESS': 'NOT_FOUND_GENRE',
       data:!isNil(foundAllGenre) ? foundAllGenre : [],
-    };
-  }
-
-  async findWithMovieById(genreId:number):Promise<CoreResponse>{
-    const foundGenre =  await this.genreRepository.findWithMovieById(genreId);
-    return {
-      ok : !isNil(foundGenre),
-      statusCode :!isNil(foundGenre) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-      message: !isNil(foundGenre) ?'SUCCESS': 'NOT_FOUND_GENRE',
-      data:!isNil(foundGenre) ? foundGenre : [],
     };
   }
 

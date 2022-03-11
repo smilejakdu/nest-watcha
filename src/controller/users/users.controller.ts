@@ -1,5 +1,5 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -16,7 +16,6 @@ import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.
 import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
-import { isNil } from 'lodash';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 
 export const BAD_REQUEST = 'bad request';
@@ -39,7 +38,7 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
 	async findByUsername(@Body() data: UserFindRequestDto) {
-		return await this.usersService.findByUsername(data);
+		return await this.usersService.findByUsername(data.username);
 	}
 
 	@ApiCreatedResponse({
@@ -58,28 +57,15 @@ export class UsersController {
 	@ApiOperation({ summary: '로그인' })
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
-		const responseLogIn =  await this.usersService.logIn(data);
-		if(isNil(responseLogIn.data)) {
-			return res.status(HttpStatus.BAD_REQUEST).json({
-				ok: responseLogIn.ok,
-				statusCode: responseLogIn.statusCode,
-				message: responseLogIn.message
-			});
-		}
-		return res.status(HttpStatus.OK).json({
-			ok:responseLogIn.ok,
-			statusCode : responseLogIn.statusCode,
-			message: responseLogIn.message,
-			data:responseLogIn.data
-		});
+		return  await this.usersService.logIn(data);
 	}
 
 	@ApiOperation({ summary: '로그아웃' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
-	@Get('logout')
-	async logOut(@Req() req:any, @Res() res: Response) {
-		console.log('userdata :', req.user);
-		res.send('ok');
+	@Get('profile')
+	async myProfile(@Req() req:any) {
+		const {username} = req.user;
+		return await this.usersService.findByUsername(username);
 	}
 }

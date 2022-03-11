@@ -8,20 +8,14 @@ import bcrypt from 'bcrypt';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 
-
-export interface UserFindOneOptions {
-	id?: number;
-	username?: string;
-}
-
 @Injectable()
 export class UsersService {
 	constructor(
 		private readonly userRepository: UserRepository,
 	) {}
 
-	async findByUsername(data: UserFindOneOptions): Promise<CoreResponse> {
-		const responseUser = await this.userRepository.findByUsername(data);
+	async findByUsername(username: string): Promise<CoreResponse> {
+		const responseUser = await this.userRepository.findByUsername(username);
 		if (isNil(responseUser)) {
 			return {
 				ok: false,
@@ -29,17 +23,18 @@ export class UsersService {
 				message: 'NOT_FOUND_USER',
 			};
 		}
+		const {password , ...userData} = responseUser;
 		return {
 			ok: true,
 			statusCode: HttpStatus.OK,
 			message: 'SUCCESS',
-			data: responseUser,
+			data: userData,
 		};
 	}
 
 	async signUp(signUpDto: SignUpRequestDto) {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByUsername({ username: username });
+		const foundUser = await this.userRepository.findByUsername(username);
 		if (isNil(foundUser)) {
 			return {
 				ok: false,
@@ -94,7 +89,7 @@ export class UsersService {
 
 	async logIn(logInDto:LoginRequestDto) {
 		const {username ,password}= logInDto;
-		const foundUser = await this.userRepository.findByUsername({ username: username });
+		const foundUser = await this.userRepository.findByUsername(username);
 		if (isNil(foundUser)) {
 			return {
 				ok: false,
@@ -127,9 +122,9 @@ export class UsersService {
 		};
 	}
 
-	async kakaoCallback(){
-
-	}
+	// async kakaoCallback(){
+	//
+	// }
 
 		// async kakaoSignUp(signUpDto :SignUpRequestDto){
 		// 	const createUser = await this.usersRepository.save(signUpDto);

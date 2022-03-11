@@ -1,7 +1,6 @@
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { LoginType, UsersEntity } from '../entities/UsersEntity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { UserFindOneOptions } from '../../service/users.service';
 import bcrypt from 'bcrypt';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 import axios from 'axios';
@@ -13,27 +12,22 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async findById(id:number) {
-    const foundUser = await this.makeQueryBuilder()
+    return await this.makeQueryBuilder()
       .where('users.id=:id ', {id})
-      .andWhere('users.deletedAt is NULL');
-    return foundUser;
+      .andWhere('users.deletedAt is NULL').getOne();
   }
 
-  async findByUsername(data : UserFindOneOptions){
-    const {id , username} =data;
-    const foundUser = await this.makeQueryBuilder()
-      .leftJoinAndSelect('users.Board','boards');
-    if(id) foundUser.andWhere('users.id=:id',{id:id});
-    if(username) foundUser.andWhere('users.username=:username',{username:username});
-    foundUser.andWhere('users.deletedAt is NULL');
-    return foundUser.getOne();
+  async findByUsername(username:string) {
+    return await this.makeQueryBuilder()
+      .leftJoinAndSelect('users.Boards','boards')
+      .where('users.username=:username',{username})
+      .getOne();
     }
 
   async findAuthLoginId(id:number, queryRunner?: QueryRunner) {
-    const foundUserAuthId = this.makeQueryBuilder(queryRunner)
+    return this.makeQueryBuilder(queryRunner)
       .select(['users.id', 'users.username' , 'users.status'])
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
-    return foundUserAuthId;
   }
 
   async findAuthId(id, type, queryRunner?: QueryRunner) {

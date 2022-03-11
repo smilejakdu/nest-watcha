@@ -48,7 +48,7 @@ export class UserRepository extends Repository<UsersEntity>{
     } else {
       return null;
     }
-    return foundUserAuth;
+    return foundUserAuth.getOne();
   }
 
   async createUser(foundUser ,queryRunner?: QueryRunner) {
@@ -67,6 +67,15 @@ export class UserRepository extends Repository<UsersEntity>{
     delete createUser.password;
     return createUser;
   }
+
+  async removeUser(id: number, queryRunner?: QueryRunner):Promise<void> {
+    await this.makeQueryBuilder(queryRunner)
+      .softDelete()
+      .from(UsersEntity)
+      .where('users.id=:id ', {id})
+      .execute();
+  }
+
   // async kakaoSignUp(){
   //
   // }
@@ -115,7 +124,21 @@ export class UserRepository extends Repository<UsersEntity>{
       throw new HttpException('Kakao login error',
                                         HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
     return profileResponse.res.data;
+  }
+
+  async checkRegister(query, type, origin) {
+    let user_auth;
+    let login_result;
+
+    if (type == LoginType.KAKAO) {
+      login_result = await this.kakaoCallback(query, `${origin}/auth/kakao/callback`);
+      user_auth = this.findAuthId(login_result.id,LoginType.KAKAO);
+    }
+
+    return {
+      user_auth: user_auth,
+      login_result: login_result
+    };
   }
 }

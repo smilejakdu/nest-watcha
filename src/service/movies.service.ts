@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { MovieEntity } from '../entities/MovieEntity';
+import { MovieEntity } from '../database/entities/MovieEntity';
 import { isNil } from 'lodash';
-import { CoreResponse } from '../../shared/CoreResponse';
+import { CoreResponse } from '../shared/CoreResponse';
 
 @Injectable()
 export class MoviesService{

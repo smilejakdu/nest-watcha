@@ -9,12 +9,12 @@ import {
 } from '@nestjs/swagger';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { UsersEntity } from 'src/database/entities/UsersEntity';
-import { BoardsService } from '../../database/service/boards.service';
+import { BoardsService } from '../../service/boards.service';
 import { CreateBoardDto } from './board.controller.dto/create-board.dto';
 import { DeleteBoardDto } from './board.controller.dto/delete-board.dto';
 import { UpdateBoardDto } from './board.controller.dto/update-board.dto';
-import { ImageService } from '../../database/service/image.service';
-import { HashtagService } from '../../database/service/hashtag.service';
+import { ImageService } from '../../service/image.service';
+import { HashtagService } from '../../service/hashtag.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

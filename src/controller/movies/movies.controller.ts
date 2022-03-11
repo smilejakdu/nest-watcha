@@ -6,7 +6,7 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { MoviesService } from '../../database/service/movies.service';
+import { MoviesService } from '../../service/movies.service';
 import { GetGenreDto } from '../genre/genre.controller.dto/getGenre.dto';
 import { Response } from 'express';
 import { CoreResponse } from '../../shared/CoreResponse';

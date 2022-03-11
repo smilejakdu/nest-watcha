@@ -6,7 +6,7 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { GenreService } from '../../database/service/genre.service';
+import { GenreService } from '../../service/genre.service';
 import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
 import { createGenreDto } from './genre.controller.dto/createGenre.dto';
 import { Response } from 'express';

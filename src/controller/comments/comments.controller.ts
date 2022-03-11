@@ -2,7 +2,7 @@ import { UpdateCommentDto } from './comments.controller.dto/update-comment.dto';
 import { CreateCommentDto } from './comments.controller.dto/create-comment.dto';
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CommentsService } from '../../database/service/comments.service';
+import { CommentsService } from '../../service/comments.service';
 import { User } from 'src/shared/common/decorator/user.decorator';
 import { UsersEntity } from 'src/database/entities/UsersEntity';
 import { DeleteCommentDto } from './comments.controller.dto/delete-comment.dto';

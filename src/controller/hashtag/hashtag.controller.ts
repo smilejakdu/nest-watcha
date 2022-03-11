@@ -3,7 +3,7 @@ import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SelectHashtagDto } from './hashtag.controller.dto/select-hashtag.dto';
-import { HashtagService } from '../../database/service/hashtag.service';
+import { HashtagService } from '../../service/hashtag.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

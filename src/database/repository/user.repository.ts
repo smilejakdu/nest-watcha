@@ -1,13 +1,13 @@
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { LoginType, UsersEntity } from '../entities/UsersEntity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { UserFindOneOptions } from '../service/users.service';
+import { UserFindOneOptions } from '../../service/users.service';
 import bcrypt from 'bcrypt';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 import axios from 'axios';
 
 @EntityRepository(UsersEntity)
-export class UserRepository extends Repository<UsersEntity>{
+export class UserRepository extends Repository<UsersEntity> {
   makeQueryBuilder(queryRunner?: QueryRunner) {
     return this.createQueryBuilder('users', queryRunner);
   }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SchedulesService } from '../database/service/schedules.service';
+import { SchedulesService } from '../service/schedules.service';
 import { SchedulesController } from '../controller/schedules/schedules.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/database/entities/UsersEntity';

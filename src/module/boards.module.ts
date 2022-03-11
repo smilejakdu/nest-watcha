@@ -5,10 +5,10 @@ import { UsersEntity } from '../database/entities/UsersEntity';
 import { BoardsEntity } from '../database/entities/BoardsEntity';
 import { HashTagEntity } from '../database/entities/HashTagEntity';
 
-import { BoardsService } from '../database/service/boards.service';
+import { BoardsService } from '../service/boards.service';
 import { BoardsController } from '../controller/board/boards.controller';
-import { ImageService } from 'src/database/service/image.service';
-import { HashtagService } from 'src/database/service/hashtag.service';
+import { ImageService } from 'src/service/image.service';
+import { HashtagService } from 'src/service/hashtag.service';
 import { BoardImageEntity } from 'src/database/entities/BoardImageEntity';
 import { BoardHashTagEntity } from 'src/database/entities/BoardHashTagEntity';
 

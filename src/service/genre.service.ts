@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CoreResponse } from '../../shared/CoreResponse';
-import { GenreRepository } from '../repository/genre.repository';
+import { CoreResponse } from '../shared/CoreResponse';
+import { GenreRepository } from '../database/repository/genre.repository';
 
 @Injectable()
 export class GenreService {

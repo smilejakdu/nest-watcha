@@ -4,7 +4,6 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { UserFindOneOptions } from '../service/users.service';
 import bcrypt from 'bcrypt';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
-import { isNil } from 'lodash';
 import axios from 'axios';
 
 @EntityRepository(UsersEntity)
@@ -34,21 +33,7 @@ export class UserRepository extends Repository<UsersEntity>{
     const foundUserAuthId = this.makeQueryBuilder(queryRunner)
       .select(['users.id', 'users.username' , 'users.status'])
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
-
-    if (isNil(foundUserAuthId)){
-      return {
-        ok : false,
-        statusCode : HttpStatus.NOT_FOUND,
-        message: 'NOT_FOUND_USER',
-      };
-    }
-
-    return{
-      ok : true,
-      statusCode : HttpStatus.OK,
-      message: 'SUCCESS',
-      data:foundUserAuthId,
-    };
+    return foundUserAuthId;
   }
 
   async findAuthId(id, type, queryRunner?: QueryRunner) {
@@ -61,19 +46,9 @@ export class UserRepository extends Repository<UsersEntity>{
     } else if (type == LoginType.GOOGLE) {
       foundUserAuth = foundUserAuth.where('users.google_auth_id = :id', {id});
     } else {
-      return {
-        ok : false,
-        statusCode : HttpStatus.NOT_FOUND,
-        message: 'NOT_FOUND_USER',
-      };
+      return null;
     }
-
-    return {
-      ok : true,
-      statusCode : HttpStatus.OK,
-      message: 'SUCCESS',
-      data:foundUserAuth,
-    };
+    return foundUserAuth;
   }
 
   async createUser(foundUser ,queryRunner?: QueryRunner) {

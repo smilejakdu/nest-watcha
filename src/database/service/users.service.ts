@@ -56,6 +56,42 @@ export class UsersService {
 		};
 	}
 
+	async findAuthId(authId:string , type){
+		const responseAuthId = await this.userRepository.findAuthId(authId,type);
+		if(!test){
+			return {
+				ok:false,
+				statusCdoe:HttpStatus.NOT_FOUND,
+				message:'NOT_FOUND',
+				data:[],
+			};
+		}
+		return {
+			ok : true,
+			statusCode : HttpStatus.OK,
+			message: 'SUCCESS',
+			data:responseAuthId,
+		};
+	}
+
+	async findAuthLoginId(id:number){
+		const foundUserAuthId = await this.userRepository.findAuthLoginId(id);
+		if(isNil(foundUserAuthId)){
+			return {
+				ok : false,
+				statusCode : HttpStatus.NOT_FOUND,
+				message: 'NOT_FOUND_USER',
+			};
+		}
+
+		return {
+			ok : true,
+			statusCode : HttpStatus.OK,
+			message: 'SUCCESS',
+			data:foundUserAuthId,
+		};
+	}
+
 	async logIn(logInDto:LoginRequestDto) {
 		const {username ,password}= logInDto;
 		const foundUser = await this.userRepository.findByUsername({ username: username });

@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { CoreEntity } from './CoreEntity';
-import { BoardsEntity } from './BoardsEntity';
-import { UsersEntity } from './UsersEntity';
+import { CoreEntity } from './core.entity';
+import { BoardsEntity } from './boards.entity';
+import { UsersEntity } from './users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class CommentsEntity extends CoreEntity {

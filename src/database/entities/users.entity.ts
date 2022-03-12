@@ -2,12 +2,12 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
-import { BoardsEntity } from './BoardsEntity';
-import { CommentsEntity } from './CommentsEntity';
-import { CoreEntity } from './CoreEntity';
-import { OrderEntity } from './OrderEntity';
-import { SchedulesEntity } from './SchedulesEntity';
-import { OrderClaimEntity } from './OrderClaimEntity';
+import { BoardsEntity } from './boards.entity';
+import { CommentsEntity } from './comments.entity';
+import { CoreEntity } from './core.entity';
+import { OrderEntity } from './order.entity';
+import { SchedulesEntity } from './schedules.entity';
+import { OrderClaimEntity } from './orderClaim.entity';
 
 export enum LoginType {
 	NAVER = 'naver',

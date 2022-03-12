@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { CoreEntity } from './CoreEntity';
-import { BoardsEntity } from './BoardsEntity';
-import { HashTagEntity } from './HashTagEntity';
+import { CoreEntity } from './core.entity';
+import { BoardsEntity } from './boards.entity';
+import { HashTagEntity } from './hashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_hashtag' })
 export class BoardHashTagEntity extends CoreEntity {

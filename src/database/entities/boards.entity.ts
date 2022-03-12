@@ -1,10 +1,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { CommentsEntity } from './CommentsEntity';
-import { CoreEntity } from './CoreEntity';
-import { UsersEntity } from './UsersEntity';
-import { BoardImageEntity } from './BoardImageEntity';
-import { BoardHashTagEntity } from './BoardHashTagEntity';
+import { CommentsEntity } from './comments.entity';
+import { CoreEntity } from './core.entity';
+import { UsersEntity } from './users.entity';
+import { BoardImageEntity } from './BoardImage.entity';
+import { BoardHashTagEntity } from './BoardHashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class BoardsEntity extends CoreEntity {

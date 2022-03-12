@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createImageURL } from 'src/shared/lib/multerOptions';
 import { Repository } from 'typeorm';
-import { BoardImageEntity } from 'src/database/entities/BoardImageEntity';
+import { BoardImageEntity } from 'src/database/entities/BoardImage.entity';
 
 @Injectable()
 export class ImageService {

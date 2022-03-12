@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 // Entity
-import { HashTagEntity } from '../database/entities/HashTagEntity';
-import { BoardHashTagEntity } from '../database/entities/BoardHashTagEntity';
-import { BoardsEntity } from '../database/entities/BoardsEntity';
+import { HashTagEntity } from '../database/entities/hashTag.entity';
+import { BoardHashTagEntity } from '../database/entities/BoardHashTag.entity';
+import { BoardsEntity } from '../database/entities/boards.entity';
 
 @Injectable()
 export class HashtagService {

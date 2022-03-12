@@ -1,5 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { GenreEntity } from '../entities/GenreEntity';
+import { GenreEntity } from '../entities/genre.entity';
 
 @EntityRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {

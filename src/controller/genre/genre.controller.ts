@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -9,7 +9,6 @@ import {
 import { GenreService } from '../../service/genre.service';
 import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
 import { createGenreDto } from './genre.controller.dto/createGenre.dto';
-import { Response } from 'express';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
@@ -35,16 +34,6 @@ export class GenreController {
   @Get(':id')
   async findOneGenre(@Param('id',ParseIntPipe) id :number) {
     return await this.genreService.findById(id);
-  }
-
-  @ApiOperation({summary:'장르와 영화 가져오기'})
-  @ApiOkResponse({
-    description:'성공',
-    type:GetGenreDto,
-  })
-  @Get(':id')
-  async findWithMovieById(@Param('id',ParseIntPipe) id :number) {
-    return await this.genreService.findWithMovieById(id);
   }
 
   @ApiOperation({summary:'장르 만들기'})

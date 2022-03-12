@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MovieEntity } from '../database/entities/MovieEntity';
-import { GenreMovieEntity } from '../database/entities/GenreMovieEntity';
+import { GenreMovieEntity } from '../database/entities/genreMovie.entity';
 import { MoviesController } from '../controller/movies/movies.controller';
 import { MoviesService } from '../service/movies.service';
-import { GenreEntity } from '../database/entities/GenreEntity';
+import { GenreEntity } from '../database/entities/genre.entity';
+import { MovieRepository } from '../database/repository/movie.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GenreEntity, MovieEntity, GenreMovieEntity])],
+  imports: [TypeOrmModule.forFeature([GenreEntity, MovieRepository, GenreMovieEntity])],
   providers: [MoviesService],
   exports: [MoviesService],
   controllers: [MoviesController],

@@ -1,7 +1,7 @@
-import { CoreEntity } from './CoreEntity';
+import { CoreEntity } from './core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { UsersEntity } from './UsersEntity';
+import { UsersEntity } from './users.entity';
 
 export enum OrderStatus {
   INIT = 'init',

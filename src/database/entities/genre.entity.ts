@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 // Entity
-import { CoreEntity } from './CoreEntity';
-import { GenreMovieEntity } from './GenreMovieEntity';
+import { CoreEntity } from './core.entity';
+import { GenreMovieEntity } from './genreMovie.entity';
 
 export enum AgeLimitStatus {
     ADLUT_MORE_THAN = 19,
@@ -13,8 +13,8 @@ export enum AgeLimitStatus {
 export class GenreEntity extends CoreEntity {
     @IsString()
     @IsNotEmpty()
-    @Column('varchar', { name: 'genreName', length: 150 })
-    genreName: string;
+    @Column('varchar', { name: 'name', length: 150 })
+    name: string;
 
     @OneToMany(
       () => GenreMovieEntity,

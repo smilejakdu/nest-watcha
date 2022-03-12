@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardsEntity } from 'src/database/entities/BoardsEntity';
-import { HashTagEntity } from '../database/entities/HashTagEntity';
+import { BoardsEntity } from 'src/database/entities/boards.entity';
+import { HashTagEntity } from '../database/entities/hashTag.entity';
 import { HashtagController } from '../controller/hashtag/hashtag.controller';
 import { HashtagService } from '../service/hashtag.service';
-import { BoardHashTagEntity } from 'src/database/entities/BoardHashTagEntity';
+import { BoardHashTagEntity } from 'src/database/entities/BoardHashTag.entity';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([HashTagEntity, BoardsEntity, BoardHashTagEntity])],

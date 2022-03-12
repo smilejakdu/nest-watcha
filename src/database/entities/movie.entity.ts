@@ -1,8 +1,8 @@
-import { CoreEntity } from './CoreEntity';
+import { CoreEntity } from './core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
-import { AgeLimitStatus, GenreEntity } from './GenreEntity';
-import { GenreMovieEntity } from './GenreMovieEntity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { AgeLimitStatus } from './genre.entity';
+import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../transformer';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
@@ -47,23 +47,4 @@ export class MovieEntity extends CoreEntity{
     genreMovie => genreMovie.Movie
   )
   Genremovie:GenreMovieEntity[];
-
-  static makeQueryBuilder(queryRunner?: QueryRunner) {
-    if (queryRunner) {
-      return queryRunner.manager.createQueryBuilder(MovieEntity, 'movie');
-    } else {
-      return this.createQueryBuilder('movie');
-    }
-  }
-
-  static findAll(queryRunner?: QueryRunner) {
-    return this.makeQueryBuilder(queryRunner).where('movie.deletedAt is NULL');
-  }
-
-  static findByid(id: number, queryRunner?: QueryRunner) {
-    return this.makeQueryBuilder(queryRunner)
-      .innerJoinAndSelect(GenreEntity,'genre')
-      .where('movie.id=:id ', {id})
-      .andWhere('movie.deletedAt is NULL');
-  }
 }

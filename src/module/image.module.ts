@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardImageEntity } from 'src/database/entities/BoardImageEntity';
+import { BoardImageEntity } from 'src/database/entities/BoardImage.entity';
 import { ImageController } from '../controller/image/image.controller';
 import { ImageService } from '../service/image.service';
 

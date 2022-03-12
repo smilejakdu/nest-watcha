@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, QueryRunner } from 'typeorm';
-import { CoreEntity } from './CoreEntity';
-import { GenreEntity } from './GenreEntity';
-import { MovieEntity } from './MovieEntity';
+import { CoreEntity } from './core.entity';
+import { GenreEntity } from './genre.entity';
+import { MovieEntity } from './movie.entity';
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -58,7 +58,7 @@ export class GenreMovieEntity extends CoreEntity{
   }
 
   static createGenreMovie(createGenreMovieDto : CreateGenreMovieDto) {
-    this.makeQueryBuilder()
+    return this.makeQueryBuilder()
       .insert()
       .values(createGenreMovieDto)
       .execute();

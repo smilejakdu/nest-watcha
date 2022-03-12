@@ -8,7 +8,7 @@ import {
 	ApiTags
 } from '@nestjs/swagger';
 import { User } from 'src/shared/common/decorator/user.decorator';
-import { UsersEntity } from 'src/database/entities/UsersEntity';
+import { UsersEntity } from 'src/database/entities/users.entity';
 import { BoardsService } from '../../service/boards.service';
 import { CreateBoardDto } from './board.controller.dto/create-board.dto';
 import { DeleteBoardDto } from './board.controller.dto/delete-board.dto';

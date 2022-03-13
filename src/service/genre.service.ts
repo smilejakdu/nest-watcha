@@ -9,10 +9,8 @@ export class GenreService {
     private readonly genreRepository: GenreRepository,
   ) {}
 
-
   async createGenre(genreName : string){
     const createdGenre:number = await this.genreRepository.createGenre(genreName);
-    console.log(createdGenre);
     return {
       ok : !isNil(createdGenre),
       statusCode :!isNil(createdGenre) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,

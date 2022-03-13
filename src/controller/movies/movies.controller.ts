@@ -11,14 +11,16 @@ import { GetGenreDto } from '../genre/genre.controller.dto/getGenre.dto';
 import { Response } from 'express';
 import { CoreResponse } from '../../shared/CoreResponse';
 import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
-import { GenreMovieEntity } from '../../database/entities/genreMovie.entity';
+import { GenreMovieService } from '../../service/genreMovie.service';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
 @Controller('movies')
 export class MoviesController{
   constructor(
-    private movieService : MoviesService) {}
+    private movieService : MoviesService,
+    private genreMovieService : GenreMovieService,
+    ) {}
 
   @ApiOperation({summary:'해당 영화 가져오기'})
   @ApiOkResponse({
@@ -44,16 +46,10 @@ export class MoviesController{
     if(!responseCreatedMovie.ok){
       throw new BadRequestException('영화 만들기 실패했습니다.');
     }
-    const test = await GenreMovieEntity.createGenreMovie(
+    return await this.genreMovieService.createGenreMovie(
       {
         genreId: genreId,
         movieId :responseCreatedMovie.data,
-      }
-    );
-    return {
-      ok :true,
-      statusCode : HttpStatus.CREATED,
-      message : 'SUCCESS',
-    };
+      });
   }
 }

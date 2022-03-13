@@ -3,11 +3,13 @@ import { isNil } from 'lodash';
 import { CoreResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
 import { QueryRunner } from 'typeorm';
+import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
 
 @Injectable()
 export class MoviesService{
   constructor(
-    private readonly movieRepository:MovieRepository
+    private readonly movieRepository:MovieRepository,
+    private readonly genreMovieRepository : GenreMovieRepository,
   ) {}
 
   async createMovie(createMovieDto) {

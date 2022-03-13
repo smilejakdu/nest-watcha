@@ -31,8 +31,8 @@ export class GenreRepository extends Repository<GenreEntity> {
     return createdGenre.raw.insertId;
   }
 
-  async updatedGenre(genreUpdateDto:UpdateGenreDto){
-    const {id , name} =genreUpdateDto;
+  async updatedGenre(data){
+    const {id , name} = data;
     const updatedGenre = await this.makeQueryBuilder()
       .update(GenreEntity)
       .set({ name : name })

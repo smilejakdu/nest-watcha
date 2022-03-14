@@ -5,7 +5,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './core.entity';
 import { BoardsEntity } from './boards.entity';
 
-@Entity({ schema: 'nest_watcha', name: 'images' })
+@Entity({ schema: 'nest_watcha', name: 'board_images' })
 export class BoardImageEntity extends CoreEntity {
 	@IsString()
 	@ApiProperty({

@@ -4,7 +4,7 @@ import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } 
 import { UndefinedToNullInterceptor } from 'src/shared/common/interceptors/undefinedToNull.interceptor';
 import { multerOptions } from 'src/shared/lib/multerOptions';
 import { imageUploadRequest } from './image.controller.dto/image.upload.dto';
-import { ImageService } from '../../service/image.service';
+import { BoardImageService } from '../../service/boardImage.service';
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',
@@ -13,7 +13,7 @@ import { ImageService } from '../../service/image.service';
 @ApiTags('IMAGE')
 @Controller('image')
 export class ImageController {
-	constructor(private imageService: ImageService) {}
+	constructor(private imageService: BoardImageService) {}
 
 	@UseInterceptors(FilesInterceptor('images', null, multerOptions))
 	// FilesInterceptor 첫번째 매개변수: formData의 key값,

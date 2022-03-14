@@ -7,11 +7,11 @@ import {
 	ApiOperation,
 	ApiTags
 } from '@nestjs/swagger';
-import { BoardsService } from '../../service/boards.service';
 import { CreateBoardDto } from './board.controller.dto/create-board.dto';
 import { DeleteBoardDto } from './board.controller.dto/delete-board.dto';
 import { UpdateBoardDto } from './board.controller.dto/update-board.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { BoardImageService } from '../../service/boardImage.service';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -25,7 +25,7 @@ const logAndReturn = <T extends string|number>(input: T): T => {
 @ApiTags('BOARD')
 @Controller('boards')
 export class BoardsController {
-	constructor(private boardsService: BoardsService) {}
+	constructor(private boardImageService: BoardImageService) {}
 
 	@ApiOperation({ summary: '게시판 정보 가져오기' })
 	@ApiOkResponse({
@@ -34,7 +34,7 @@ export class BoardsController {
 	})
 	@Get()
 	async getBoards() {
-		return this.boardsService.findAllBoards();
+		return this.boardImageService.findAllBoards();
 	}
 
 	@ApiOkResponse({

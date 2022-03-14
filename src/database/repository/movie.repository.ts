@@ -30,11 +30,14 @@ export class MovieRepository extends Repository<MovieEntity>{
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
+    console.log(ids);
+    console.log(set);
     const updatedMovie =  await this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)
       .set(set)
-      .where('movie.id in (:ids)', { ids })
+      .where('movies.id in (:ids)', { ids })
       .execute();
+    console.log('updatedMovie:',updatedMovie);
     return updatedMovie.raw.insertId;
   }
 

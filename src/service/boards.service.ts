@@ -1,68 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { BoardsEntity } from 'src/database/entities/boards.entity';
-import { HashTagEntity } from 'src/database/entities/hashTag.entity';
-import { UsersEntity } from 'src/database/entities/users.entity';
-import { Repository } from 'typeorm';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BoardsRepository } from '../database/repository/boards.repository';
+import { isNil } from 'lodash';
+import { CoreResponse } from '../shared/CoreResponse';
 
 @Injectable()
 export class BoardsService {
 	constructor(
-		@InjectRepository(BoardsEntity) private boardsRepository: Repository<BoardsEntity>,
-		@InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
-		@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>,
+		private readonly boardsRepository : BoardsRepository,
 	) {}
 
-	async findByUsername(username: string): Promise<any> {
-		const foundByUsername: UsersEntity = await this.usersRepository.createQueryBuilder('user').where('user.username =:username', { username }).execute();
-		return foundByUsername;
+	async createBoard(data, userId: number):Promise<CoreResponse> {
+		const createdBoard = await this.boardsRepository.createBoard(data, userId);
+		return {
+			ok: !isNil(createdBoard),
+			statusCode :!isNil(createdBoard) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			message: !isNil(createdBoard) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(createdBoard) ? createdBoard : null,
+		};
 	}
 
-	async findAllBoards(): Promise<BoardsEntity[]> {
-		const foundAllBoards: BoardsEntity[] = await this.boardsRepository.createQueryBuilder('boards').leftJoin('boards.User', 'user').getMany();
-		return foundAllBoards;
+	async findAllBoards():Promise<CoreResponse> {
+		const foundAllBoards = await this.boardsRepository.findAllBoards();
+		return {
+			ok : !isNil(foundAllBoards),
+			statusCode :!isNil(foundAllBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
+			message: !isNil(foundAllBoards) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(foundAllBoards) ? foundAllBoards : [],
+		};
 	}
 
-	async findMyBoard(userId: number): Promise<[BoardsEntity[], number]> {
-		const foundMyBoardResponse: [BoardsEntity[], number] = await this.boardsRepository
-			.createQueryBuilder('boards')
-			.leftJoinAndSelect('boards.User', 'user')
-			.where('boards.userId =:userId', { userId })
-			.getManyAndCount();
-		return foundMyBoardResponse;
+	async findMyBoard(userId: number):Promise<CoreResponse> {
+		const foundMyBoard = await this.boardsRepository.findMyBoard(userId);
+		return {
+			ok: !foundMyBoard,
+			statusCode :!isNil(foundMyBoard) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			message: !isNil(foundMyBoard) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(foundMyBoard) ? foundMyBoard : null,
+		};
 	}
 
-	async insertHashtagList(hashTagList) {
-		const hashtagInsertedList = await this.hashTagRepository.createQueryBuilder('hashtag').insert().values(hashTagList).execute();
+	// async insertHashtagList(hashTagList) {
+	// 	const hashtagInsertedList = await this.hashTagRepository.createQueryBuilder('hashtag').insert().values(hashTagList).execute();
+	// 	return hashtagInsertedList;
+	// }
 
-		return hashtagInsertedList;
-	}
-
-	async createBoard(title: string, content: string, userId: number) {
-		const boards = await this.boardsRepository
-			.createQueryBuilder('boards')
-			.insert()
-			.values([{ title: title, content: content, userId: userId }])
-			.execute();
-
-		return boards.identifiers[0].id;
-	}
 
 	async updateBoard(boardId: number, title: string, content: string) {
-		const board: BoardsEntity = await this.boardsRepository.createQueryBuilder('board').where('board.boardId =:boardId', { boardId }).getOne();
-
-		await this.boardsRepository
-			.createQueryBuilder('board')
-			.update<BoardsEntity>(BoardsEntity, {
-				id: board.id,
-				title: title,
-				content: content,
-			})
-			.where('board.id = :id', { id: board.id })
-			.execute();
+		const foundBoard = await this.boardsRepository.findById(boardId);
+		if(!foundBoard){
+			throw new NotFoundException('해당하는 게시판이 없습니다.');
+		}
+		const responseUpdatedBoard = await this.boardsRepository.updateBoardOne(foundBoard.id,{title,content});
+		return {
+			ok: !isNil(responseUpdatedBoard),
+			statusCode :!isNil(responseUpdatedBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+			message: !isNil(responseUpdatedBoard) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(responseUpdatedBoard) ? responseUpdatedBoard : null,
+		};
 	}
 
 	async deleteBoardOne(boardId: number) {
-		return await this.boardsRepository.createQueryBuilder('board').delete().where('board.boardId =:boardId', { boardId }).execute();
+		const responseBoardId = this.boardsRepository.deleteBoardOne(boardId);
+		return {
+			ok: !isNil(responseBoardId),
+			statusCode :!isNil(responseBoardId) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			message: !isNil(responseBoardId) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(responseBoardId) ? responseBoardId : null,
+		};
 	}
 }

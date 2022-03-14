@@ -44,6 +44,7 @@ export class MoviesService{
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
+    console.log('updatedMovie:',updatedMovie);
     return {
       ok : !isNil(updatedMovie),
       statusCode :!isNil(updatedMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,

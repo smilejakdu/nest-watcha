@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { Response } from 'express';
 import { log } from 'console';
 
@@ -14,15 +14,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		// let msg = '';
 		if (typeof err !== 'string' && err.error === 'Bad Request') {
 			return response.status(status).json({
-				success: false,
-				code: status,
+				ok: false,
+				statusCode: status,
 				data: err.message,
 			});
 		}
 
 		response.status(status).json({
-			success: false,
-			code: status,
+			ok: false,
+			statusCode: status,
 			data: err,
 		});
 	}

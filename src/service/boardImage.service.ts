@@ -1,4 +1,4 @@
-import { isEmpty, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { BoardImageRepository } from '../database/repository/boardImage.repository';
 
@@ -29,12 +29,12 @@ export class BoardImageService {
 	}
 
 	async insertImages(boardId: number, imagePathList: string[]) {
-		const insertImagePathResult: any[] = [];
-		if (!isEmpty(imagePathList)) {
-			for (const imagePath of imagePathList) {
-				insertImagePathResult.push({ BoardId: boardId, imagePath: imagePath });
-			}
-			await this.boardImageRepository.createQueryBuilder('boardImage').insert().values(insertImagePathResult).execute();
-		}
+		const responseInsertImages = await this.boardImageRepository.insertImages(boardId,imagePathList);
+		return {
+			ok: !isNil(responseInsertImages),
+			statusCode :!isNil(responseInsertImages) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			message: !isNil(responseInsertImages) ?'SUCCESS': 'BAD_REQUEST',
+			data:!isNil(responseInsertImages) ? responseInsertImages : [],
+		};
 	}
 }

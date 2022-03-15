@@ -12,6 +12,8 @@ import { DeleteBoardDto } from './board.controller.dto/delete-board.dto';
 import { UpdateBoardDto } from './board.controller.dto/update-board.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { BoardImageService } from '../../service/boardImage.service';
+import { BoardsService } from '../../service/boards.service';
+import { HashtagService } from '../../service/hashtag.service';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -25,7 +27,11 @@ const logAndReturn = <T extends string|number>(input: T): T => {
 @ApiTags('BOARD')
 @Controller('boards')
 export class BoardsController {
-	constructor(private boardImageService: BoardImageService) {}
+	constructor(
+		private readonly boardsService : BoardsService,
+		private readonly boardImageService: BoardImageService,
+		private readonly hashtagService : HashtagService,
+	) {}
 
 	@ApiOperation({ summary: '게시판 정보 가져오기' })
 	@ApiOkResponse({
@@ -34,7 +40,7 @@ export class BoardsController {
 	})
 	@Get()
 	async getBoards() {
-		return this.boardImageService.findAllBoards();
+		return this.boardImageService.findAllImages();
 	}
 
 	@ApiOkResponse({
@@ -57,9 +63,9 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
 	async createBoard(@Req() req:any, @Body() data:CreateBoardDto) {
-		const boardId = await this.boardsService.createBoard(data, req.user.id);
-		await this.imageService.insertImages(boardId, data.imagePath);
-		await this.hashtagService.createHashTag(boardId, data.hashtag);
+		const responseBoard = await this.boardsService.createBoard(data, req.user.id);
+		await this.boardImageService.insertImages(responseBoard.data.id, data.imagePath);
+		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
 	}
 
 	@ApiOkResponse({

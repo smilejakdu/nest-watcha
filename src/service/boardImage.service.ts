@@ -4,7 +4,8 @@ import { BoardImageRepository } from '../database/repository/boardImage.reposito
 
 @Injectable()
 export class BoardImageService {
-	constructor(private readonly boardImageRepository : BoardImageRepository) {}
+	constructor(
+		private readonly boardImageRepository : BoardImageRepository) {}
 
 
 	async uploadFiles(files){

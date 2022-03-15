@@ -53,5 +53,5 @@ export class MovieEntity extends CoreEntity{
     ()=>subMovieImageEntity,
     subMovie => subMovie.movie
   )
-  subImage:subMovieImageEntity[];
+  subMovieImage:subMovieImageEntity[];
 }

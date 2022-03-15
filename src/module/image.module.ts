@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardImageEntity } from 'src/database/entities/BoardImage.entity';
-import { ImageController } from '../controller/image/boardImage.controller';
 import { BoardImageService } from '../service/boardImage.service';
+import { BoardImageController } from '../controller/image/boardImage.controller';
+import { BoardImageRepository } from '../database/repository/boardImage.repository';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([BoardImageEntity])],
-	controllers: [ImageController],
+	imports: [TypeOrmModule.forFeature([BoardImageRepository])],
+	controllers: [BoardImageController],
 	providers: [BoardImageService],
 	exports: [BoardImageService],
 })

@@ -24,20 +24,18 @@ export class MovieRepository extends Repository<MovieEntity>{
 
   async findOneById(id:number){
     return await this.makeQueryBuilder()
+      .leftJoinAndSelect('movie.subImage','subImage')
       .where('movie.id=:id ', {id:id})
       .andWhere('movie.deletedAt is null')
       .getOne();
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    console.log(ids);
-    console.log(set);
     const updatedMovie =  await this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)
       .set(set)
       .where('movies.id in (:ids)', { ids })
       .execute();
-    console.log('updatedMovie:',updatedMovie);
     return updatedMovie.raw.insertId;
   }
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardImageEntity } from 'src/database/entities/BoardImage.entity';
-import { ImageController } from '../controller/image/image.controller';
+import { ImageController } from '../controller/image/boardImage.controller';
 import { BoardImageService } from '../service/boardImage.service';
 
 @Module({

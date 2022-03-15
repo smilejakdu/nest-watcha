@@ -12,7 +12,7 @@ import { BoardImageService } from '../../service/boardImage.service';
 @UseInterceptors(UndefinedToNullInterceptor)
 @ApiTags('IMAGE')
 @Controller('image')
-export class ImageController {
+export class BoardImageController {
 	constructor(private imageService: BoardImageService) {}
 
 	@UseInterceptors(FilesInterceptor('images', null, multerOptions))

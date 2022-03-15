@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { AgeLimitStatus } from './genre.entity';
 import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../transformer';
+import { subMovieImageEntity } from './subMovieImage.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -47,4 +48,10 @@ export class MovieEntity extends CoreEntity{
     genreMovie => genreMovie.Movie
   )
   Genremovie:GenreMovieEntity[];
+
+  @OneToMany(
+    ()=>subMovieImageEntity,
+    subMovie => subMovie.movie
+  )
+  subImage:subMovieImageEntity[];
 }

@@ -17,10 +17,16 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
     return generatedFiles;
   }
 
-  async findAllImages(): Promise<any> {
-    return await this.makeQueryBuilder()
+  findAllImages() {
+    return this.makeQueryBuilder()
       .select('board_images.imagePath')
-      .getMany();
+      .where('board_images.deletedAt is null');
+  }
+
+  findBoardImage(){
+   return this.findAllImages()
+     .innerJoin('board_images.Board','Board')
+     .getMany();
   }
 
   async insertImages(boardId: number, imagePathList: string[]) {

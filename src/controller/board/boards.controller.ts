@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	ParseIntPipe,
+	Post,
+	Put,
+	Req,
+	UseGuards
+} from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -64,7 +76,15 @@ export class BoardsController {
 	@Post()
 	async createBoard(@Req() req:any, @Body() data:CreateBoardDto) {
 		const responseBoard = await this.boardsService.createBoard(data, req.user.id);
-		await this.boardImageService.insertImages(responseBoard.data.id, data.imagePath);
+		console.log('responseBoard:',responseBoard);
+		// responseBoard: { ok: true, statusCode: 201, message: 'SUCCESS', data: 2 }
+		if(!responseBoard.ok){
+			throw new BadRequestException('게시판만들기 실패하였습니다.');
+		}
+		const responseImage = await this.boardImageService.insertImages(responseBoard.data.id, data.imagePath);
+		if(!responseImage.ok){
+			throw new BadRequestException('이미지만들기 실패하였습니다.');
+		}
 		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
 	}
 

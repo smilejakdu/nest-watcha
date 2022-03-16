@@ -5,21 +5,28 @@ import { Repository } from 'typeorm';
 // Entity
 import { HashTagEntity } from '../database/entities/hashTag.entity';
 import { BoardHashTagEntity } from '../database/entities/BoardHashTag.entity';
-import { BoardsEntity } from '../database/entities/boards.entity';
+import { BoardsRepository } from '../database/repository/boards.repository';
+import { HashtagRepository } from '../database/repository/hashtag.repository';
 
 @Injectable()
 export class HashtagService {
 	constructor(
-		@InjectRepository(BoardsEntity) private boardRepository: Repository<BoardsEntity>,
-		@InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
+		private readonly boardsRepository : BoardsRepository,
+		private readonly hashTagRepository : HashtagRepository,
+		// @InjectRepository(BoardsEntity) private boardRepository: Repository<BoardsEntity>,
+		// @InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
 		@InjectRepository(BoardHashTagEntity)
 		private boardHashTagRepository: Repository<BoardHashTagEntity>,
 	) {}
 
-	async getMyHashTag(hashtag: string[]): Promise<object> {
-		return this.boardRepository
+	async getMyHashTag(hashtag: string[]): Promise<any> {
+		return this.boardsRepository
 			.createQueryBuilder('Boards')
 			.select('Boards.*')
+			.addSelect([
+				'HashTag.id',
+				'HashTag.hash',
+			])
 			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
 			.innerJoin(HashTagEntity, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
 			.where('HashTag.hash IN (:...hashtag)', { hashtag })
@@ -28,11 +35,7 @@ export class HashtagService {
 	}
 
 	async insertHashtagList(hashTagList) {
-		const hashtagInsertedList = await this.hashTagRepository
-			.createQueryBuilder('hashtag')
-			.insert()
-			.values(hashTagList)
-			.execute();
+		const hashtagInsertedList = await this.hashTagRepository.insertHashtagList(hashTagList);
 		return hashtagInsertedList;
 	}
 
@@ -43,10 +46,7 @@ export class HashtagService {
 		if (!isEmpty(hashtags)) {
 			const HashSliceLowcase: string[] = hashtags.map((v: string) => v.slice(1).toLowerCase());
 			const hashEntityList: HashTagEntity[] = await this.hashTagRepository
-				.createQueryBuilder('hashtag')
-				.select(['hashtag.id', 'hashtag.hash'])
-				.where('hashtag.hash IN (:...HashSliceLowcase)', { HashSliceLowcase })
-				.getMany();
+				.findHashTagList(HashSliceLowcase);
 
 			const hashTagResultList = hashEntityList.map(hashtag => {
 				return hashtag.hash;
@@ -76,7 +76,10 @@ export class HashtagService {
 					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 
-				await this.boardHashTagRepository.createQueryBuilder('boardHashTag').insert().values(BoardIdhashId).execute();
+				await this.boardHashTagRepository
+					.createQueryBuilder('boardHashTag')
+					.insert()
+					.values(BoardIdhashId).execute();
 			}
 		}
 	}

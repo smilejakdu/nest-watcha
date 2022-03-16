@@ -50,7 +50,7 @@ export class BoardsService {
 			ok: !isNil(responseUpdatedBoard),
 			statusCode :!isNil(responseUpdatedBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
 			message: !isNil(responseUpdatedBoard) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(responseUpdatedBoard) ? responseUpdatedBoard.raw.insertId : null,
+			data:!isNil(responseUpdatedBoard) ? boardId : null,
 		};
 	}
 
@@ -59,9 +59,9 @@ export class BoardsService {
 		console.log('responseDeletedBoardId:',responseDeletedBoardId);
 		return {
 			ok: !isNil(responseDeletedBoardId),
-			statusCode :!isNil(responseDeletedBoardId) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			statusCode :!isNil(responseDeletedBoardId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
 			message: !isNil(responseDeletedBoardId) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(responseDeletedBoardId) ? responseDeletedBoardId.raw.insertId : null,
+			data:!isNil(responseDeletedBoardId) ? boardId : null,
 		};
 	}
 }

@@ -51,8 +51,7 @@ export class BoardsController {
 		type: CreateBoardDto,
 	})
 	@Get('image')
-	async getBoards() {
-		console.log('111111111');
+	async getBoardImage() {
 		return this.boardImageService.findAllImages();
 	}
 

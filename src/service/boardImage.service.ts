@@ -8,7 +8,7 @@ export class BoardImageService {
 		private readonly boardImageRepository : BoardImageRepository) {}
 
 
-	async uploadFiles(files){
+	async uploadFiles(files) {
 		const uploadedFile = await this.boardImageRepository.uploadFiles(files);
 		return {
 			ok: !isNil(uploadedFile),

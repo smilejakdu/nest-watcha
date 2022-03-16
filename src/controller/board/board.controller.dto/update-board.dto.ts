@@ -1,17 +1,8 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
 import { CreateBoardDto } from './create-board.dto';
 
 export class UpdateBoardDto extends PickType(CreateBoardDto, [
 	'title',
 	'content',
 	'imagePath',
-] as const) {
-	@IsNumber()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'id',
-		description: 'id',
-	})
-	public id: number;
-}
+] as const) {}

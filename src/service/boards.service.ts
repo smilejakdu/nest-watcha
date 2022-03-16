@@ -32,7 +32,7 @@ export class BoardsService {
 	async findMyBoard(userId: number):Promise<CoreResponse> {
 		const foundMyBoard = await this.boardsRepository.findMyBoard(userId).getMany();
 		return {
-			ok: !foundMyBoard,
+			ok : !isNil(foundMyBoard),
 			statusCode :!isNil(foundMyBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
 			message: !isNil(foundMyBoard) ?'SUCCESS': 'BAD_REQUEST',
 			data:!isNil(foundMyBoard) ? foundMyBoard : null,

@@ -21,10 +21,6 @@ export class CommentsService {
 			.getManyAndCount();
 	}
 
-	async findBoardAndComments(boardId: number){
-
-	}
-
 	async createComment(content: string, boardId: number, userId: number) {
 		const createdComment = await this.commentsRepository.createComment(content,boardId,userId);
 		console.log('createdComment:',createdComment);

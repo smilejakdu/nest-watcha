@@ -15,26 +15,18 @@ export class UsersService {
 	) {}
 
 	async findByUsername(username: string): Promise<CoreResponse> {
-		const responseUser = await this.userRepository.findByUsername(username);
-		if (isNil(responseUser)) {
-			return {
-				ok: false,
-				statusCode: HttpStatus.NOT_FOUND,
-				message: 'NOT_FOUND_USER',
-			};
-		}
-		const {password , ...userData} = responseUser;
+		const responseUser = await this.userRepository.findByUsername(username).getOne();
 		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: userData,
+			ok: !isNil(responseUser),
+			statusCode: !isNil(responseUser) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+			message: !isNil(responseUser) ? 'SUCCESS' : 'BAD_REQUEST',
+			data: !isNil(responseUser) ? responseUser : null,
 		};
 	}
 
 	async signUp(signUpDto: SignUpRequestDto) {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByUsername(username);
+		const foundUser = await this.userRepository.findByUsername(username).getOne();
 		if (isNil(foundUser)) {
 			return {
 				ok: false,
@@ -53,43 +45,27 @@ export class UsersService {
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
-		if(isNil(foundUserByAuthId)) {
-			return {
-				ok:false,
-				statusCdoe:HttpStatus.NOT_FOUND,
-				message:'NOT_FOUND',
-				data:[],
-			};
-		}
 		return {
-			ok : true,
-			statusCode : HttpStatus.OK,
-			message: 'SUCCESS',
-			data:foundUserByAuthId,
+			ok: !isNil(foundUserByAuthId),
+			statusCode: !isNil(foundUserByAuthId) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
+			message: !isNil(foundUserByAuthId) ? 'SUCCESS' : 'NOT_FOUND',
+			data: !isNil(foundUserByAuthId) ? foundUserByAuthId : null,
 		};
 	}
 
-	async findAuthLoginId(id:number){
-		const foundUserAuthId = await this.userRepository.findAuthLoginId(id);
-		if(isNil(foundUserAuthId)){
-			return {
-				ok : false,
-				statusCode : HttpStatus.NOT_FOUND,
-				message: 'NOT_FOUND_USER',
-			};
-		}
-
+	async findAuthLoginId(id:number) {
+		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
 		return {
-			ok : true,
-			statusCode : HttpStatus.OK,
-			message: 'SUCCESS',
-			data:foundUserAuthId,
+			ok: !isNil(foundUserAuthId),
+			statusCode: !isNil(foundUserAuthId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+			message: !isNil(foundUserAuthId) ? 'SUCCESS' : 'BAD_REQUEST',
+			data: !isNil(foundUserAuthId) ? foundUserAuthId : null,
 		};
 	}
 
 	async logIn(logInDto:LoginRequestDto) {
 		const {username ,password}= logInDto;
-		const foundUser = await this.userRepository.findByUsername(username);
+		const foundUser = await this.userRepository.findByUsername(username).getOne();
 		if (isNil(foundUser)) {
 			return {
 				ok: false,

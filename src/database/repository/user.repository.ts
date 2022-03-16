@@ -11,21 +11,38 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.createQueryBuilder('users', queryRunner);
   }
 
-  async findById(id:number) {
-    return await this.makeQueryBuilder()
-      .where('users.id=:id ', {id})
-      .andWhere('users.deletedAt is NULL').getOne();
+  findOneUserById(id:number) {
+    return this.findAllUser()
+      .where('users.id=:id ', {id});
   }
 
-  async findByUsername(username:string) {
-    return await this.makeQueryBuilder()
-      .leftJoinAndSelect('users.Boards','boards')
-      .where('users.username=:username',{username})
-      .getOne();
+  findAllUser(){
+    return this.makeQueryBuilder()
+      .where('users.deletedAt is null');
+  }
+
+  findByUsername(username:string) {
+    return this.findAllUser()
+      .select([
+        'users.id',
+        'users.email',
+        'users.password',
+        'users.username',
+        'users.kakao_auth_id',
+        'users.naver_auth_id',
+        'users.google_auth_id',
+      ])
+      .addSelect([
+        'boards.id',
+        'boards.title',
+        'boards.content',
+      ])
+      .leftJoin('users.Boards','boards')
+      .where('users.username=:username',{username});
     }
 
-  async findAuthLoginId(id:number, queryRunner?: QueryRunner) {
-    return this.makeQueryBuilder(queryRunner)
+  findAuthLoginId(id:number, queryRunner?: QueryRunner) {
+    return this.findAllUser()
       .select(['users.id', 'users.username' , 'users.status'])
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
   }
@@ -62,17 +79,11 @@ export class UserRepository extends Repository<UsersEntity> {
     return createUser;
   }
 
-  async removeUser(id: number, queryRunner?: QueryRunner):Promise<void> {
-    await this.makeQueryBuilder(queryRunner)
+  removeUser(id: number, queryRunner?: QueryRunner) {
+    return this.findOneUserById(id)
       .softDelete()
-      .from(UsersEntity)
-      .where('users.id=:id ', {id})
-      .execute();
+      .from(UsersEntity);
   }
-
-  // async kakaoSignUp(){
-  //
-  // }
 
   async kakaoCallback(query: any, redirectURI: string): Promise<any> {
     const client_id = process.env.AUTH_KAKAO_CLIENT_ID;

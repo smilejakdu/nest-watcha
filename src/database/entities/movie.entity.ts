@@ -5,6 +5,7 @@ import { AgeLimitStatus } from './genre.entity';
 import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../transformer';
 import { subMovieImageEntity } from './subMovieImage.entity';
+import { OrderLogEntity } from './orderLog.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -54,4 +55,9 @@ export class MovieEntity extends CoreEntity{
     subMovie => subMovie.movie
   )
   subMovieImage:subMovieImageEntity[];
+
+  @OneToMany(
+    () => OrderLogEntity,
+      orderLog => orderLog.Movie)
+  OrderLog: OrderLogEntity[];
 }

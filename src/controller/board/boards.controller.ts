@@ -77,8 +77,7 @@ export class BoardsController {
 	@ApiOperation({ summary: '내 게시판가져오기' })
 	@Get('my_board')
 	async getMyBoards(@Req() req:any) {
-		const responseFoundMyBoard = await this.boardsService.findMyBoard(req.user.id);
-		return responseFoundMyBoard;
+		return await this.boardsService.findMyBoard(req.user.id);
 	}
 
 	@ApiCreatedResponse({

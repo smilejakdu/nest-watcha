@@ -8,6 +8,7 @@ import { CoreEntity } from './core.entity';
 import { OrderEntity } from './order.entity';
 import { SchedulesEntity } from './schedules.entity';
 import { OrderClaimEntity } from './orderClaim.entity';
+import { OrderLogEntity } from './orderLog.entity';
 
 export enum LoginType {
 	NAVER = 'naver',
@@ -87,4 +88,7 @@ export class UsersEntity extends CoreEntity {
 
 	@OneToMany(() => OrderClaimEntity, orderClaim => orderClaim.User)
 	OrderClaims: OrderClaimEntity[];
+
+	@OneToMany(() => OrderLogEntity, orderLog => orderLog.User)
+	OrderLog: OrderLogEntity[];
 }

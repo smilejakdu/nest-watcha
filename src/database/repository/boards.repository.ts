@@ -20,41 +20,35 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return createdBoard.raw.insertId;
   }
 
-  async findAllBoards(){
-    return await this.makeQueryBuilder()
-      .leftJoin('boards.User', 'user')
-      .getMany();
+  findAllBoardsWithUser(){
+    return this.findAllBoards()
+      .leftJoin('boards.User', 'user');
   }
 
-  async findMyBoard(userId:number){
-    console.log('userId:',userId);
+  findAllBoards(){
     return this.makeQueryBuilder()
+      .where('boards.deletedAt is null');
+  }
+
+  findMyBoard(userId:number){
+    return this.findAllBoards()
       .innerJoin('boards.User','user')
-      .where('boards.userId =:userId',{userId})
-      .getMany();
+      .where('boards.userId =:userId',{userId});
   }
 
-  async findById(boardId:number){
-    return await this.makeQueryBuilder()
-      .where('boards.id=:id',{id:boardId})
-      .getOne();
+   findById(boardId:number){
+    return this.findAllBoards()
+      .where('boards.id=:id',{id:boardId});
   }
 
-  async updateBoardOne(boardId:number,set:any){
-    const updatedBoard = await this.makeQueryBuilder()
-      .update<BoardsEntity>(BoardsEntity, set)
-      .where('board.id = :id', { id: boardId })
-      .execute();
-
-    return updatedBoard.raw.insertId;
+   updateBoardOne(boardId:number,set:any){
+    return this.findById(boardId)
+      .update<BoardsEntity>(BoardsEntity, set);
   }
 
-  async deleteBoardOne(boardId:number){
-    const deletedBoard = await this.makeQueryBuilder()
+   deleteBoardOne(boardId:number){
+    return this.findById(boardId)
       .softDelete()
-      .where('board.boardId =:boardId', { boardId })
-      .execute();
-
-    return deletedBoard.raw.insertId;
+      .from(BoardsEntity);
   }
 }

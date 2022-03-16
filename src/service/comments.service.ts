@@ -1,18 +1,15 @@
-import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 // Entity
-import { BoardsEntity } from 'src/database/entities/boards.entity';
-import { UsersEntity } from 'src/database/entities/users.entity';
-import { CommentsEntity } from 'src/database/entities/comments.entity';
+import { CommentsRepository } from '../database/repository/comments.repository';
+import { BoardsRepository } from '../database/repository/boards.repository';
+import { UserRepository } from '../database/repository/user.repository';
 
 @Injectable()
 export class CommentsService {
 	constructor(
-		@InjectRepository(UsersEntity) private usersRepository: Repository<UsersEntity>,
-		@InjectRepository(BoardsEntity) private boardsRepository: Repository<BoardsEntity>,
-		@InjectRepository(CommentsEntity)
-		private commentsRepository: Repository<CommentsEntity>,
+		private readonly userRepository:UserRepository,
+		private readonly boardsRepository : BoardsRepository,
+		private readonly commentsRepository : CommentsRepository,
 	) {}
 
 	async findBoardAndComments(boardId: number) {
@@ -24,27 +21,25 @@ export class CommentsService {
 			.getManyAndCount();
 	}
 
-	async createComment(content: string, boardId: number, userId: number) {
-		const comment = new CommentsEntity();
+	async findBoardAndComments(boardId: number){
 
-		comment.content = content;
-		comment.boardId = boardId;
-		comment.userId = userId;
-		await this.commentsRepository.save(comment);
+	}
+
+	async createComment(content: string, boardId: number, userId: number) {
+		const createdComment = await this.commentsRepository.createComment(content,boardId,userId);
+		console.log('createdComment:',createdComment);
+		return createdComment.raw.insertId;
 	}
 
 	async updateComment(content: string, commentId: number) {
-		const commentObject = await this.commentsRepository.findOne({
-			id: commentId,
-		});
-		commentObject.content = content;
-		await this.commentsRepository.save(commentObject);
+		const updatedComment = await this.commentsRepository.updateComment(content,commentId);
+		console.log('updatedComment:',updatedComment);
+		return updatedComment.raw.insertId;
 	}
 
-	async deleteComment(CommentId: number) {
-		const comment = await this.boardsRepository.findOne({
-			where: { id: CommentId },
-		});
-		await this.commentsRepository.delete(comment);
+	async deleteComment(commentId: number) {
+		const deletedComment = await this.commentsRepository.deleteComment(commentId);
+		console.log('deletedComment:',deletedComment);
+		return deletedComment.raw.insertId;
 	}
 }

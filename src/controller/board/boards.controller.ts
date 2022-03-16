@@ -50,8 +50,9 @@ export class BoardsController {
 		description: '성공',
 		type: CreateBoardDto,
 	})
-	@Get()
+	@Get('image')
 	async getBoards() {
+		console.log('111111111');
 		return this.boardImageService.findAllImages();
 	}
 

@@ -8,6 +8,7 @@ import {
 	ParseIntPipe,
 	Post,
 	Put,
+	Query,
 	Req,
 	UseGuards
 } from '@nestjs/common';
@@ -26,6 +27,7 @@ import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { BoardImageService } from '../../service/boardImage.service';
 import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
+import { Pagination } from '../../shared/pagination';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -57,6 +59,18 @@ export class BoardsController {
 
 	@ApiOkResponse({
 		description: '성공',
+	})
+	@ApiOperation({ summary: '게시판 모두 가져오기' })
+	@Get('')
+	async getAllBoards(@Query() pagination: Pagination) {
+		pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
+		pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
+
+		return this.boardsService.findAllBoards(pagination);
+	}
+
+	@ApiOkResponse({
+		description: '성공',
 		type: CreateBoardDto,
 	})
 	@UseGuards(UserAuthGuard)
@@ -76,8 +90,6 @@ export class BoardsController {
 	@Post()
 	async createBoard(@Req() req:any, @Body() data:CreateBoardDto) {
 		const responseBoard = await this.boardsService.createBoard(data, req.user.id);
-		console.log('responseBoard:',responseBoard);
-		// responseBoard: { ok: true, statusCode: 201, message: 'SUCCESS', data: 2 }
 		if(!responseBoard.ok){
 			throw new BadRequestException('게시판만들기 실패하였습니다.');
 		}

@@ -2,6 +2,7 @@ import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/boards.repository';
 import { isNil } from 'lodash';
 import { CoreResponse } from '../shared/CoreResponse';
+import { Pagination } from '../shared/pagination';
 
 @Injectable()
 export class BoardsService {
@@ -19,8 +20,12 @@ export class BoardsService {
 		};
 	}
 
-	async findAllBoards():Promise<CoreResponse> {
-		const foundAllBoards = await this.boardsRepository.findAllBoards().getMany();
+	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
+		const skip = Number((pagination.page - 1) * pagination.limit);
+		const foundAllBoards = await this.boardsRepository.findAllBoards()
+			.offset(skip)
+			.limit(pagination.limit)
+			.getMany();
 		return {
 			ok : !isNil(foundAllBoards),
 			statusCode :!isNil(foundAllBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
@@ -45,7 +50,6 @@ export class BoardsService {
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
 		const responseUpdatedBoard = await this.boardsRepository.updateBoardOne(foundBoard.id,{title,content}).execute();
-		console.log('responseUpdatedBoard:',responseUpdatedBoard);
 		return {
 			ok: !isNil(responseUpdatedBoard),
 			statusCode :!isNil(responseUpdatedBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
@@ -56,7 +60,6 @@ export class BoardsService {
 
 	async deleteBoardOne(boardId: number) {
 		const responseDeletedBoardId = await this.boardsRepository.deleteBoardOne(boardId).execute();
-		console.log('responseDeletedBoardId:',responseDeletedBoardId);
 		return {
 			ok: !isNil(responseDeletedBoardId),
 			statusCode :!isNil(responseDeletedBoardId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,

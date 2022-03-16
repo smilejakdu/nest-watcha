@@ -1,5 +1,6 @@
 import { BoardsEntity } from '../entities/boards.entity';
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import { Pagination } from '../../shared/pagination';
 
 @EntityRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -25,7 +26,7 @@ export class BoardsRepository extends Repository<BoardsEntity>{
       .leftJoin('boards.User', 'user');
   }
 
-  findAllBoards(){
+  findAllBoards(pagination?:Pagination){
     return this.makeQueryBuilder()
       .where('boards.deletedAt is null');
   }

@@ -19,7 +19,7 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
 
   async findAllImages(): Promise<any> {
     return await this.makeQueryBuilder()
-      .select('boardImage.imagePath')
+      .select('board_images.imagePath')
       .getMany();
   }
 

@@ -20,6 +20,7 @@ export class BoardImageService {
 
 	async findAllImages(): Promise<any> {
 		const foundAllImage = await this.boardImageRepository.findAllImages();
+		console.log('foundAllImage:',foundAllImage);
 		return {
 			ok: !isNil(foundAllImage),
 			statusCode :!isNil(foundAllImage) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,

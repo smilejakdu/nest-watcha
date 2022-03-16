@@ -33,7 +33,7 @@ export class BoardsController {
 		private readonly hashtagService : HashtagService,
 	) {}
 
-	@ApiOperation({ summary: '게시판 정보 가져오기' })
+	@ApiOperation({ summary: '게시판 이미지 모두 가져오기' })
 	@ApiOkResponse({
 		description: '성공',
 		type: CreateBoardDto,

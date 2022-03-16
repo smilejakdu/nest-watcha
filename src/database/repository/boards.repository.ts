@@ -8,9 +8,14 @@ export class BoardsRepository extends Repository<BoardsEntity>{
   }
 
   async createBoard(data, userId: number) {
+    const {title , content } = data;
     const createdBoard = await this.makeQueryBuilder()
       .insert()
-      .values({userId: userId}+data)
+      .values({
+        userId: userId,
+        title : title,
+        content:content,
+      })
       .execute();
     return createdBoard.raw.insertId;
   }
@@ -22,8 +27,9 @@ export class BoardsRepository extends Repository<BoardsEntity>{
   }
 
   async findMyBoard(userId:number){
+    console.log('userId:',userId);
     return this.makeQueryBuilder()
-      .leftJoinAndSelect('boards.User','user')
+      .innerJoin('boards.User','user')
       .where('boards.userId =:userId',{userId})
       .getMany();
   }

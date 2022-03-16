@@ -33,7 +33,7 @@ export class BoardsService {
 		const foundMyBoard = await this.boardsRepository.findMyBoard(userId);
 		return {
 			ok: !foundMyBoard,
-			statusCode :!isNil(foundMyBoard) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
+			statusCode :!isNil(foundMyBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
 			message: !isNil(foundMyBoard) ?'SUCCESS': 'BAD_REQUEST',
 			data:!isNil(foundMyBoard) ? foundMyBoard : null,
 		};

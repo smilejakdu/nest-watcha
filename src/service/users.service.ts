@@ -15,12 +15,13 @@ export class UsersService {
 	) {}
 
 	async findByUsername(username: string): Promise<CoreResponse> {
-		const responseUser = await this.userRepository.findByUsername(username).getOne();
+		const foundUser = await this.userRepository.findByUsername(username).getOne();
+		const {password , ...userData} = foundUser;
 		return {
-			ok: !isNil(responseUser),
-			statusCode: !isNil(responseUser) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(responseUser) ? 'SUCCESS' : 'BAD_REQUEST',
-			data: !isNil(responseUser) ? responseUser : null,
+			ok: !isNil(foundUser),
+			statusCode: !isNil(foundUser) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+			message: !isNil(foundUser) ? 'SUCCESS' : 'BAD_REQUEST',
+			data: !isNil(foundUser) ? userData : null,
 		};
 	}
 

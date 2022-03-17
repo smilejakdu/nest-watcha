@@ -1,9 +1,10 @@
 import { CoreEntity } from './core.entity';
-import { Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JsonTransformer } from '../transformer';
 import { UsersEntity } from './users.entity';
 import { MovieEntity } from './movie.entity';
 
+@Entity({ schema: 'nest_watcha', name: 'order_log' })
 export class OrderLogEntity extends CoreEntity {
   @Column({
     type: 'text',

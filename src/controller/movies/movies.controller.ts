@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res
 } from '@nestjs/common';
 import {
@@ -23,6 +24,7 @@ import { Response } from 'express';
 import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
 import { GenreMovieService } from '../../service/genreMovie.service';
 import { UpdateMovieDto } from './movie.controller.dto/updateMovie.dto';
+import { Pagination } from '../../shared/pagination';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
@@ -69,6 +71,15 @@ export class MoviesController{
     });
   }
 
+  @ApiOperation({summary:'모든 영화 가져오기'})
+  @ApiOkResponse({ description:'성공' })
+  @Get()
+  async findAllMovie(@Query() pagination: Pagination){
+    pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
+    pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
+
+    return await this.movieService.findAllMovie(pagination);
+  }
 
   @ApiOperation({summary:'영화 수정하기'})
   @ApiCreatedResponse({ description:'성공'})

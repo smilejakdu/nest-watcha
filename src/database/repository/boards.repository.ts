@@ -22,22 +22,30 @@ export class BoardsRepository extends Repository<BoardsEntity>{
 
   findAllBoards(){
     return this.makeQueryBuilder()
-      .innerJoin('boards.Images','images');
+      .select([
+        'boards.id',
+        'boards.title',
+        'boards.content',
+        'boards.updatedAt',
+        'user.username',
+      ])
+      .addSelect([
+        'images.id',
+        'images.imagePath'
+      ])
+      .addSelect([
+        'comments.id',
+        'comments.content',
+        'comments.updatedAt',
+      ])
+      .innerJoin('boards.User','user')
+      .innerJoin('boards.Comments','comments')
+      .leftJoin('boards.Images','images');
   }
 
   findAllBoardsWithUser(){
     return this.makeQueryBuilder()
       .leftJoin('boards.User', 'user');
-  }
-
-  findMyBoard(userId:number) {
-    return this.makeQueryBuilder()
-      .addSelect([
-        'images.id',
-        'images.imagePath'
-      ])
-      .innerJoin('boards.Images','images')
-      .where('boards.userId =:userId',{userId});
   }
 
    findById(boardId:number){

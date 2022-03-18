@@ -28,12 +28,21 @@ export class BoardsEntity extends CoreEntity {
 	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: UsersEntity;
 
-	@OneToMany(() => BoardImageEntity, boardImage => boardImage.Board)
+	@OneToMany(
+		() => BoardImageEntity,
+			boardImage => boardImage.Board
+	)
 	Images: BoardImageEntity[];
 
-	@OneToMany(() => CommentsEntity, comments => comments.Board)
+	@OneToMany(
+		() => CommentsEntity,
+			comments => comments.Board
+	)
 	Comments: CommentsEntity[];
 
-	@OneToMany(() => BoardHashTagEntity, boardHashTagEntity => boardHashTagEntity.Boards)
+	@OneToMany(
+		() => BoardHashTagEntity,
+			boardHashTagEntity => boardHashTagEntity.Boards
+	)
 	boardHashTag: BoardHashTagEntity[];
 }

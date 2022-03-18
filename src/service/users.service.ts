@@ -25,6 +25,17 @@ export class UsersService {
 		};
 	}
 
+	async findMyBoards(email:string){
+		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
+		return {
+			ok: !isNil(foundMyBoards),
+			statusCode: !isNil(foundMyBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
+			message: !isNil(foundMyBoards) ? 'SUCCESS' : 'NOT_FOUND',
+			data: !isNil(foundMyBoards) ? foundMyBoards : [],
+		};
+
+	}
+
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
 		const foundUser = await this.userRepository.findByUsername(email).getOne();

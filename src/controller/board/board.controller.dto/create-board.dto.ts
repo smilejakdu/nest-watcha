@@ -26,9 +26,8 @@ export class CreateBoardDto {
 	})
 	public hashtag: string;
 
-	@IsString()
 	@ApiProperty({
-		example: 'imagePath',
+		example: ['string1','string2'],
 		description: 'imagePath',
 	})
 	public imagePath: string[];

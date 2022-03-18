@@ -30,10 +30,11 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
   }
 
   async insertImages(boardId: number, imagePathList: string[]) {
-    const insertImagePathResult: any[] = [];
+    console.log(boardId);
+    const insertImagePathResult = [];
     if (!isNil(imagePathList)) {
       for (const imagePath of imagePathList) {
-        insertImagePathResult.push({ BoardId: boardId, imagePath: imagePath });
+        insertImagePathResult.push({ boardId: boardId, imagePath: imagePath });
       }
       const result = await this.makeQueryBuilder()
         .insert()

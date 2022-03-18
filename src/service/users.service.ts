@@ -27,7 +27,7 @@ export class UsersService {
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByUsername(username).getOne();
+		const foundUser = await this.userRepository.findByUsername(email).getOne();
 		if (foundUser) {
 			return {
 				ok: false,
@@ -66,13 +66,13 @@ export class UsersService {
 	}
 
 	async logIn(logInDto:LoginRequestDto) {
-		const {username ,password}= logInDto;
-		const foundUser = await this.userRepository.findByUsername(username).getOne();
+		const {email ,password}= logInDto;
+		const foundUser = await this.userRepository.findByUsername(email).getOne();
 		if (isNil(foundUser)) {
 			return {
 				ok: false,
-				statusCode: HttpStatus.BAD_REQUEST,
-				message: '해당하는 유저를 찾을 수 없습니다.'
+				statusCode: HttpStatus.NOT_FOUND,
+				message: 'does not found user'
 			};
 		}
 

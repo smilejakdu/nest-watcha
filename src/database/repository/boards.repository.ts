@@ -34,6 +34,7 @@ export class BoardsRepository extends Repository<BoardsEntity>{
   findMyBoard(userId:number){
     return this.findAllBoards()
       .innerJoin('boards.User','user')
+      .leftJoin('')
       .where('boards.userId =:userId',{userId});
   }
 

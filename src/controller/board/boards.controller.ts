@@ -10,6 +10,7 @@ import {
 	Put,
 	Query,
 	Req,
+	Res,
 	UseGuards
 } from '@nestjs/common';
 import {
@@ -28,6 +29,7 @@ import { BoardImageService } from '../../service/boardImage.service';
 import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
+import { Response } from 'express';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -87,16 +89,24 @@ export class BoardsController {
 	@UseGuards(UserAuthGuard)
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@Req() req:any, @Body() data:CreateBoardDto) {
+	async createBoard(@Req() req:any, @Body() data:CreateBoardDto,@Res() res:Response) {
 		const responseBoard = await this.boardsService.createBoard(data, req.user.id);
 		if(!responseBoard.ok){
 			throw new BadRequestException('게시판만들기 실패하였습니다.');
 		}
-		const responseImage = await this.boardImageService.insertImages(responseBoard.data.id, data.imagePath);
+		const responseImage = await this.boardImageService.insertImages(responseBoard.data, data.imagePath);
 		if(!responseImage.ok){
 			throw new BadRequestException('이미지만들기 실패하였습니다.');
 		}
 		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
+
+		return res.status(responseBoard.statusCode).json({
+			ok:responseBoard.ok,
+			statusCode : responseBoard.statusCode,
+			message : responseBoard.message,
+			data : responseBoard.data,
+		});
+
 	}
 
 	@ApiOkResponse({

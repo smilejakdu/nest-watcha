@@ -21,7 +21,7 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.deletedAt is null');
   }
 
-  findByUsername(username:string) {
+  findByUsername(email:string) {
     return this.findAllUser()
       .select([
         'users.id',
@@ -38,7 +38,7 @@ export class UserRepository extends Repository<UsersEntity> {
         'boards.content',
       ])
       .leftJoin('users.Boards','boards')
-      .where('users.username=:username',{username:username});
+      .where('users.email=:email',{email:email});
     }
 
   findAuthLoginId(id:number, queryRunner?: QueryRunner) {
@@ -81,7 +81,7 @@ export class UserRepository extends Repository<UsersEntity> {
         .execute();
       });
     delete createUser.password;
-    return createUser;
+    return createUser.raw.insertId;
   }
 
   removeUser(id: number, queryRunner?: QueryRunner) {

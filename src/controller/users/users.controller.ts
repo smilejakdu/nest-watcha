@@ -28,7 +28,9 @@ export const BAD_REQUEST = 'bad request';
 @ApiTags('USER')
 @Controller('users')
 export class UsersController {
-	constructor(private usersService: UsersService) {}
+	constructor(
+		private readonly usersService: UsersService
+	) {}
 
 	@ApiOkResponse({
 		description: 'success',
@@ -76,8 +78,17 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async myProfile(@Req() req:any) {
+	async findMyProfile(@Req() req:any) {
 		const {email} = req.user;
 		return await this.usersService.findByUsername(email);
+	}
+
+	@ApiOperation({ summary: 'my_boards' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(UserAuthGuard)
+	@Get('my_boards')
+	async findMyBoards(@Req() req:any) {
+		const {email} = req.user;
+		return await this.usersService.findMyBoards(email);
 	}
 }

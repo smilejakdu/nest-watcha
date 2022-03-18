@@ -21,6 +21,33 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.deletedAt is null');
   }
 
+  findMyBoard(email:string) {
+    return this.makeQueryBuilder()
+      .select([
+        'boards.id',
+        'boards.title',
+        'boards.content',
+        'boards.updatedAt',
+      ])
+      .addSelect([
+        'users.username',
+        'users.email',
+      ])
+      .addSelect([
+        'images.id',
+        'images.imagePath'
+      ])
+      .addSelect([
+        'comments.id',
+        'comments.content',
+        'comments.updatedAt',
+      ])
+      .innerJoin('users.Boards','boards')
+      .innerJoin('boards.Images','images')
+      .leftJoin('boards.Comments','comments')
+      .where('users.email =:email',{email});
+  }
+
   findByUsername(email:string) {
     return this.findAllUser()
       .select([

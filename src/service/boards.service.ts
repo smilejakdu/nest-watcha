@@ -23,24 +23,14 @@ export class BoardsService {
 	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
 		const skip = Number((pagination.page - 1) * pagination.limit);
 		const foundAllBoards = await this.boardsRepository.findAllBoards()
-			.offset(skip)
-			.limit(pagination.limit)
+			.skip(skip)
+			.take(pagination.limit)
 			.getMany();
 		return {
 			ok : !isNil(foundAllBoards),
 			statusCode :!isNil(foundAllBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
 			message: !isNil(foundAllBoards) ?'SUCCESS': 'BAD_REQUEST',
 			data:!isNil(foundAllBoards) ? foundAllBoards : [],
-		};
-	}
-
-	async findMyBoard(userId: number):Promise<CoreResponse> {
-		const foundMyBoard = await this.boardsRepository.findMyBoard(userId).getMany();
-		return {
-			ok : !isNil(foundMyBoard),
-			statusCode :!isNil(foundMyBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(foundMyBoard) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(foundMyBoard) ? foundMyBoard : null,
 		};
 	}
 

@@ -71,17 +71,6 @@ export class BoardsController {
 		return this.boardsService.findAllBoards(pagination);
 	}
 
-	@ApiOkResponse({
-		description: '성공',
-		type: CreateBoardDto,
-	})
-	@UseGuards(UserAuthGuard)
-	@ApiOperation({ summary: '내 게시판가져오기' })
-	@Get('my_board')
-	async getMyBoards(@Req() req:any) {
-		return await this.boardsService.findMyBoard(req.user.id);
-	}
-
 	@ApiCreatedResponse({
 		description: '성공',
 		type: CreateBoardDto,

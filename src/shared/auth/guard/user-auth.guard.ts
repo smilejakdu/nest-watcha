@@ -49,7 +49,7 @@ export class UserAuthGuard implements CanActivate {
         httpOnly: true,
         secure: true,
       });
-      throw new HttpException('찾을 수 없는 고객 데이터입니다.', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('does not found users.', HttpStatus.UNAUTHORIZED);
     }
     req.user = userData;
 

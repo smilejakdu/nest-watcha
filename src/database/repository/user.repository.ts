@@ -37,7 +37,12 @@ export class UserRepository extends Repository<UsersEntity> {
         'boards.title',
         'boards.content',
       ])
+      .addSelect([
+        'images.id',
+        'images.imagePath'
+      ])
       .leftJoin('users.Boards','boards')
+      .innerJoin('boards.Images','images')
       .where('users.email=:email',{email:email});
     }
 

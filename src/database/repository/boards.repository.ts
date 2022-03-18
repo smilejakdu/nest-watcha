@@ -1,6 +1,5 @@
 import { BoardsEntity } from '../entities/boards.entity';
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { Pagination } from '../../shared/pagination';
 
 @EntityRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -21,25 +20,28 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return createdBoard.raw.insertId;
   }
 
+  findAllBoards(){
+    return this.makeQueryBuilder()
+      .innerJoin('boards.Images','images');
+  }
+
   findAllBoardsWithUser(){
-    return this.findAllBoards()
+    return this.makeQueryBuilder()
       .leftJoin('boards.User', 'user');
   }
 
-  findAllBoards(pagination?:Pagination){
+  findMyBoard(userId:number) {
     return this.makeQueryBuilder()
-      .where('boards.deletedAt is null');
-  }
-
-  findMyBoard(userId:number){
-    return this.findAllBoards()
-      .innerJoin('boards.User','user')
-      .leftJoin('')
+      .addSelect([
+        'images.id',
+        'images.imagePath'
+      ])
+      .innerJoin('boards.Images','images')
       .where('boards.userId =:userId',{userId});
   }
 
    findById(boardId:number){
-    return this.findAllBoards()
+    return this.makeQueryBuilder()
       .where('boards.id=:id',{id:boardId});
   }
 

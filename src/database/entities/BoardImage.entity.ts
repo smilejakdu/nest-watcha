@@ -18,7 +18,9 @@ export class BoardImageEntity extends CoreEntity {
 	@Column('int', { name: 'boardId', nullable: true })
 	boardId: number;
 
-	@ManyToOne(() => BoardsEntity, boards => boards.Images, {
+	@ManyToOne(
+		() => BoardsEntity,
+			boards => boards.Images, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})

@@ -72,12 +72,12 @@ export class UsersController {
 		});
 	}
 
-	@ApiOperation({ summary: '로그아웃' })
+	@ApiOperation({ summary: 'profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async myProfile(@Req() req:any) {
-		const {username} = req.user;
-		return await this.usersService.findByUsername(username);
+		const {email} = req.user;
+		return await this.usersService.findByUsername(email);
 	}
 }

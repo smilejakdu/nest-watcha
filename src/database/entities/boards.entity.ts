@@ -28,7 +28,7 @@ export class BoardsEntity extends CoreEntity {
 	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: UsersEntity;
 
-	@OneToMany(() => BoardImageEntity, boardImage => boardImage.imagePath)
+	@OneToMany(() => BoardImageEntity, boardImage => boardImage.Board)
 	Images: BoardImageEntity[];
 
 	@OneToMany(() => CommentsEntity, comments => comments.Board)

@@ -47,7 +47,14 @@ export class UsersController {
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto,@Res() res:Response) {
-		return await this.usersService.signUp(data);
+		const result = await this.usersService.signUp(data);
+		console.log('result:',result);
+		return res.status(result.statusCode).json({
+			ok : result.ok,
+			statusCode : result.statusCode,
+			message : result.message,
+			data : result.data,
+		});
 	}
 
 	@ApiOkResponse({
@@ -57,7 +64,7 @@ export class UsersController {
 	@ApiOperation({ summary: '로그인' })
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
-		return  await this.usersService.logIn(data);
+		return await this.usersService.logIn(data);
 	}
 
 	@ApiOperation({ summary: '로그아웃' })

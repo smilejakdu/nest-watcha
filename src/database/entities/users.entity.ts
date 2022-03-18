@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -17,6 +17,7 @@ export enum LoginType {
 }
 
 @Entity({ schema: 'nest_watcha', name: 'users' })
+@Unique('email', ['email'])
 export class UsersEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
@@ -35,6 +36,15 @@ export class UsersEntity extends CoreEntity {
 	})
 	@Column('varchar', { name: 'email', length: 150 })
 	email: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		example: '1111111111',
+		description: 'phone',
+	})
+	@Column('varchar', { name: 'phone', length: 200 })
+	phone: string;
 
 	@IsString()
 	@IsNotEmpty()

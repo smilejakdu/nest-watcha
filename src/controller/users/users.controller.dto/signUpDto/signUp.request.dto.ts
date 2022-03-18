@@ -35,7 +35,6 @@ export class SignUpRequestDto {
 	public phone: string;
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'kakao_auth_id',
 		description: 'kakao_auth_id',
@@ -43,7 +42,6 @@ export class SignUpRequestDto {
 	public kakao_auth_id?: string;
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'naver_auth_id',
 		description: 'naver_auth_id',
@@ -51,7 +49,6 @@ export class SignUpRequestDto {
 	public naver_auth_id?: string;
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'google_auth_id',
 		description: 'google_auth_id',

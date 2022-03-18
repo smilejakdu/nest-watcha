@@ -25,17 +25,18 @@ export class UsersService {
 		};
 	}
 
-	async signUp(signUpDto: SignUpRequestDto) {
+	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
 		const foundUser = await this.userRepository.findByUsername(username).getOne();
-		if (isNil(foundUser)) {
+		if (foundUser) {
 			return {
 				ok: false,
 				statusCode: HttpStatus.BAD_REQUEST,
-				message: '해당하는 유저를 찾을 수 없습니다.'
+				message: 'exist user',
+				data:[],
 			};
 		}
-		const responseCreatedUser = await this.userRepository.createUser(foundUser);
+		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
 		return {
 			ok: true,
 			statusCode: HttpStatus.CREATED,

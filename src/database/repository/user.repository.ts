@@ -38,7 +38,7 @@ export class UserRepository extends Repository<UsersEntity> {
         'boards.content',
       ])
       .leftJoin('users.Boards','boards')
-      .where('users.username=:username',{username});
+      .where('users.username=:username',{username:username});
     }
 
   findAuthLoginId(id:number, queryRunner?: QueryRunner) {
@@ -72,6 +72,11 @@ export class UserRepository extends Repository<UsersEntity> {
         .values({
           username:newUser.username,
           password:hashedPassword,
+          email:newUser.email,
+          phone:newUser.phone,
+          kakao_auth_id:newUser.kakao_auth_id,
+          naver_auth_id:newUser.naver_auth_id,
+          google_auth_id:newUser.google_auth_id
         })
         .execute();
       });

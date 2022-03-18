@@ -16,10 +16,24 @@ export class MovieRepository extends Repository<MovieEntity>{
     return createdMovie.raw.insertId;
   }
 
-  async findAll(queryRunner?: QueryRunner) {
-    return await this.makeQueryBuilder(queryRunner)
-      .where('movie.deletedAt is NULL')
-      .getMany();
+  findAll(queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
+      .addSelect([
+        'subMovieImage.id',
+        'subMovieImage.imageString',
+        'subMovieImage.updatedAt',
+      ])
+      .addSelect([
+        'subMovieImage.id',
+        'subMovieImage.imageString',
+        'subMovieImage.updatedAt',
+      ])
+      .addSelect([
+        'genremovie.id'
+      ])
+      .innerJoin('movie.Genremovie','genremovie')
+      .innerJoinAndSelect('genremovie.Genre','genre')
+      .leftJoin('movie.subMovieImage','subMovieImage');
   }
 
   async findOneById(id:number){

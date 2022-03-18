@@ -22,8 +22,14 @@ export class MoviesService{
     };
   }
 
-  async findAllMovie() {
-    const foundAllMovie = await this.movieRepository.findAll();
+  async findAllMovie(pagination) {
+    const skip = Number((pagination.page - 1) * pagination.limit);
+    const foundAllMovie = await this.movieRepository
+      .findAll()
+      .skip(skip)
+      .take(pagination.limit)
+      .getMany();
+
     return {
       ok : !isNil(foundAllMovie),
       statusCode :!isNil(foundAllMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,

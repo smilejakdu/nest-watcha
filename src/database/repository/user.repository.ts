@@ -48,7 +48,7 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.email =:email',{email});
   }
 
-  findByUsername(email:string) {
+  findByEmail(email:string) {
     return this.findAllUser()
       .select([
         'users.id',

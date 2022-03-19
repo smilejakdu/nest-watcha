@@ -8,12 +8,12 @@ import { GenreMovieRepository } from '../database/repository/genreMovie.reposito
 @Injectable()
 export class MoviesService{
   constructor(
-    private readonly movieRepository:MovieRepository,
+    private readonly movieRepository: MovieRepository,
     private readonly genreMovieRepository : GenreMovieRepository,
   ) {}
 
   async createMovie(createMovieDto) {
-    const createdMovie:number = await this.movieRepository.createMovie(createMovieDto);
+    const createdMovie = await this.movieRepository.createMovie(createMovieDto);
     return {
       ok : !isNil(createdMovie),
       statusCode :!isNil(createdMovie) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
@@ -23,7 +23,7 @@ export class MoviesService{
   }
 
   async findAllMovie() {
-    const foundAllMovie = await this.movieRepository.findAll();
+    const foundAllMovie = await this.movieRepository.findAll().getMany();
     return {
       ok : !isNil(foundAllMovie),
       statusCode :!isNil(foundAllMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
@@ -33,7 +33,7 @@ export class MoviesService{
   }
 
   async findOneById(id:number): Promise<CoreResponse> {
-    const foundOneMovie = await this.movieRepository.findOneById(id);
+    const foundOneMovie = await this.movieRepository.findOneById(id).getOne();
     return {
       ok : !isNil(foundOneMovie),
       statusCode :!isNil(foundOneMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
@@ -44,12 +44,21 @@ export class MoviesService{
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
-    console.log('updatedMovie:',updatedMovie);
     return {
       ok : !isNil(updatedMovie),
       statusCode :!isNil(updatedMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
       message: !isNil(updatedMovie) ?'SUCCESS': 'BAD_REQUEST',
       data:!isNil(updatedMovie) ? updatedMovie : null,
+    };
+  }
+
+  async deleteMovieById(ids:number[],queryRunner?: QueryRunner) {
+    const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
+    return {
+      ok : !isNil(deletedMovie),
+      statusCode :!isNil(deletedMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
+      message: !isNil(deletedMovie) ?'SUCCESS': 'BAD_REQUEST',
+      data:!isNil(deletedMovie) ? deletedMovie : null,
     };
   }
 }

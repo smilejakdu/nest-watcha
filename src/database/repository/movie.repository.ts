@@ -8,43 +8,37 @@ export class MovieRepository extends Repository<MovieEntity>{
     return this.createQueryBuilder('movie', queryRunner);
   }
 
-  async createMovie(createMovieDto:CreateMovieDto):Promise<number> {
-    const createdMovie = await this.makeQueryBuilder()
-      .insert()
-      .values(createMovieDto)
-      .execute();
-    return createdMovie.raw.insertId;
-  }
-
-  async findAll(queryRunner?: QueryRunner) {
-    return await this.makeQueryBuilder(queryRunner)
-      .where('movie.deletedAt is NULL')
-      .getMany();
-  }
-
-  async findOneById(id:number){
+  async createMovie(createMovieDto:CreateMovieDto) {
     return await this.makeQueryBuilder()
+      .insert()
+      .values(createMovieDto).execute();
+  }
+
+  findAll(queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
+      .where('movie.deletedAt is NULL');
+  }
+
+  findOneById(id:number) {
+    return this.makeQueryBuilder()
       .leftJoinAndSelect('movie.subImage','subImage')
       .where('movie.id=:id ', {id:id})
-      .andWhere('movie.deletedAt is null')
-      .getOne();
+      .andWhere('movie.deletedAt is null');
   }
 
-  async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    const updatedMovie =  await this.makeQueryBuilder(queryRunner)
+  updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)
       .set(set)
       .where('movies.id in (:ids)', { ids })
       .execute();
-    return updatedMovie.raw.insertId;
   }
 
-  async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
-    const deletedMovie = await this.makeQueryBuilder(queryRunner)
+  deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
       .softDelete()
       .from(MovieEntity)
       .where('movie.id in (:ids) ', {ids})
       .execute();
-    return deletedMovie.raw.insertId;
   }
 }

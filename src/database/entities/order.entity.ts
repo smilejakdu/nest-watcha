@@ -1,6 +1,6 @@
 import { CoreEntity } from './core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { UsersEntity } from './users.entity';
 
 export enum OrderStatus {
@@ -17,6 +17,7 @@ export enum OrderStatus {
 }
 
 @Entity({ schema: 'nest_watcha', name: 'orders' })
+@Index(['order_number'])
 export class OrderEntity extends CoreEntity{
   @IsString()
   @IsNotEmpty()

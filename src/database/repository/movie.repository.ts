@@ -36,29 +36,31 @@ export class MovieRepository extends Repository<MovieEntity>{
       .leftJoin('movie.subMovieImage','subMovieImage');
   }
 
-  async findOneById(id:number){
-    return await this.makeQueryBuilder()
-      .leftJoinAndSelect('movie.subImage','subImage')
-      .where('movie.id=:id ', {id:id})
-      .andWhere('movie.deletedAt is null')
-      .getOne();
+  findAll(queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
+      .where('movie.deletedAt is NULL');
   }
 
-  async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    const updatedMovie =  await this.makeQueryBuilder(queryRunner)
+  findOneById(id:number) {
+    return this.makeQueryBuilder()
+      .leftJoinAndSelect('movie.subImage','subImage')
+      .where('movie.id=:id ', {id:id})
+      .andWhere('movie.deletedAt is null');
+  }
+
+  updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)
       .set(set)
       .where('movies.id in (:ids)', { ids })
       .execute();
-    return updatedMovie.raw.insertId;
   }
 
-  async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
-    const deletedMovie = await this.makeQueryBuilder(queryRunner)
+  deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
+    return this.makeQueryBuilder(queryRunner)
       .softDelete()
       .from(MovieEntity)
       .where('movie.id in (:ids) ', {ids})
       .execute();
-    return deletedMovie.raw.insertId;
   }
 }

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
@@ -14,18 +14,21 @@ export class UsersService {
 		private readonly userRepository: UserRepository,
 	) {}
 
-	async findByUsername(username: string): Promise<CoreResponse> {
-		const foundUser = await this.userRepository.findByUsername(username).getOne();
+	async findByEmail(email: string): Promise<CoreResponse> {
+		const foundUser = await this.userRepository.findByEmail(email).getOne();
+		if(!foundUser){
+			throw new NotFoundException(`해당하는 유저를 찾을 수 없습니다 ${email}`);
+		}
 		const {password , ...userData} = foundUser;
 		return {
-			ok: !isNil(foundUser),
-			statusCode: !isNil(foundUser) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(foundUser) ? 'SUCCESS' : 'BAD_REQUEST',
-			data: !isNil(foundUser) ? userData : null,
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: foundUser,
 		};
 	}
 
-	async findMyBoards(email:string){
+	async findMyBoards(email:string) {
 		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
 		return {
 			ok: !isNil(foundMyBoards),
@@ -33,12 +36,11 @@ export class UsersService {
 			message: !isNil(foundMyBoards) ? 'SUCCESS' : 'NOT_FOUND',
 			data: !isNil(foundMyBoards) ? foundMyBoards : [],
 		};
-
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByUsername(email).getOne();
+		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (foundUser) {
 			return {
 				ok: false,
@@ -78,7 +80,7 @@ export class UsersService {
 
 	async logIn(logInDto:LoginRequestDto) {
 		const {email ,password}= logInDto;
-		const foundUser = await this.userRepository.findByUsername(email).getOne();
+		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (isNil(foundUser)) {
 			return {
 				ok: false,

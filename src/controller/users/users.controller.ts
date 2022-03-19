@@ -39,8 +39,8 @@ export class UsersController {
 	@ApiOperation({ summary: '회원검색' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
-	async findByUsername(@Body() data: UserFindRequestDto) {
-		return await this.usersService.findByUsername(data.username);
+	async findByEmail(@Body() data: UserFindRequestDto) {
+		return await this.usersService.findByEmail(data.email);
 	}
 
 	@ApiCreatedResponse({
@@ -80,7 +80,7 @@ export class UsersController {
 	@Get('profile')
 	async findMyProfile(@Req() req:any) {
 		const {email} = req.user;
-		return await this.usersService.findByUsername(email);
+		return await this.usersService.findByEmail(email);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })

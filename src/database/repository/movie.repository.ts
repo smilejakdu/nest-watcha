@@ -36,11 +36,6 @@ export class MovieRepository extends Repository<MovieEntity>{
       .leftJoin('movie.subMovieImage','subMovieImage');
   }
 
-  findAll(queryRunner?: QueryRunner) {
-    return this.makeQueryBuilder(queryRunner)
-      .where('movie.deletedAt is NULL');
-  }
-
   findOneById(id:number) {
     return this.makeQueryBuilder()
       .leftJoinAndSelect('movie.subImage','subImage')

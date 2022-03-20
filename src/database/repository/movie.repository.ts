@@ -8,12 +8,11 @@ export class MovieRepository extends Repository<MovieEntity>{
     return this.createQueryBuilder('movie', queryRunner);
   }
 
-  async createMovie(createMovieDto:CreateMovieDto):Promise<number> {
-    const createdMovie = await this.makeQueryBuilder()
+  async createMovie(createMovieDto:CreateMovieDto) {
+    return await this.makeQueryBuilder()
       .insert()
       .values(createMovieDto)
       .execute();
-    return createdMovie.raw.insertId;
   }
 
   findAll(queryRunner?: QueryRunner) {

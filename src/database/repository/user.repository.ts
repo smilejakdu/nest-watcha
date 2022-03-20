@@ -3,6 +3,7 @@ import { LoginType, UsersEntity } from '../entities/users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
+import * as Jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 @EntityRepository(UsersEntity)
@@ -12,13 +13,8 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   findOneUserById(id:number) {
-    return this.findAllUser()
-      .where('users.id=:id ', {id});
-  }
-
-  findAllUser(){
     return this.makeQueryBuilder()
-      .where('users.deletedAt is null');
+      .where('users.id=:id ', {id});
   }
 
   findMyBoard(email:string) {
@@ -49,7 +45,7 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   findByEmail(email:string) {
-    return this.findAllUser()
+    return this.makeQueryBuilder()
       .select([
         'users.id',
         'users.email',
@@ -74,14 +70,27 @@ export class UserRepository extends Repository<UsersEntity> {
     }
 
   findAuthLoginId(id:number, queryRunner?: QueryRunner) {
-    return this.findAllUser()
+    return this.makeQueryBuilder()
       .select(['users.id', 'users.username' , 'users.status'])
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
   }
 
+  findUserById(id: number) {
+    return this.makeQueryBuilder()
+      .where('users.id = :id', { id })
+      .addSelect(['users.kakaoAuthId', 'users.appleAuthId', 'users.naverAuthId']);
+  }
+
+  getToken(user_auth: any) {
+    const payload = {sub: user_auth};
+    const jwt = Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
+    return jwt;
+  }
+
   async findAuthId(id, type, queryRunner?: QueryRunner) {
     let foundUserAuth = this.makeQueryBuilder(queryRunner)
-      .select(['users.id', 'users.status','users.username']);
+      .innerJoinAndSelect('users.Boards', 'boards')
+      .innerJoinAndSelect('users.Orders', 'orders');
     if (type == LoginType.NAVER) {
       foundUserAuth = foundUserAuth.where('users.naver_auth_id = :id', {id});
     } else if (type == LoginType.KAKAO) {
@@ -123,14 +132,15 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async kakaoCallback(query: any, redirectURI: string): Promise<any> {
-    const client_id = process.env.AUTH_KAKAO_CLIENT_ID;
+    const KAKAO_CLIENT_Id = process.env.AUTH_KAKAO_CLIENT_ID;
     const url = 'https://kauth.kakao.com/oauth/token';
+
     if (!query.code) {
       throw new HttpException('올바르지 않은 로그인 url입니다.', 400);
     }
     const data = {
       grant_type: 'authorization_code',
-      client_id: client_id,
+      client_id: KAKAO_CLIENT_Id,
       redirect_uri: redirectURI,
       code: query.code,
     };
@@ -138,7 +148,6 @@ export class UserRepository extends Repository<UsersEntity> {
     await axios.post(url, data , {
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     }).then(res=> {
-      console.log(res);
       responseToken = {res:res};
     })
     .catch(error=> {
@@ -167,20 +176,5 @@ export class UserRepository extends Repository<UsersEntity> {
                                         HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return profileResponse.res.data;
-  }
-
-  async checkRegister(query, type, origin) {
-    let user_auth;
-    let login_result;
-
-    if (type == LoginType.KAKAO) {
-      login_result = await this.kakaoCallback(query, `${origin}/auth/kakao/callback`);
-      user_auth = this.findAuthId(login_result.id,LoginType.KAKAO);
-    }
-
-    return {
-      user_auth: user_auth,
-      login_result: login_result
-    };
   }
 }

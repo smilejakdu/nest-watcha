@@ -1,5 +1,5 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -17,6 +17,7 @@ import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { LoginType } from '../../database/entities/users.entity';
 
 export const BAD_REQUEST = 'bad request';
 
@@ -39,8 +40,14 @@ export class UsersController {
 	@ApiOperation({ summary: '회원검색' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('findUser')
-	async findByEmail(@Body() data: UserFindRequestDto) {
-		return await this.usersService.findByEmail(data.email);
+	async findByEmail(@Body() data: UserFindRequestDto, @Res() res:Response) {
+		const responseUserByEmail = await this.usersService.findByEmail(data.email);
+		return res.status(responseUserByEmail.statusCode).json({
+			ok : responseUserByEmail.ok,
+			statusCode : responseUserByEmail.statusCode,
+			message : responseUserByEmail.message,
+			data : responseUserByEmail.data,
+		});
 	}
 
 	@ApiCreatedResponse({
@@ -48,7 +55,7 @@ export class UsersController {
 	})
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
-	async signUp(@Body() data: SignUpRequestDto,@Res() res:Response) {
+	async signUp(@Body() data: SignUpRequestDto, @Res() res:Response) {
 		const  responseSignUp = await this.usersService.signUp(data);
 		return res.status(responseSignUp.statusCode).json({
 			ok : responseSignUp.ok,
@@ -58,13 +65,14 @@ export class UsersController {
 		});
 	}
 
+	@ApiOperation({ summary: 'login' })
 	@ApiOkResponse({
 		description: 'success',
 		type: LoginResponseDto,
 	})
-	@ApiOperation({ summary: 'login' })
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
+		console.log(data);
 		const responseLogin =  await this.usersService.logIn(data);
 		return res.status(responseLogin.statusCode).json({
 			ok : responseLogin.ok,
@@ -90,5 +98,25 @@ export class UsersController {
 	async findMyBoards(@Req() req:any) {
 		const {email} = req.user;
 		return await this.usersService.findMyBoards(email);
+	}
+
+	@ApiOperation({ summary: 'kakao_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@Get('/kakao/callback')
+	async kakaoCallback(@Query() query: any, @Req() req: any, @Res() res: Response) {
+		console.log(req.headers.origin);
+		const data:{user_auth: any, login_result: any} =
+			await this.usersService.checkRegister(query , LoginType.KAKAO , req.headers.origin);
+		const userId = data.user_auth?.user?.id;
+		console.log('userId:',userId);
+		if (!data.user_auth) {
+			const result = await this.usersService.socialSignUp(data, LoginType.KAKAO);
+			console.log('result:',result);
+			// const reuslt = await this.socialSignUp(data.login_result, LoginType.KAKAO);
+			// userId = reuslt.data.user.id;
+		}
+		// const user = await this.usersService.findByEmail();
+		// const user = await this.userService.findUserProfile(userId);
+		// return this.createToken(user, req.headers.origin, res);
 	}
 }

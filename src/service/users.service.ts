@@ -7,6 +7,7 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcrypt';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
+import { LoginType } from '../database/entities/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,19 @@ export class UsersService {
 			statusCode: HttpStatus.OK,
 			message: 'SUCCESS',
 			data: foundUser,
+		};
+	}
+
+	async findById(id:number){
+		const foundUser= await this.userRepository.findUserById(id).getOne();
+		if (!foundUser) {
+			throw new NotFoundException(`does not found user :${id}`);
+		}
+
+		const accessToken = await this.userRepository.getToken({id:foundUser.id});
+		return {
+			...foundUser,
+			accessToken,
 		};
 	}
 
@@ -58,6 +72,18 @@ export class UsersService {
 		};
 	}
 
+	async socialSignUp(data:any , loginType : LoginType) {
+		console.log(data);
+		console.log(loginType);
+		// const responseCreateUser = await this.userRepository.createUser();
+		// return {
+		// 	ok: true,
+		// 	statusCode: HttpStatus.CREATED,
+		// 	message: 'SUCCESS',
+		// 	data: responseCreateUser,
+		// };
+	}
+
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
 		return {
@@ -75,6 +101,21 @@ export class UsersService {
 			statusCode: !isNil(foundUserAuthId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
 			message: !isNil(foundUserAuthId) ? 'SUCCESS' : 'BAD_REQUEST',
 			data: !isNil(foundUserAuthId) ? foundUserAuthId : null,
+		};
+	}
+
+	async checkRegister(query ,loginType:string, origin:any) {
+		let foundUserByAuthId;
+		let login_result;
+
+		if (loginType == LoginType.KAKAO) {
+			login_result = await this.userRepository.kakaoCallback(query, `${origin}/auth/kakao/callback`);
+			foundUserByAuthId = this.findAuthId(login_result.id,LoginType.KAKAO);
+		}
+
+		return {
+			user_auth: foundUserByAuthId,
+			login_result: login_result
 		};
 	}
 

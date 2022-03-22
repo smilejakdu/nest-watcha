@@ -106,12 +106,16 @@ export class UsersController {
 	async kakaoCallback(@Req() req: any, @Res() res: Response) {
 		const data:{foundUser: any, kakaoUserData: any} =
 			await this.usersService.checkRegister(LoginType.KAKAO , req.headers.access_token);
-		console.log('data.foundUser:',data);
-		let userId = data.foundUser?.user?.id;
+		let userId = data.foundUser?.id;
 		if (!data.foundUser) {
 			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
 			userId = result.data;
 		}
-		return await this.usersService.findById(userId);
+		const foundUser =  await this.usersService.findById(userId);
+		const accessToken = await this.usersService.createToken(foundUser,res);
+		return {
+			foundUser,
+			accessToken
+		};
 	}
 }

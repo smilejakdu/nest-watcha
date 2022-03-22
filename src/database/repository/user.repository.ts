@@ -78,7 +78,7 @@ export class UserRepository extends Repository<UsersEntity> {
   findUserById(id: number) {
     return this.makeQueryBuilder()
       .where('users.id = :id', { id })
-      .addSelect(['users.kakaoAuthId', 'users.appleAuthId', 'users.naverAuthId']);
+      .addSelect(['users.kakao_auth_id', 'users.google_auth_id', 'users.naver_auth_id']);
   }
 
   getToken(user_auth: any) {
@@ -144,11 +144,10 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async kakaoCallback(tokenString:string): Promise<any> {
-    const responseToken = 'YaVW_OZZe5qPPn20Ja0dJFpz8oiQ5QQFSDMLlAo9c-sAAAF_sWqeeA';
     const get_profile_url = 'https://kapi.kakao.com/v2/user/me';
 
     const getProfileHeaders = {
-      Authorization: `Bearer ${responseToken}`,
+      Authorization: `Bearer ${tokenString}`,
     };
 
     let profileResponse;

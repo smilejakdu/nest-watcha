@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
@@ -25,20 +25,20 @@ export class UsersService {
 			ok: true,
 			statusCode: HttpStatus.OK,
 			message: 'SUCCESS',
-			data: foundUser,
+			data: userData,
 		};
 	}
 
 	async findById(id:number) {
-		const foundUser= await this.userRepository.findUserById(id).getOne();
+		const foundUser = await this.userRepository.findUserById(id).getOne();
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
-
-		const accessToken = await this.userRepository.getToken({id:foundUser.id});
 		return {
-			...foundUser,
-			accessToken,
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: foundUser,
 		};
 	}
 
@@ -56,12 +56,7 @@ export class UsersService {
 		const { password, username, email, phone } = signUpDto;
 		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (foundUser) {
-			return {
-				ok: false,
-				statusCode: HttpStatus.BAD_REQUEST,
-				message: 'exist user',
-				data:[],
-			};
+			throw new BadRequestException('exsit user');
 		}
 		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
 		return {
@@ -84,7 +79,6 @@ export class UsersService {
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
-		console.log('foundUserByAuthId:',foundUserByAuthId);
 		return {
 			ok: true,
 			statusCode: HttpStatus.OK,
@@ -109,7 +103,6 @@ export class UsersService {
 
 		if (loginType === LoginType.KAKAO) {
 			kakaoUserData = await this.userRepository.kakaoCallback(tokenString);
-			console.log('kakaoUserData:',kakaoUserData);
 			foundUser = await this.findAuthId(kakaoUserData.id,LoginType.KAKAO);
 		}
 
@@ -165,6 +158,6 @@ export class UsersService {
 			secure: true,
 		});
 
-		res.json(user);
+		return res.json(user);
 	}
 }

@@ -1,5 +1,5 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -103,20 +103,15 @@ export class UsersController {
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakao/callback')
-	async kakaoCallback(@Query() query: any, @Req() req: any, @Res() res: Response) {
-		console.log(req.headers.origin);
-		const data:{user_auth: any, login_result: any} =
-			await this.usersService.checkRegister(query , LoginType.KAKAO , req.headers.origin);
-		const userId = data.user_auth?.user?.id;
-		console.log('userId:',userId);
-		if (!data.user_auth) {
-			const result = await this.usersService.socialSignUp(data, LoginType.KAKAO);
-			console.log('result:',result);
-			// const reuslt = await this.socialSignUp(data.login_result, LoginType.KAKAO);
-			// userId = reuslt.data.user.id;
+	async kakaoCallback(@Req() req: any, @Res() res: Response) {
+		const data:{foundUser: any, kakaoUserData: any} =
+			await this.usersService.checkRegister(LoginType.KAKAO , req.headers.access_token);
+		console.log('data.foundUser:',data);
+		let userId = data.foundUser?.user?.id;
+		if (!data.foundUser) {
+			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
+			userId = result.data;
 		}
-		// const user = await this.usersService.findByEmail();
-		// const user = await this.userService.findUserProfile(userId);
-		// return this.createToken(user, req.headers.origin, res);
+		return await this.usersService.findById(userId);
 	}
 }

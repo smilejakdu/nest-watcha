@@ -38,12 +38,11 @@ export class UsersEntity extends CoreEntity {
 	email: string;
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: '1111111111',
 		description: 'phone',
 	})
-	@Column('varchar', { name: 'phone', length: 200 })
+	@Column('varchar', { name: 'phone', length: 200, nullable: true })
 	phone: string;
 
 	@IsString()
@@ -52,36 +51,33 @@ export class UsersEntity extends CoreEntity {
 		example: 'password',
 		description: 'password',
 	})
-	@Column('varchar', { name: 'password', length: 150 }) // select: false 하면 password 빼고 불러온다.
+	@Column('varchar', { name: 'password', length: 150, nullable: true }) // select: false 하면 password 빼고 불러온다.
 	password: string;
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash@kakao.com',
 		description: 'kakao_auth_id',
 	})
-	@Column('varchar', { name: 'kakao_auth_id', length: 150 })
+	@Column('varchar', { name: 'kakao_auth_id', length: 150, nullable: true })
 	kakao_auth_id: string;
 
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash@naver.com',
 		description: 'naver_auth_id',
 	})
-	@Column('varchar', { name: 'naver_auth_id', length: 150 })
+	@Column('varchar', { name: 'naver_auth_id', length: 150, nullable: true })
 	naver_auth_id: string;
 
 
 	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash@gmail.com',
 		description: 'google_auth_id',
 	})
-	@Column('varchar', { name: 'google_auth_id', length: 150 })
+	@Column('varchar', { name: 'google_auth_id', length: 150, nullable: true })
 	google_auth_id: string;
 
 	@OneToMany(() => BoardsEntity, boards => boards.User)

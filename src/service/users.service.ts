@@ -29,7 +29,7 @@ export class UsersService {
 		};
 	}
 
-	async findById(id:number){
+	async findById(id:number) {
 		const foundUser= await this.userRepository.findUserById(id).getOne();
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
@@ -73,49 +73,49 @@ export class UsersService {
 	}
 
 	async socialSignUp(data:any , loginType : LoginType) {
-		console.log(data);
-		console.log(loginType);
-		// const responseCreateUser = await this.userRepository.createUser();
-		// return {
-		// 	ok: true,
-		// 	statusCode: HttpStatus.CREATED,
-		// 	message: 'SUCCESS',
-		// 	data: responseCreateUser,
-		// };
+		const responseCreateUser = await this.userRepository.createKakaoUser(data);
+		return {
+			ok: true,
+			statusCode: HttpStatus.CREATED,
+			message: 'SUCCESS',
+			data: responseCreateUser.raw.insertId,
+		};
 	}
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
+		console.log('foundUserByAuthId:',foundUserByAuthId);
 		return {
-			ok: !isNil(foundUserByAuthId),
-			statusCode: !isNil(foundUserByAuthId) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-			message: !isNil(foundUserByAuthId) ? 'SUCCESS' : 'NOT_FOUND',
-			data: !isNil(foundUserByAuthId) ? foundUserByAuthId : null,
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: foundUserByAuthId,
 		};
 	}
 
 	async findAuthLoginId(id:number) {
 		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
 		return {
-			ok: !isNil(foundUserAuthId),
-			statusCode: !isNil(foundUserAuthId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(foundUserAuthId) ? 'SUCCESS' : 'BAD_REQUEST',
-			data: !isNil(foundUserAuthId) ? foundUserAuthId : null,
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: foundUserAuthId,
 		};
 	}
 
-	async checkRegister(query ,loginType:string, origin:any) {
-		let foundUserByAuthId;
-		let login_result;
+	async checkRegister(loginType:string, tokenString:string) {
+		let foundUser;
+		let kakaoUserData;
 
-		if (loginType == LoginType.KAKAO) {
-			login_result = await this.userRepository.kakaoCallback(query, `${origin}/auth/kakao/callback`);
-			foundUserByAuthId = this.findAuthId(login_result.id,LoginType.KAKAO);
+		if (loginType === LoginType.KAKAO) {
+			kakaoUserData = await this.userRepository.kakaoCallback(tokenString);
+			console.log('kakaoUserData:',kakaoUserData);
+			foundUser = await this.findAuthId(kakaoUserData.id,LoginType.KAKAO);
 		}
 
 		return {
-			user_auth: foundUserByAuthId,
-			login_result: login_result
+			foundUser: foundUser.data,
+			kakaoUserData: kakaoUserData
 		};
 	}
 
@@ -154,13 +154,17 @@ export class UsersService {
 		};
 	}
 
-	// async kakaoCallback(){
-	//
-	// }
+	async createToken(user: any, res: any) {
+		const token = await this.userRepository.getToken({id:user.id});
+		user.accessToken = token;
 
-		// async kakaoSignUp(signUpDto :SignUpRequestDto){
-		// 	const createUser = await this.usersRepository.save(signUpDto);
-		// 	delete createUser.password;
-		// 	return createUser;
-		// }
+		res.cookie('accessToken', token, {
+			domain: 'localhost',
+			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+			httpOnly: true,
+			secure: true,
+		});
+
+		res.json(user);
+	}
 }

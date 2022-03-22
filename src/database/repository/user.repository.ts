@@ -87,24 +87,36 @@ export class UserRepository extends Repository<UsersEntity> {
     return jwt;
   }
 
-  async findAuthId(id, type, queryRunner?: QueryRunner) {
-    let foundUserAuth = this.makeQueryBuilder(queryRunner)
-      .innerJoinAndSelect('users.Boards', 'boards')
-      .innerJoinAndSelect('users.Orders', 'orders');
-    if (type == LoginType.NAVER) {
-      foundUserAuth = foundUserAuth.where('users.naver_auth_id = :id', {id});
-    } else if (type == LoginType.KAKAO) {
-      foundUserAuth = foundUserAuth.where('users.kakao_auth_id = :id', {id});
-    } else if (type == LoginType.GOOGLE) {
-      foundUserAuth = foundUserAuth.where('users.google_auth_id = :id', {id});
+  async findAuthId(id:string, type:LoginType) {
+    let foundUserAuth = this.makeQueryBuilder();
+
+    if (type === LoginType.NAVER) {
+      foundUserAuth = foundUserAuth.where('users.naver_auth_id=:id', {id});
+    } else if (type === LoginType.KAKAO) {
+      foundUserAuth = foundUserAuth.where('users.kakao_auth_id=:id', {id});
+    } else if (type === LoginType.GOOGLE) {
+      foundUserAuth = foundUserAuth.where('users.google_auth_id=:id', {id});
     } else {
       return null;
     }
     return foundUserAuth.getOne();
   }
 
-  async createUser(foundUser ,queryRunner?: QueryRunner) {
-    const {password , ...newUser}= foundUser;
+  async createKakaoUser(kakaoUser) {
+    return await transactionRunner(async (queryRunner) => {
+      return await this.makeQueryBuilder()
+        .insert()
+        .values({
+          username:kakaoUser.properties.nickname,
+          email:kakaoUser.kakao_account.email,
+          kakao_auth_id:kakaoUser.id,
+        })
+        .execute();
+    });
+  }
+
+  async createUser(user ,queryRunner?: QueryRunner) {
+    const {password , ...newUser}= user;
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const createUser = await transactionRunner(async (queryRunner) => {
@@ -114,10 +126,10 @@ export class UserRepository extends Repository<UsersEntity> {
           username:newUser.username,
           password:hashedPassword,
           email:newUser.email,
-          phone:newUser.phone,
+          phone:newUser.phone ,
           kakao_auth_id:newUser.kakao_auth_id,
           naver_auth_id:newUser.naver_auth_id,
-          google_auth_id:newUser.google_auth_id
+          google_auth_id:newUser.google_auth_id,
         })
         .execute();
       });
@@ -131,34 +143,12 @@ export class UserRepository extends Repository<UsersEntity> {
       .from(UsersEntity);
   }
 
-  async kakaoCallback(query: any, redirectURI: string): Promise<any> {
-    const KAKAO_CLIENT_Id = process.env.AUTH_KAKAO_CLIENT_ID;
-    const url = 'https://kauth.kakao.com/oauth/token';
-
-    if (!query.code) {
-      throw new HttpException('올바르지 않은 로그인 url입니다.', 400);
-    }
-    const data = {
-      grant_type: 'authorization_code',
-      client_id: KAKAO_CLIENT_Id,
-      redirect_uri: redirectURI,
-      code: query.code,
-    };
-    let responseToken;
-    await axios.post(url, data , {
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    }).then(res=> {
-      responseToken = {res:res};
-    })
-    .catch(error=> {
-      console.log(error);
-    });
-
+  async kakaoCallback(tokenString:string): Promise<any> {
+    const responseToken = 'YaVW_OZZe5qPPn20Ja0dJFpz8oiQ5QQFSDMLlAo9c-sAAAF_sWqeeA';
     const get_profile_url = 'https://kapi.kakao.com/v2/user/me';
 
     const getProfileHeaders = {
-      // Authorization: `Bearer ${token_res.data.access_token}`,
-      Authorization: `Bearer ${responseToken.res.data.access_token}`,
+      Authorization: `Bearer ${responseToken}`,
     };
 
     let profileResponse;

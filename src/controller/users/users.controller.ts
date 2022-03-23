@@ -87,8 +87,8 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async findMyProfile(@Req() req:any) {
-		const {email} = req.user;
-		return await this.usersService.findByEmail(email);
+		const {id} = req.user;
+		return await this.usersService.findById(id);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })
@@ -111,11 +111,21 @@ export class UsersController {
 			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
 			userId = result.data;
 		}
+
 		const foundUser =  await this.usersService.findById(userId);
-		const accessToken = await this.usersService.createToken(foundUser,res);
-		return {
-			foundUser,
-			accessToken
-		};
+		const accessToken = await this.usersService.createToken(foundUser.data);
+
+		res.cookie('accessToken', accessToken.accessToken, {
+			domain: 'localhost',
+			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+			httpOnly: true,
+			secure: true,
+		});
+		return res.json({
+			ok:foundUser.ok,
+			statusCdoe : foundUser.statusCode,
+			message : foundUser.message,
+			data :foundUser.data,
+		});
 	}
 }

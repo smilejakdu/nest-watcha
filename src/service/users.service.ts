@@ -148,17 +148,9 @@ export class UsersService {
 		};
 	}
 
-	async createToken(user: any, res: any) {
+	async createToken(user: any) {
 		const token = await this.userRepository.getToken({id:user.id});
 		user.accessToken = token;
-
-		res.cookie('accessToken', token, {
-			domain: 'localhost',
-			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
-			httpOnly: true,
-			secure: true,
-		});
-
-		return res.json(user);
+		return user;
 	}
 }

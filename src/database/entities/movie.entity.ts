@@ -14,12 +14,12 @@ export class MovieEntity extends CoreEntity{
   @Column('varchar',{name:'movieTitle',length:100})
   movieTitle:string;
 
-  @Column('decimal', { precision: 5, scale: 2 })
+  @Column('decimal', { precision: 5, scale: 2 , nullable:true })
   movieScore:number;
 
   @Column('varchar',{
     name:'movieImage',
-    nullable: false,
+    nullable: true,
   })
   movieImage: string;
 
@@ -28,14 +28,14 @@ export class MovieEntity extends CoreEntity{
     nullable: true,
     transformer: JsonTransformer,
   })
-  director:string[]
+  director:Record<string, any>;
 
   @Column({
     type: 'text',
     nullable: true,
     transformer: JsonTransformer,
   })
-  appearance:string[];
+  appearance:Record<string, any>;
 
   @Column({
     type: 'enum',

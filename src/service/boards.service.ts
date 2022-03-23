@@ -1,6 +1,5 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/boards.repository';
-import { isNil } from 'lodash';
 import { CoreResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
 
@@ -12,11 +11,14 @@ export class BoardsService {
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {
 		const createdBoard = await this.boardsRepository.createBoard(data, userId);
+		if(!createdBoard){
+			throw new BadRequestException('BAD REQUEST');
+		}
 		return {
-			ok: !isNil(createdBoard),
-			statusCode :!isNil(createdBoard) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-			message: !isNil(createdBoard) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(createdBoard) ? createdBoard : null,
+			ok: true,
+			statusCode : HttpStatus.CREATED,
+			message: 'SUCCESS',
+			data: createdBoard ,
 		};
 	}
 
@@ -27,10 +29,10 @@ export class BoardsService {
 			.take(pagination.limit)
 			.getMany();
 		return {
-			ok : !isNil(foundAllBoards),
-			statusCode :!isNil(foundAllBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-			message: !isNil(foundAllBoards) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(foundAllBoards) ? foundAllBoards : [],
+			ok : true,
+			statusCode : HttpStatus.OK ,
+			message: 'SUCCESS',
+			data: foundAllBoards,
 		};
 	}
 
@@ -39,22 +41,28 @@ export class BoardsService {
 		if(!foundBoard){
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
-		const responseUpdatedBoard = await this.boardsRepository.updateBoardOne(foundBoard.id,{title,content}).execute();
+		const responseUpdatedBoard = await this.boardsRepository
+			.updateBoardOne(foundBoard.id,{title,content})
+			.execute();
+
 		return {
-			ok: !isNil(responseUpdatedBoard),
-			statusCode :!isNil(responseUpdatedBoard) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(responseUpdatedBoard) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(responseUpdatedBoard) ? boardId : null,
+			ok: true,
+			statusCode : HttpStatus.OK ,
+			message: 'SUCCESS',
+			data: responseUpdatedBoard.raw.insertId,
 		};
 	}
 
 	async deleteBoardOne(boardId: number) {
-		const responseDeletedBoardId = await this.boardsRepository.deleteBoardOne(boardId).execute();
+		const responseDeletedBoardId = await this.boardsRepository
+			.deleteBoardOne(boardId)
+			.execute();
+
 		return {
-			ok: !isNil(responseDeletedBoardId),
-			statusCode :!isNil(responseDeletedBoardId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(responseDeletedBoardId) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(responseDeletedBoardId) ? boardId : null,
+			ok: true,
+			statusCode : HttpStatus.OK ,
+			message: 'SUCCESS',
+			data: responseDeletedBoardId.raw.insertId,
 		};
 	}
 }

@@ -31,6 +31,7 @@ export class UsersService {
 
 	async findById(id:number) {
 		const foundUser = await this.userRepository.findUserById(id).getOne();
+		const {password , ...userData} =foundUser;
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
@@ -38,7 +39,7 @@ export class UsersService {
 			ok: true,
 			statusCode: HttpStatus.OK,
 			message: 'SUCCESS',
-			data: foundUser,
+			data: userData,
 		};
 	}
 

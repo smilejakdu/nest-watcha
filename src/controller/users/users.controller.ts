@@ -72,7 +72,6 @@ export class UsersController {
 	})
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
-		console.log(data);
 		const responseLogin =  await this.usersService.logIn(data);
 		return res.status(responseLogin.statusCode).json({
 			ok : responseLogin.ok,

@@ -41,7 +41,7 @@ export class MoviesController{
   async createMovie(@Body() body:CreateMovieDto) {
     const {genreId , ...movieDto} = body;
     const responseCreatedMovie = await this.movieService.createMovie(movieDto);
-    if(!responseCreatedMovie.ok){
+    if(!responseCreatedMovie.ok) {
       throw new BadRequestException('영화 만들기 실패했습니다.');
     }
     await this.genreMovieService.createGenreMovie(
@@ -74,7 +74,7 @@ export class MoviesController{
   @ApiOperation({summary:'모든 영화 가져오기'})
   @ApiOkResponse({ description:'성공' })
   @Get()
-  async findAllMovie(@Query() pagination: Pagination){
+  async findAllMovie(@Query() pagination: Pagination) {
     pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
     pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
 

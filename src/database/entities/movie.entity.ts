@@ -1,11 +1,12 @@
 import { CoreEntity } from './core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AgeLimitStatus } from './genre.entity';
 import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../transformer';
 import { subMovieImageEntity } from './subMovieImage.entity';
 import { OrderLogEntity } from './orderLog.entity';
+import { MovieOptionEntity } from './movieOption.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity{
@@ -60,4 +61,16 @@ export class MovieEntity extends CoreEntity{
     () => OrderLogEntity,
       orderLog => orderLog.Movie)
   OrderLog: OrderLogEntity[];
+
+  @Column('int', { name: 'movieOptionId', nullable: true })
+  movieOptionId: number|null;
+
+  @ManyToOne(
+    () => MovieOptionEntity,
+    movieOption => movieOption.movie_option, {
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE',
+    })
+  @JoinColumn([{ name: 'movieOptionId', referencedColumnName: 'id' }])
+  MovieOption: MovieOptionEntity;
 }

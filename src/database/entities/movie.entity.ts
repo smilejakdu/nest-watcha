@@ -67,7 +67,7 @@ export class MovieEntity extends CoreEntity{
 
   @ManyToOne(
     () => MovieOptionEntity,
-    movieOption => movieOption.movie_option, {
+    movieOption => movieOption.Movies, {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE',
     })

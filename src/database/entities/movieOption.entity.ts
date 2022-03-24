@@ -14,5 +14,5 @@ export class MovieOptionEntity extends CoreEntity {
     () => MovieEntity,
     movie => movie.MovieOption
   )
-  movie_option: MovieEntity[];
+  Movies: MovieEntity[];
 }

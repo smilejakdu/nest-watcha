@@ -15,6 +15,8 @@ export class MovieOptionsRepository extends Repository<MovieOptionEntity>{
   }
 
   async createMovieOption(data , @TransactionManager() transactionManager:EntityManager) {
-    return await transactionManager.save(data);
+    const newMovieOption = new MovieOptionEntity();
+    Object.assign(newMovieOption,data);
+    return await transactionManager.save(MovieOptionEntity, newMovieOption);
   }
 }

@@ -11,9 +11,10 @@ export class MovieOptionsService {
   async createMovieOption(createMovieOption) {
     const queryRunner = await getConnection().createQueryRunner();
     await queryRunner.startTransaction();
+
     let createdMovieOption;
     try{
-      createdMovieOption= await this.movieOptionRepository.createMovieOption(createMovieOption, queryRunner.manager);
+      createdMovieOption = await this.movieOptionRepository.createMovieOption(createMovieOption, queryRunner.manager);
       await queryRunner.commitTransaction();
     }catch (error) {
       console.log(error);
@@ -21,6 +22,7 @@ export class MovieOptionsService {
     } finally {
       await queryRunner.release();
     }
+
     return {
       ok: true ,
       statusCode: HttpStatus.CREATED,

@@ -1,5 +1,5 @@
 import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { MovieOptionsService } from '../../service/movieOptions.service';
 import { CreateMovieOptionDto } from './movieOption.controller.dto/createMovieOption.dto';
 
@@ -12,9 +12,10 @@ export class MovieOptionsController {
   ) {}
 
   @ApiOperation({ summary: '뮤비 옵션 만들기' })
-  @ApiCreatedResponse({ description:'성공'})
+  @ApiCreatedResponse({ description: '성공' })
   @Post()
-  async createMovieOption(createMovieOptionDto:CreateMovieOptionDto) {
+  async createMovieOption(@Body() createMovieOptionDto:CreateMovieOptionDto) {
+    console.log(createMovieOptionDto);
     return await this.movieOptionService.createMovieOption(createMovieOptionDto);
   }
 }

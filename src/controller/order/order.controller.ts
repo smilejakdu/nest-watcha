@@ -1,4 +1,4 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Request } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -8,8 +8,6 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { OrdersService } from '../../service/orders.service';
-import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import { checkAdminPermission, PermissionType } from '../../shared/common/permissions/permissionCheck';
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',
@@ -26,11 +24,9 @@ export class OrderController {
     description: '성공',
   })
   @ApiBearerAuth('JWT')
-  @UseGuards(UserAuthGuard)
   @ApiOperation({ summary: 'order create admin' })
   @Post('/admin')
   async createOrderAdmin(@Request() req: any) {
-    checkAdminPermission(req, [{permissionType: PermissionType.ADMIN}]);
     console.log(req.user);
   }
 }

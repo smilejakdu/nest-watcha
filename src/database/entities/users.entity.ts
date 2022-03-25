@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner, Unique } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -9,6 +9,7 @@ import { OrderEntity } from './order.entity';
 import { SchedulesEntity } from './schedules.entity';
 import { OrderClaimEntity } from './orderClaim.entity';
 import { OrderLogEntity } from './orderLog.entity';
+import { PermissionEntity } from './permission.entity';
 
 export enum LoginType {
 	NAVER = 'naver',
@@ -80,6 +81,19 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'google_auth_id', length: 150, nullable: true })
 	google_auth_id: string;
 
+	@Column('int', { name: 'permissionId', nullable:true })
+	permissionId: number|null;
+
+	@ManyToOne(
+		() => PermissionEntity,
+		permission => permission.users,
+		{
+			onDelete: 'CASCADE',
+			onUpdate: 'CASCADE',
+		})
+	@JoinColumn({name:'permissionId'})
+	permission: PermissionEntity;
+
 	@OneToMany(() => BoardsEntity, boards => boards.User)
 	Boards: BoardsEntity[];
 
@@ -97,4 +111,12 @@ export class UsersEntity extends CoreEntity {
 
 	@OneToMany(() => OrderLogEntity, orderLog => orderLog.User)
 	OrderLog: OrderLogEntity[];
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(UsersEntity, 'user');
+		} else {
+			return this.createQueryBuilder('user');
+		}
+	}
 }

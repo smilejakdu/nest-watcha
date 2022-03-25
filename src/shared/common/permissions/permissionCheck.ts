@@ -1,19 +1,54 @@
-import { ForbiddenException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { PermissionEntity, PermissionType } from '../../../database/entities/permission.entity';
+import { PERMISSION_KEY } from './permission.decorator';
 
-export enum PermissionType {
-  USER = 'user',
-  ADMIN = 'admin',
+@Injectable()
+export class PermissionsGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredPermission = this.reflector.getAllAndOverride<PermissionEntity>(PERMISSION_KEY, [context.getHandler(), context.getClass()]);
+    const req = context.switchToHttp().getRequest();
+    const {user} = req;
+
+    if (!user) {
+      return false;
+    }
+
+    if (!requiredPermission) {
+      return false;
+    }
+
+    const foundPermissionWithUser = await this.getPermissionForUser(user.id);
+    return foundPermissionWithUser.type === PermissionType.ADMIN;
+  }
+
+  async getPermissionForUser(userId) {
+    const permissions = await PermissionEntity.makeQueryBuilder()
+      .select([
+        'permission.id',
+        'permission.type'
+      ])
+      .addSelect([
+        'users.id',
+        'users.username',
+        'users.email',
+        'users.phone'
+      ])
+      .innerJoin('permission.users','users','users.id =:userId',{userId:userId})
+      .getOne();
+
+    return permissions;
+  }
 }
 
-export class AllowPermissionOption {
-  permissionType: PermissionType;
-}
-
-export function nonThrowableCheckAdminPermission(request: Request, detailPermissions: AllowPermissionOption[]) {
+export function nonThrowableCheckAdminPermission(request: Request, detailPermissions: string) {
+  console.log('request:',request);
   const req = Object.assign(request);
-  const {auth} = req;
+  const userId = req.userId;
 
-  if (!req.auth) {
+  if (!req.detailPermissions) {
     return false;
   }
 
@@ -21,22 +56,10 @@ export function nonThrowableCheckAdminPermission(request: Request, detailPermiss
     return true;
   }
 
-  let allow = false;
-  console.log('auth.permissions:',auth.permissions);
-  for (let i = 0; i < auth.permissions.length; i++) {
-    const perm = auth.permissions[i];
-    if ( perm.type === PermissionType.ADMIN ) {
-      allow = true;
-      break;
-    }else {
-      return false;
-    }
-  }
-
-  return true;
+  return detailPermissions === PermissionType.ADMIN;
 }
 
-export function checkAdminPermission(request: Request, detailPermissions: AllowPermissionOption[]) {
+export function checkAdminPermission(request: Request, detailPermissions: PermissionType) {
   const req = Object.assign(request);
 
   if (!req.auth) {
@@ -49,3 +72,4 @@ export function checkAdminPermission(request: Request, detailPermissions: AllowP
 
   return true;
 }
+

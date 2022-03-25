@@ -19,7 +19,12 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 
-	const config = new DocumentBuilder().setTitle('nestWatcha API').setDescription('nestWatcha Swagger').setVersion('1.0').addCookieAuth('connect.sid').build();
+	const config = new DocumentBuilder()
+		.setTitle('nestWatcha API')
+		.setDescription('nestWatcha Swagger')
+		.setVersion('1.0')
+		.addCookieAuth('connect.sid')
+		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document);

@@ -56,6 +56,16 @@ export class MoviesController{
     };
   }
 
+  @ApiOperation({summary:'모든 영화 가져오기'})
+  @ApiOkResponse({ description:'성공' })
+  @Get()
+  async findAllMovie(@Query() pagination: Pagination) {
+    pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
+    pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
+
+    return await this.movieService.findAllMovie(pagination);
+  }
+
   @ApiOperation({summary:'해당 영화 가져오기'})
   @ApiOkResponse({
     description:'성공',
@@ -69,16 +79,6 @@ export class MoviesController{
       message : responseFoundMovie.message,
       data : responseFoundMovie.data,
     });
-  }
-
-  @ApiOperation({summary:'모든 영화 가져오기'})
-  @ApiOkResponse({ description:'성공' })
-  @Get()
-  async findAllMovie(@Query() pagination: Pagination) {
-    pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
-    pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
-
-    return await this.movieService.findAllMovie(pagination);
   }
 
   @ApiOperation({summary:'영화 수정하기'})

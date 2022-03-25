@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { AgeLimitStatus } from '../../../database/entities/genre.entity';
 import { Type } from 'class-transformer';
 
@@ -37,13 +37,11 @@ export class CreateMovieDto {
 
   @IsNotEmpty()
   @IsDefined()
-  @IsArray()
   @Type(() => Object)
   director:Record<string, any>;
 
   @IsNotEmpty()
   @IsDefined()
-  @IsArray()
   @Type(() => Object)
   appearance:Record<string, any>;
 

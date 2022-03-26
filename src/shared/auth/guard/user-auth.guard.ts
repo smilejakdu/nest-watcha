@@ -8,7 +8,7 @@ export class UserAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
-    let accessToken = req.headers['access-token'];
+    let accessToken = req.headers['access_token'];
 
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;
@@ -19,6 +19,7 @@ export class UserAuthGuard implements CanActivate {
 
     try {
       const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
+      console.log(decodedUserJwt);
       userId = decodedUserJwt.sub?.id;
     } catch (jwtErr) {
       res.cookie('accessToken', null, {

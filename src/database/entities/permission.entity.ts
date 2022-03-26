@@ -15,7 +15,8 @@ export class PermissionEntity extends CoreEntity {
   })
   type: PermissionType;
 
-  @OneToMany(()=>UsersEntity,
+  @OneToMany(
+    ()=>UsersEntity,
     user => user.permission,
     )
   users:UsersEntity[];

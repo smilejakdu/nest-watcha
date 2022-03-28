@@ -125,7 +125,7 @@ export class UsersService {
 		}
 
 		const result = await bcrypt.compare(password, foundUser.password);
-		const payload = {username: foundUser.username};
+		const payload = {email: foundUser.email};
 		const jwt = await Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
 
 		if (result) {

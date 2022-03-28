@@ -15,12 +15,11 @@ export class UserAuthGuard implements CanActivate {
 
     }
 
-    let userId: any;
+    let userEmail: any;
 
     try {
       const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
-      console.log(decodedUserJwt);
-      userId = decodedUserJwt.sub?.id;
+      userEmail = decodedUserJwt?.email;
     } catch (jwtErr) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
@@ -30,8 +29,7 @@ export class UserAuthGuard implements CanActivate {
       });
       throw new HttpException('로그인 정보가 만료되었습니다.01', HttpStatus.UNAUTHORIZED);
     }
-
-    if (!userId) {
+    if (!userEmail) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
         expires: new Date(new Date().getTime() - 1),
@@ -41,7 +39,7 @@ export class UserAuthGuard implements CanActivate {
       throw new HttpException('로그인 정보가 만료되었습니다.02', HttpStatus.UNAUTHORIZED);
     }
 
-    const userData = await UsersEntity.findOne({id:userId});
+    const userData = await UsersEntity.findOne({email:userEmail});
     if (!userData) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
@@ -64,7 +62,7 @@ export class UserAuthGuardOptional implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
 
-    let accessToken = req.headers['access-token'];
+    let accessToken = req.headers['access_token'];
 
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;

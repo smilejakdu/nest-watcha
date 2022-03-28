@@ -26,7 +26,7 @@ export const BAD_REQUEST = 'bad request';
 })
 @UseInterceptors(UndefinedToNullInterceptor)
 @ApiBadRequestResponse({ description: 'bad request' })
-@ApiTags('USER')
+@ApiTags('USERS')
 @Controller('users')
 export class UsersController {
 	constructor(
@@ -86,6 +86,7 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async findMyProfile(@Req() req:any) {
+		console.log('req.user:',req.user);
 		const {id} = req.user;
 		return await this.usersService.findById(id);
 	}

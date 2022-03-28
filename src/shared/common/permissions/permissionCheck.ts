@@ -9,14 +9,12 @@ export class PermissionsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const {user} = req;
-    console.log('PermissionsGuard.user:',user);
 
     if (!user) {
       return false;
     }
 
     const foundPermissionWithUser = await this.getPermissionForUser(user.id);
-    console.log('foundPermissionWithUser:',foundPermissionWithUser);
     if (foundPermissionWithUser.type !== PermissionType.ADMIN) {
       throw new ForbiddenException('권한이 필요한 요청입니다.');
     }

@@ -2,6 +2,7 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '
 import { BoardsRepository } from '../database/repository/boards.repository';
 import { CoreResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
+import { getConnection } from 'typeorm';
 
 @Injectable()
 export class BoardsService {
@@ -10,7 +11,19 @@ export class BoardsService {
 	) {}
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {
-		const createdBoard = await this.boardsRepository.createBoard(data, userId);
+		const queryRunner = await getConnection().createQueryRunner();
+		await queryRunner.startTransaction();
+		let createdBoard;
+		try{
+			createdBoard = await this.boardsRepository.createBoard({data, userId} ,queryRunner.manager);
+			await queryRunner.commitTransaction();
+		}catch (error) {
+			console.log(error);
+			await queryRunner.rollbackTransaction();
+		}finally {
+			await queryRunner.release();
+		}
+
 		if(!createdBoard){
 			throw new BadRequestException('BAD REQUEST');
 		}

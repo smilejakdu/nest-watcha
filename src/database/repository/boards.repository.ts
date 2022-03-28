@@ -1,5 +1,12 @@
 import { BoardsEntity } from '../entities/boards.entity';
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  EntityManager,
+  EntityRepository,
+  QueryRunner,
+  Repository,
+  SelectQueryBuilder,
+  TransactionManager
+} from 'typeorm';
 
 @EntityRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -7,17 +14,11 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return this.createQueryBuilder('boards', queryRunner);
   }
 
-  async createBoard(data, userId: number) {
-    const {title , content } = data;
-    const createdBoard = await this.makeQueryBuilder()
-      .insert()
-      .values({
-        userId: userId,
-        title : title,
-        content:content,
-      })
-      .execute();
-    return createdBoard.raw.insertId;
+  async createBoard(data, @TransactionManager() transactionManager:EntityManager) {
+    const newBoard = new BoardsEntity();
+    Object.assign(newBoard ,data);
+    const createdBoard =  await transactionManager.save(BoardsEntity, newBoard);
+    return createdBoard.id;
   }
 
   findAllBoards(){

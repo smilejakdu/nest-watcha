@@ -1,6 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../entities/genre.entity';
-import { UpdateGenreDto } from '../../controller/genre/genre.controller.dto/updateGenre.dto';
 
 @EntityRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {
@@ -14,21 +13,19 @@ export class GenreRepository extends Repository<GenreEntity> {
       .getMany();
   }
 
-  async findById(id:number){
+  async findById(id: number) {
     return await this.makeQueryBuilder()
-      .leftJoinAndSelect('genre.Genremovie','movies')
-      .where('genre.id=:id ', {id:id})
+      .leftJoinAndSelect('genre.Genremovie', 'movies')
+      .where('genre.id=:id ', { id: id })
       .andWhere('genre.deletedAt is null')
       .getOne();
   }
 
-  async createGenre(name:string) {
-    const createdGenre = await this.makeQueryBuilder()
-      .insert()
-      .values({
-        name:name,
-      }).execute();
-    return createdGenre.raw.insertId;
+  async createGenre(name: string, queryRunner) {
+    const newGenre = new GenreEntity();
+    newGenre.name = name;
+    const createdGenre = await queryRunner.manager.save(GenreEntity,newGenre);
+    return createdGenre.id;
   }
 
   async updatedGenre(data){

@@ -2,15 +2,32 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CoreResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/genre.repository';
 import { isNil } from 'lodash';
+import { Connection } from 'typeorm';
 
 @Injectable()
 export class GenreService {
   constructor(
     private readonly genreRepository: GenreRepository,
+    private connection: Connection,
   ) {}
 
   async createGenre(genreName : string){
-    const createdGenre:number = await this.genreRepository.createGenre(genreName);
+    const queryRunner = this.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let createdGenre;
+    try{
+      createdGenre = await this.genreRepository.createGenre(genreName,queryRunner);
+      await queryRunner.commitTransaction();
+    }catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+    }finally {
+      await queryRunner.release();
+    }
+
     return {
       ok : !isNil(createdGenre),
       statusCode :!isNil(createdGenre) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,

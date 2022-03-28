@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -11,6 +11,8 @@ import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
 import { createGenreDto } from './genre.controller.dto/createGenre.dto';
 import { UpdateGenreDto } from './genre.controller.dto/updateGenre.dto';
 import { DeleteGenreDto } from './genre.controller.dto/deleteGenre.dto';
+import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
@@ -23,8 +25,9 @@ export class GenreController {
     description:'성공',
     type:GetGenreDto,
   })
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Post()
-  async createGenre(@Body() body:createGenreDto) {
+  async createGenre(@Req() req, @Body() body:createGenreDto) {
     return await this.genreService.createGenre(body.genreName);
   }
 

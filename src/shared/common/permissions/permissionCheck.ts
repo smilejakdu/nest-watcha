@@ -15,6 +15,10 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const foundPermissionWithUser = await this.getPermissionForUser(user.id);
+    if(!foundPermissionWithUser){
+      throw new ForbiddenException('권한이 필요한 요청입니다.');
+    }
+
     if (foundPermissionWithUser.type !== PermissionType.ADMIN) {
       throw new ForbiddenException('권한이 필요한 요청입니다.');
     }

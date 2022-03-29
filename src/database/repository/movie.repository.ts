@@ -18,6 +18,10 @@ export class MovieRepository extends Repository<MovieEntity>{
   findAll(queryRunner?: QueryRunner) {
     return this.makeQueryBuilder(queryRunner)
       .addSelect([
+        'genre.id',
+        'genre.name'
+      ])
+      .addSelect([
         'subMovieImage.id',
         'subMovieImage.imageString',
         'subMovieImage.updatedAt',
@@ -31,7 +35,7 @@ export class MovieRepository extends Repository<MovieEntity>{
         'genremovie.id'
       ])
       .innerJoin('movie.Genremovie','genremovie')
-      .innerJoinAndSelect('genremovie.Genre','genre')
+      .innerJoin('genremovie.Genre','genre')
       .leftJoin('movie.subMovieImage','subMovieImage');
   }
 

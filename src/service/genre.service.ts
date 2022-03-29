@@ -2,17 +2,16 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CoreResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/genre.repository';
 import { isNil } from 'lodash';
-import { Connection } from 'typeorm';
+import { getConnection } from 'typeorm';
 
 @Injectable()
 export class GenreService {
   constructor(
     private readonly genreRepository: GenreRepository,
-    private connection: Connection,
   ) {}
 
   async createGenre(genreName : string){
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = await getConnection().createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

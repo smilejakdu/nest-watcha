@@ -5,16 +5,18 @@ import { getConnection } from 'typeorm';
 @Injectable()
 export class MovieOptionsService {
   constructor(
-    private readonly movieOptionRepository :MovieOptionsRepository
+    private readonly movieOptionRepository :MovieOptionsRepository,
   ) {}
 
   async createMovieOption(createMovieOption) {
     const queryRunner = await getConnection().createQueryRunner();
+
+    await queryRunner.connect();
     await queryRunner.startTransaction();
 
     let createdMovieOption;
     try{
-      createdMovieOption = await this.movieOptionRepository.createMovieOption(createMovieOption, queryRunner.manager);
+      createdMovieOption = await this.movieOptionRepository.createMovieOption(createMovieOption, queryRunner);
       await queryRunner.commitTransaction();
     }catch (error) {
       console.log(error);

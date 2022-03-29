@@ -19,7 +19,7 @@ export class PermissionEntity extends CoreEntity {
     ()=>UsersEntity,
     user => user.permission,
     )
-  users:UsersEntity[];
+  users: UsersEntity[];
 
   static makeQueryBuilder(queryRunner?: QueryRunner) {
     if (queryRunner) {

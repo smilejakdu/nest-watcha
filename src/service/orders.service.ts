@@ -30,6 +30,13 @@ export class OrdersService {
     const {movie_number , imp_uid }= body;
     console.log(movie_number);
     console.log(imp_uid);
+
+    const url = `https://api.iamport.kr/payments/${imp_uid}`;
+
+    // const iamport = new Iamport(this.httpService);
+    const {access_token} = await iamport.getIamportToken();
+
+
   }
 
   async findOneOrder(email:string):Promise<CoreResponse> {

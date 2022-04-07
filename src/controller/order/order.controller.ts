@@ -1,4 +1,4 @@
-import { Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -8,6 +8,8 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { OrdersService } from '../../service/orders.service';
+import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { CompletePaymentDto } from './order.controller.dto/createCompletePayment.dto';
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',
@@ -28,5 +30,12 @@ export class OrderController {
   @Post('/admin')
   async createOrderAdmin(@Request() req: any) {
     console.log(req.user);
+  }
+
+  @ApiBearerAuth('JWT')
+  @UseGuards(UserAuthGuard)
+  @Post('/payment')
+  async orderComplete(@Body() body: CompletePaymentDto): Promise<any> {
+    console.log(body);
   }
 }

@@ -32,9 +32,13 @@ export class MovieRepository extends Repository<MovieEntity>{
         'subMovieImage.updatedAt',
       ])
       .addSelect([
+        'movieOption.price'
+      ])
+      .addSelect([
         'genremovie.id'
       ])
       .innerJoin('movie.Genremovie','genremovie')
+      .innerJoin('movie.MovieOption','movieOption')
       .innerJoin('genremovie.Genre','genre')
       .leftJoin('movie.subMovieImage','subMovieImage');
   }

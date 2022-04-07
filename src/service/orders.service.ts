@@ -1,8 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { OrderRepository } from '../database/repository/order.repository';
 import { UsersService } from './users.service';
 import { isNil } from 'lodash';
 import { CoreResponse } from '../shared/CoreResponse';
+import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 
 @Injectable()
 export class OrdersService {
@@ -14,12 +15,21 @@ export class OrdersService {
   async createOrderNumber(email:string , set:any):Promise<CoreResponse> {
     const foundUser = await this.usersService.findByEmail(email);
     const createdOrder = await this.ordersRepository.createOrder(foundUser.data , set);
+    if(isNil(createdOrder)){
+      throw new BadRequestException('bad request create_order_number');
+    }
     return {
-      ok: !isNil(createdOrder),
-      statusCode :!isNil(createdOrder) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-      message: !isNil(createdOrder) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(createdOrder) ? createdOrder.raw.insertId : null,
+      ok: true,
+      statusCode : HttpStatus.CREATED ,
+      message: 'CREATED',
+      data:createdOrder.raw.insertId,
     };
+  }
+
+  async orderPaymentComplete(body:CompletePaymentDto){
+    const {movie_number , imp_uid }= body;
+    console.log(movie_number);
+    console.log(imp_uid);
   }
 
   async findOneOrder(email:string):Promise<CoreResponse> {

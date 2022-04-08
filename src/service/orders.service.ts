@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { isNil } from 'lodash';
 import { CoreResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
+import { Iamport } from '../controller/order/iamport';
 
 @Injectable()
 export class OrdersService {
@@ -26,17 +27,25 @@ export class OrdersService {
     };
   }
 
-  async orderPaymentComplete(body:CompletePaymentDto){
+  async orderPaymentComplete(body:CompletePaymentDto) {
     const {movie_number , imp_uid }= body;
     console.log(movie_number);
     console.log(imp_uid);
 
-    const url = `https://api.iamport.kr/payments/${imp_uid}`;
+    const iamport = new Iamport();
+    const access_token = await iamport.getIamportToken();
+    if(isNil(access_token)){
+      throw new BadRequestException('iamport access_token error');
+    }
 
-    // const iamport = new Iamport(this.httpService);
-    const {access_token} = await iamport.getIamportToken();
-
-
+    try{
+      const result = await iamport.getPaymentData(imp_uid,access_token);
+      console.log(result);
+      return result;
+    }catch (error) {
+      console.log(error);
+      throw new BadRequestException(`결제 정보 오류 : ${error.response.data.message}`);
+    }
   }
 
   async findOneOrder(email:string):Promise<CoreResponse> {

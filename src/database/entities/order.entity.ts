@@ -16,6 +16,14 @@ export enum OrderStatus {
   EXCHANGED = 'exchanged'
 }
 
+export enum IamportPaymentStatus {
+  PAID = 'paid', // 결제 완료
+  CANCELLED = 'cancelled', // 취소됨
+  FAILED = 'failed', // 결제 실패
+}
+
+
+
 @Entity({ schema: 'nest_watcha', name: 'orders' })
 @Index(['order_number'])
 export class OrderEntity extends CoreEntity{

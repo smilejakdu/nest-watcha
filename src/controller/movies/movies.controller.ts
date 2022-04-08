@@ -9,7 +9,9 @@ import {
   Post,
   Put,
   Query,
-  Res
+  Req,
+  Res,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -25,6 +27,8 @@ import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
 import { GenreMovieService } from '../../service/genreMovie.service';
 import { UpdateMovieDto } from './movie.controller.dto/updateMovie.dto';
 import { Pagination } from '../../shared/pagination';
+import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
@@ -37,8 +41,9 @@ export class MoviesController{
 
   @ApiOperation({summary:'영화 만들기'})
   @ApiCreatedResponse({ description:'성공'})
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Post()
-  async createMovie(@Body() body:CreateMovieDto) {
+  async createMovie(@Req() req, @Body() body:CreateMovieDto) {
     const {genreId , ...movieDto} = body;
     const responseCreatedMovie = await this.movieService.createMovie(movieDto);
     if(!responseCreatedMovie.ok) {
@@ -83,8 +88,9 @@ export class MoviesController{
 
   @ApiOperation({summary:'영화 수정하기'})
   @ApiCreatedResponse({ description:'성공'})
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Put(':id')
-  async updateMovie(@Param('id', ParseIntPipe) id: number,@Body() body:UpdateMovieDto){
+  async updateMovie(@Req() req,@Param('id', ParseIntPipe) id: number,@Body() body:UpdateMovieDto){
     const {genreId , ...movieDto} = body;
     const responseUpdatedMovie = await this.movieService.updateMovieByIds([id],movieDto);
     await this.genreMovieService.updateGenreMovie(

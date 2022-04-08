@@ -1,4 +1,11 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  EntityManager,
+  EntityRepository,
+  QueryRunner,
+  Repository,
+  SelectQueryBuilder,
+  TransactionManager
+} from 'typeorm';
 import { MovieEntity } from '../entities/movie.entity';
 import { CreateMovieDto } from '../../controller/movies/movie.controller.dto/createMovie.dto';
 
@@ -8,11 +15,15 @@ export class MovieRepository extends Repository<MovieEntity>{
     return this.createQueryBuilder('movie', queryRunner);
   }
 
-  async createMovie(createMovieDto:CreateMovieDto) {
-    return await this.makeQueryBuilder()
-      .insert()
-      .values(createMovieDto)
-      .execute();
+  async createMovie(createMovieDto:CreateMovieDto, @TransactionManager() transactionManager:EntityManager) {
+    const newMovie = new MovieEntity();
+    Object.assign(newMovie, createMovieDto);
+    const createdMovie = await transactionManager.save(MovieEntity, newMovie);
+    // return await this.makeQueryBuilder()
+    //   .insert()
+    //   .values(createMovieDto)
+    //   .execute();
+    return createdMovie.id;
   }
 
   findAll(queryRunner?: QueryRunner) {

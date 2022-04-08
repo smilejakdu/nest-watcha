@@ -1,8 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CoreResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
-import { QueryRunner } from 'typeorm';
+import { getConnection, QueryRunner } from 'typeorm';
 import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
+import { isNil } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class MoviesService{
@@ -12,7 +13,22 @@ export class MoviesService{
   ) {}
 
   async createMovie(createMovieDto) {
-    const createdMovie = await this.movieRepository.createMovie(createMovieDto);
+    const queryRunner = await getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    let createdMovie;
+    try{
+      createdMovie = await this.movieRepository.createMovie(createMovieDto,queryRunner.manager);
+    }catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+    }finally {
+      await queryRunner.release();
+    }
+
+    if(!createdMovie){
+      throw new BadRequestException('BAD REQUEST');
+    }
+
     return {
       ok : true,
       statusCode : HttpStatus.CREATED,
@@ -39,6 +55,9 @@ export class MoviesService{
 
   async findOneById(id:number): Promise<CoreResponse> {
     const foundOneMovie = await this.movieRepository.findOneById(id).getOne();
+    if(isNil(foundOneMovie)){
+      throw new NotFoundException(`does not found movie ${id}`);
+    }
     return {
       ok : true,
       statusCode :HttpStatus.OK,

@@ -55,7 +55,7 @@ export class MoviesService{
 
   async findOneById(id:number): Promise<CoreResponse> {
     const foundOneMovie = await this.movieRepository.findOneById(id).getOne();
-    if(isNil(foundOneMovie)){
+    if(isNil(foundOneMovie)) {
       throw new NotFoundException(`does not found movie ${id}`);
     }
     return {

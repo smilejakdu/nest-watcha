@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CompletePaymentDto {
   @ApiPropertyOptional()
@@ -9,6 +9,6 @@ export class CompletePaymentDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  movie_number: string;
+  @IsNumber()
+  movie_number: number;
 }

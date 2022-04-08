@@ -78,12 +78,7 @@ export class MoviesController{
   })
   @Get(':id')
   async findMovieById(@Param('id', ParseIntPipe) id: number, @Res() res:Response) {
-    const responseFoundMovie = await this.movieService.findOneById(id);
-    return res.status(HttpStatus.OK).json({
-      statusCode:responseFoundMovie.statusCode,
-      message : responseFoundMovie.message,
-      data : responseFoundMovie.data,
-    });
+    return await this.movieService.findOneById(id);
   }
 
   @ApiOperation({summary:'영화 수정하기'})

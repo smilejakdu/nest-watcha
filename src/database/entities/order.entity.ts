@@ -22,6 +22,12 @@ export enum IamportPaymentStatus {
   FAILED = 'failed', // 결제 실패
 }
 
+export enum IamportValidateStatus {
+  SUCCESS = 'success', // 결제 성공
+  VBANKISSUED = 'vbankIssued', // 가상계좌 발급 성공
+  CANCELLED = 'cancelled', // 취소됨
+  FAILED = 'failed', // 결제 실패
+}
 
 
 @Entity({ schema: 'nest_watcha', name: 'orders' })

@@ -6,6 +6,7 @@ import { CoreResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
 import { MoviesService } from './movies.service';
+import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/order.entity';
 
 @Injectable()
 export class OrdersService {
@@ -52,8 +53,19 @@ export class OrdersService {
     }
 
     const {amount, status} = paymentData;
+    console.log(status);
     if (foundMovie.data.id == amount){
-
+      switch (status) {
+        case IamportPaymentStatus.PAID: // 결제 완료
+          console.log(status);
+          return {status: IamportValidateStatus.SUCCESS, message: 'payment success', data: paymentData};
+        case IamportPaymentStatus.CANCELLED: // 취소 완료
+          console.log(status);
+          return {status: IamportValidateStatus.CANCELLED, message: 'cancel success', data: paymentData};
+        case IamportPaymentStatus.FAILED: // 결제 실패
+          console.log(status);
+          return {status: IamportValidateStatus.FAILED, message: 'payment fail', data: paymentData};
+      }
     }
   }
 

@@ -46,7 +46,6 @@ export class OrdersService {
     try{
       paymentData = await iamport.getPaymentData(imp_uid,access_token);
       console.log(paymentData);
-      // return result;
     }catch (error) {
       console.log(error);
       throw new BadRequestException(`결제 정보 오류 : ${error.response.data.message}`);
@@ -54,7 +53,7 @@ export class OrdersService {
 
     const {amount, status} = paymentData;
     console.log(status);
-    if (foundMovie.data.id == amount){
+    if (foundMovie.data.price == amount) {
       switch (status) {
         case IamportPaymentStatus.PAID: // 결제 완료
           console.log(status);
@@ -83,6 +82,5 @@ export class OrdersService {
   async findOrderByOrderNumber(orderNumber:string) {
     return this.ordersRepository.findOrderByOrderNumber(orderNumber)
       .getOne();
-
   }
 }

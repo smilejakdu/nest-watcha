@@ -10,6 +10,7 @@ import {
 import { OrdersService } from '../../service/orders.service';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { CompletePaymentDto } from './order.controller.dto/createCompletePayment.dto';
+import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',
@@ -27,6 +28,7 @@ export class OrderController {
   })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'order create admin' })
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Post('/admin')
   async createOrderAdmin(@Request() req: any) {
     console.log(req.user);
@@ -37,5 +39,6 @@ export class OrderController {
   @Post('/payment')
   async orderComplete(@Body() body: CompletePaymentDto): Promise<any> {
     console.log(body);
+    return await this.ordersService.orderPaymentComplete(body);
   }
 }

@@ -21,6 +21,16 @@ Used TypeScript , Nest js , MySQL
 
 - Comment (CRUD)
 
+## 👉 장르
+
+- 어드민 Permission 체크
+- 장르 ( CRUD )
+
+## 👉 영화
+
+- 어드민 Permission 체크
+- 뮤비 ( CRUD ) 
+
 ## 👉 주문
 
 - Order iamport

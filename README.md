@@ -34,3 +34,12 @@ Used TypeScript , Nest js , MySQL
 ## 👉 주문
 
 - Order iamport
+
+
+# 배포 
+
+✅ Used
+
+배포라는게 어떠한 상황에 맞게 배포를 할때가 있는것 같아서 ,
+우선적으로 그냥 ubuntu 에 pm2 올려서 배포를 해봤다 .
+그 후에 , docker 를 사용해서 배포를 진행을 했다.

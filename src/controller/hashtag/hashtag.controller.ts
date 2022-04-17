@@ -1,4 +1,4 @@
-import { Body, Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get } from '@nestjs/common';
 
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 

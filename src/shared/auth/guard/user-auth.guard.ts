@@ -12,7 +12,6 @@ export class UserAuthGuard implements CanActivate {
 
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;
-
     }
 
     let userEmail: any;

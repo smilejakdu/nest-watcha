@@ -1,5 +1,6 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../entities/genre.entity';
+import { transactionRunner } from '../../shared/common/transaction/transaction';
 
 @EntityRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {
@@ -38,12 +39,14 @@ export class GenreRepository extends Repository<GenreEntity> {
     return updatedGenre.raw.insertId;
   }
 
-  async deletedGenre(genreId:number) {
-      const deletedGenre = await this.makeQueryBuilder()
+  async deletedGenre(genreId:number, queryRunner?: QueryRunner) {
+    const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+      return await this.makeQueryBuilder()
         .softDelete()
         .from(GenreEntity)
         .where('genre.id =:genreId',{genreId:genreId})
         .execute();
+    });
       return deletedGenre.raw.insertId;
   }
 }

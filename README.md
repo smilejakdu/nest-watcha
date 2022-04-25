@@ -2,7 +2,7 @@
 
 http://localhost:3000/api/
 
-Used TypeScript , Nest js , MySQL
+Used TypeScript , Nest js , MySQL , Docker , CI CD
 
 # 📌 구현한 기능
 

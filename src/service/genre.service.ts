@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CoreResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/genre.repository';
-import { isNil } from 'lodash';
 import { getConnection } from 'typeorm';
 
 @Injectable()
@@ -20,6 +19,15 @@ export class GenreService {
     try{
       createdGenre = await this.genreRepository.createGenre(genreName,queryRunner);
       await queryRunner.commitTransaction();
+
+      if (createdGenre){
+        return {
+          ok : true,
+          statusCode : HttpStatus.CREATED,
+          message: 'CREATED',
+          data: createdGenre ,
+        };
+      }
     }catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
@@ -28,10 +36,9 @@ export class GenreService {
     }
 
     return {
-      ok : !isNil(createdGenre),
-      statusCode :!isNil(createdGenre) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-      message: !isNil(createdGenre) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(createdGenre) ? createdGenre : null,
+      ok : false,
+      statusCode : HttpStatus.BAD_REQUEST,
+      message: 'BAD_REQUEST',
     };
   }
 
@@ -56,22 +63,49 @@ export class GenreService {
   }
 
   async updateGenre(data) {
-    const foundUpdatedGenre = await this.genreRepository.updatedGenre(data);
+    const queryRunner = await getConnection().createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let updatedGenre;
+    try{
+      updatedGenre = await this.genreRepository.updatedGenre(data);
+      await queryRunner.commitTransaction();
+      if (updatedGenre){
+        return {
+          ok : true,
+          statusCode : HttpStatus.OK,
+          message : 'SUCCESS',
+          data : updatedGenre,
+        };
+      }
+    }catch (error) {
+      await queryRunner.rollbackTransaction();
+    }finally {
+      await queryRunner.release();
+    }
+
     return {
-      ok : !isNil(foundUpdatedGenre),
-      statusCode :!isNil(foundUpdatedGenre) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-      message: !isNil(foundUpdatedGenre) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(foundUpdatedGenre) ? foundUpdatedGenre : null,
+      ok : false,
+      statusCode : HttpStatus.BAD_REQUEST,
+      message : 'BAD_REQUEST',
     };
   }
 
   async deletedGenre(genreId:number){
-    const foundDeletedGenre = await this.genreRepository.deletedGenre(genreId);
+    const deletedGenre = await this.genreRepository.deletedGenre(genreId);
+    if (deletedGenre) {
+      return {
+        ok : true,
+        statusCode : HttpStatus.OK,
+        message: 'SUCCESS',
+        data:deletedGenre,
+      };
+    }
     return {
-      ok : !isNil(foundDeletedGenre),
-      statusCode :!isNil(foundDeletedGenre) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-      message: !isNil(foundDeletedGenre) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(foundDeletedGenre) ? foundDeletedGenre : null,
+      ok : false,
+      statusCode :HttpStatus.BAD_REQUEST,
+      message: 'BAD_REQUEST',
     };
   }
 }

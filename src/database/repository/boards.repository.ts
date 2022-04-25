@@ -17,7 +17,7 @@ export class BoardsRepository extends Repository<BoardsEntity>{
   async createBoard(data, @TransactionManager() transactionManager:EntityManager) {
     const newBoard = new BoardsEntity();
     Object.assign(newBoard ,data);
-    const createdBoard =  await transactionManager.save(BoardsEntity, newBoard);
+    const createdBoard = await transactionManager.save(BoardsEntity, newBoard);
     return createdBoard.id;
   }
 

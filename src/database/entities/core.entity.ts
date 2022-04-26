@@ -18,6 +18,8 @@ export class CoreEntity extends BaseEntity{
 	@UpdateDateColumn()
 	updatedAt: Date;
 
-	@DeleteDateColumn()
-	deletedAt: Date | null;
+	@DeleteDateColumn({
+		nullable: true,
+	})
+	deletedAt?: Date;
 }

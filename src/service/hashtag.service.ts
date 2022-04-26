@@ -13,8 +13,6 @@ export class HashtagService {
 	constructor(
 		private readonly boardsRepository : BoardsRepository,
 		private readonly hashTagRepository : HashtagRepository,
-		// @InjectRepository(BoardsEntity) private boardRepository: Repository<BoardsEntity>,
-		// @InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
 		@InjectRepository(BoardHashTagEntity)
 		private boardHashTagRepository: Repository<BoardHashTagEntity>,
 	) {}

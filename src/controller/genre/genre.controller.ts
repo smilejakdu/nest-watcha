@@ -60,7 +60,7 @@ export class GenreController {
   async updateOneGenre(@Param('id',ParseIntPipe) id :number,@Body() body:UpdateGenreDto){
     return await this.genreService.updateGenre({
       id :id,
-      name : body.name
+      name : body.genreName
     });
   }
 

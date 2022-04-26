@@ -5,10 +5,10 @@ import { MovieEntity } from './movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'genre_movie' })
 export class GenreMovieEntity extends CoreEntity{
-  @Column('int', { name: 'genreId' })
+  @Column('int', { name: 'genreId',nullable:true })
   genreId: number;
 
-  @Column('int', { name: 'movieId' })
+  @Column('int', { name: 'movieId',nullable:true })
   movieId: number;
 
   @ManyToOne(

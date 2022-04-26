@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CoreResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/genre.repository';
-import { getConnection } from 'typeorm';
 
 @Injectable()
 export class GenreService {
@@ -49,14 +48,8 @@ export class GenreService {
   }
 
   async updateGenre(data) {
-    const queryRunner = await getConnection().createQueryRunner();
+      const updatedGenre = await this.genreRepository.updatedGenre(data);
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    let updatedGenre;
-    try{
-      updatedGenre = await this.genreRepository.updatedGenre(data);
-      await queryRunner.commitTransaction();
       if (updatedGenre){
         return {
           ok : true,
@@ -65,11 +58,6 @@ export class GenreService {
           data : updatedGenre,
         };
       }
-    }catch (error) {
-      await queryRunner.rollbackTransaction();
-    }finally {
-      await queryRunner.release();
-    }
 
     return {
       ok : false,
@@ -78,8 +66,9 @@ export class GenreService {
     };
   }
 
-  async deletedGenre(genreId:number){
+  async deletedGenre(genreId:number) {
     const deletedGenre = await this.genreRepository.deletedGenre(genreId);
+    console.log(deletedGenre);
     if (!deletedGenre) {
       return {
         ok : false,
@@ -88,8 +77,8 @@ export class GenreService {
       };
     }
     return {
-      ok : false,
-      statusCode :HttpStatus.BAD_REQUEST,
+      ok : true,
+      statusCode :HttpStatus.OK,
       message: 'SUCCESS',
       data:deletedGenre,
     };

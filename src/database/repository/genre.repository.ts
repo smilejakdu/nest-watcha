@@ -18,7 +18,6 @@ export class GenreRepository extends Repository<GenreEntity> {
     return await this.makeQueryBuilder()
       .leftJoinAndSelect('genre.Genremovie', 'movies')
       .where('genre.id=:id ', { id: id })
-      .andWhere('genre.deletedAt is null')
       .getOne();
   }
 
@@ -33,24 +32,19 @@ export class GenreRepository extends Repository<GenreEntity> {
 
   async updatedGenre(data){
     const {id , name} = data;
+    const foundGenre = await this.findById(id);
     const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
-      return await this.makeQueryBuilder()
-        .update(GenreEntity)
-        .set({name:name})
-        .where('genre.id =:id',{id : id})
-        .execute();
+      foundGenre.name = name;
+      return await queryRunner.manager.save(GenreEntity,foundGenre);
     });
-    return updatedGenre.raw.insertId;
+    return updatedGenre.id;
   }
 
   async deletedGenre(genreId:number) {
+    const foundGenre = await this.findById(genreId);
     const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      return await this.makeQueryBuilder()
-        .softDelete()
-        .from(GenreEntity)
-        .where('genre.id =:genreId',{genreId:genreId})
-        .execute();
+      return await queryRunner.manager.softDelete(GenreEntity,foundGenre.id);
     });
-      return deletedGenre.raw.insertId;
+    return deletedGenre.affected;
   }
 }

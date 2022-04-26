@@ -9,37 +9,23 @@ export class GenreService {
     private readonly genreRepository: GenreRepository,
   ) {}
 
-  async createGenre(genreName : string){
-    const queryRunner = await getConnection().createQueryRunner();
+  async createGenre(genreName : string) {
+      const createdGenre = await this.genreRepository.createGenre(genreName);
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    let createdGenre;
-    try{
-      createdGenre = await this.genreRepository.createGenre(genreName,queryRunner);
-      await queryRunner.commitTransaction();
-
-      if (createdGenre){
+      if (!createdGenre) {
         return {
-          ok : true,
-          statusCode : HttpStatus.CREATED,
-          message: 'CREATED',
-          data: createdGenre ,
+          ok: false,
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'NOT_FOUND',
         };
       }
-    }catch (error) {
-      console.log(error);
-      await queryRunner.rollbackTransaction();
-    }finally {
-      await queryRunner.release();
-    }
 
-    return {
-      ok : false,
-      statusCode : HttpStatus.BAD_REQUEST,
-      message: 'BAD_REQUEST',
-    };
+      return {
+        ok: true,
+        statusCode: HttpStatus.CREATED,
+        message: 'CREATED',
+        data: createdGenre,
+      };
   }
 
   async findById(id: number): Promise<CoreResponse> {
@@ -94,18 +80,19 @@ export class GenreService {
 
   async deletedGenre(genreId:number){
     const deletedGenre = await this.genreRepository.deletedGenre(genreId);
-    if (deletedGenre) {
+    console.log(deletedGenre);
+    if (!deletedGenre) {
       return {
-        ok : true,
-        statusCode : HttpStatus.OK,
-        message: 'SUCCESS',
-        data:deletedGenre,
+        ok : false,
+        statusCode : HttpStatus.NOT_FOUND,
+        message: 'NOT_FOUND',
       };
     }
     return {
       ok : false,
       statusCode :HttpStatus.BAD_REQUEST,
-      message: 'BAD_REQUEST',
+      message: 'SUCCESS',
+      data:deletedGenre,
     };
   }
 }

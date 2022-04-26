@@ -22,25 +22,29 @@ export class GenreRepository extends Repository<GenreEntity> {
       .getOne();
   }
 
-  async createGenre(name: string, queryRunner) {
+  async createGenre(name: string) {
     const newGenre = new GenreEntity();
     newGenre.name = name;
-    const createdGenre = await queryRunner.manager.save(GenreEntity,newGenre);
+    const createdGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+      return await queryRunner.manager.save(GenreEntity,newGenre);
+    });
     return createdGenre.id;
   }
 
   async updatedGenre(data){
     const {id , name} = data;
-    const updatedGenre = await this.makeQueryBuilder()
-      .update(GenreEntity)
-      .set({ name : name })
-      .where('genre.id =:id',{id : id})
-      .execute();
+    const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+      return await this.makeQueryBuilder()
+        .update(GenreEntity)
+        .set({name:name})
+        .where('genre.id =:id',{id : id})
+        .execute();
+    });
     return updatedGenre.raw.insertId;
   }
 
-  async deletedGenre(genreId:number, queryRunner?: QueryRunner) {
-    const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+  async deletedGenre(genreId:number) {
+    const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
       return await this.makeQueryBuilder()
         .softDelete()
         .from(GenreEntity)

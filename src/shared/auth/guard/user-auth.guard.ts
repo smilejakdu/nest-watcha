@@ -18,7 +18,7 @@ export class UserAuthGuard implements CanActivate {
 
     try {
       const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
-      userEmail = decodedUserJwt?.email;
+      userEmail = decodedUserJwt?.sub?.email;
     } catch (jwtErr) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],

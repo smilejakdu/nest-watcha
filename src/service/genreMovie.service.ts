@@ -12,11 +12,19 @@ export class GenreMovieService{
 
   async createGenreMovie(createGenreMovieDto : CreateGenreMovieDto){
     const createdGenreMovie = await this.genreMovieRepository.createGenreMovie(createGenreMovieDto);
+    if (!createGenreMovieDto){
+      return {
+        ok : false,
+        statusCode : HttpStatus.BAD_REQUEST,
+        message:  'BAD_REQUEST',
+        data: null,
+      };
+    }
     return {
-      ok : !isNil(createdGenreMovie),
-      statusCode :!isNil(createdGenreMovie) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-      message: !isNil(createdGenreMovie) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(createdGenreMovie) ? createdGenreMovie : null,
+      ok : true,
+      statusCode : HttpStatus.CREATED,
+      message: 'SUCCESS',
+      data: createdGenreMovie,
     };
   }
 

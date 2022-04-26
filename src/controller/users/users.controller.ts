@@ -86,7 +86,6 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async findMyProfile(@Req() req:any) {
-		console.log('req.user:',req.user);
 		const {id} = req.user;
 		return await this.usersService.findById(id);
 	}

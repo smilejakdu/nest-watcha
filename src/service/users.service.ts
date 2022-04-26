@@ -136,7 +136,7 @@ export class UsersService {
 				message:'SUCCESS',
 				data:{
 					user : foundUser,
-					jwt : jwt
+					access_token : jwt
 				}
 			};
 		}
@@ -149,7 +149,7 @@ export class UsersService {
 	}
 
 	async createToken(user: any) {
-		const token = await this.userRepository.getToken({id:user.id});
+		const token = await this.userRepository.getToken({email:user.email});
 		user.accessToken = token;
 		return user;
 	}

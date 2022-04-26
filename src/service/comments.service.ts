@@ -29,13 +29,11 @@ export class CommentsService {
 
 	async updateComment(content: string, commentId: number) {
 		const updatedComment = await this.commentsRepository.updateComment(content,commentId);
-		console.log('updatedComment:',updatedComment);
 		return updatedComment.raw.insertId;
 	}
 
 	async deleteComment(commentId: number) {
 		const deletedComment = await this.commentsRepository.deleteComment(commentId);
-		console.log('deletedComment:',deletedComment);
 		return deletedComment.raw.insertId;
 	}
 }

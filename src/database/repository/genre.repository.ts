@@ -25,7 +25,7 @@ export class GenreRepository extends Repository<GenreEntity> {
   async createGenre(name: string) {
     const newGenre = new GenreEntity();
     newGenre.name = name;
-    const createdGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+    const createdGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
       return await queryRunner.manager.save(GenreEntity,newGenre);
     });
     return createdGenre.id;

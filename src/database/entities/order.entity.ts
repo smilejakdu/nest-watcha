@@ -1,7 +1,8 @@
 import { CoreEntity } from './core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { UsersEntity } from './users.entity';
+import { MovieEntity } from './movie.entity';
 
 export enum OrderStatus {
   INIT = 'init',
@@ -50,6 +51,9 @@ export class OrderEntity extends CoreEntity{
   @Column('int', { name: 'userId', nullable: true })
   userId: number|null;
 
+  @Column('int', { name: 'movieId', nullable: true })
+  movieId: number|null;
+
   @ManyToOne(() => UsersEntity,
       users => users.Boards, {
     onDelete: 'SET NULL',
@@ -57,4 +61,10 @@ export class OrderEntity extends CoreEntity{
   })
   @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
   User: UsersEntity;
+
+  @OneToOne(()=>MovieEntity,
+    movieEntity => movieEntity.id,
+    )
+  @JoinColumn([{ name: 'movieId', referencedColumnName: 'id' }])
+  Movie: MovieEntity;
 }

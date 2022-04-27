@@ -56,6 +56,7 @@ export class GenreController {
     description:'업데이트 성공',
     type:UpdateGenreDto,
   })
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Patch(':id')
   async updateOneGenre(@Param('id',ParseIntPipe) id :number,@Body() body:UpdateGenreDto){
     return await this.genreService.updateGenre({
@@ -69,6 +70,7 @@ export class GenreController {
     description:'삭제하기 성공',
     type: DeleteGenreDto,
   })
+  @UseGuards(UserAuthGuard,PermissionsGuard)
   @Delete(':id')
   async deleteOneGenre(@Param('id',ParseIntPipe) id :number){
     return await this.genreService.deletedGenre(id);

@@ -68,7 +68,6 @@ export class GenreService {
 
   async deletedGenre(genreId:number) {
     const deletedGenre = await this.genreRepository.deletedGenre(genreId);
-    console.log(deletedGenre);
     if (!deletedGenre) {
       return {
         ok : false,

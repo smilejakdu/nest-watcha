@@ -4,10 +4,14 @@ import dayjs from 'dayjs';
 
 @Injectable()
 export class SchedulesService {
-  async findTransactionMoney() {
+
+  findDayjs(){
     const fromDate = dayjs(new Date()).subtract(1, 'day').format('YYYY-MM-DD 00:00:00');
     const toDate = dayjs(new Date()).subtract(1, 'day').format('YYYY-MM-DD 23:59:59');
-
+    return {fromDate , toDate};
+  }
+  async findAccountMoney() {
+    const {fromDate , toDate} = this.findDayjs();
     return await getManager().query(
       `
         select IFNULL(sum(o.order_price), 0) sum_price
@@ -19,6 +23,17 @@ export class SchedulesService {
         where o.createdAt between  ? and ?;
     `,
       [fromDate, toDate],
+    );
+  }
+
+  async findNewUser() {
+    const {fromDate , toDate} = this.findDayjs();
+    return await getManager().query(
+      `
+        select *
+        from users u
+        where u.createdAt between ? and ?;
+      `,[fromDate,toDate]
     );
   }
 }

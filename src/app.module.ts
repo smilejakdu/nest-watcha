@@ -13,6 +13,7 @@ import { GenreModule } from './module/genre.module';
 import { GenreMovieEntity } from './database/entities/genreMovie.entity';
 import { MovieModule } from './module/movie.module';
 import { MovieOptionEntity } from './database/entities/movieOption.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { MovieOptionEntity } from './database/entities/movieOption.entity';
 			isGlobal: true,
 		}),
 		TypeOrmModule.forRoot(ormconfig),
+		ScheduleModule.forRoot(),
 		UsersModule,
 		BoardsModule,
 		CommentsModule,

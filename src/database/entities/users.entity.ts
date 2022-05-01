@@ -63,7 +63,6 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'kakao_auth_id', length: 150, nullable: true })
 	kakao_auth_id: string;
 
-
 	@IsString()
 	@ApiProperty({
 		example: 'ash@naver.com',

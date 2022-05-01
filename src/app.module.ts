@@ -10,9 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HashtagModule } from './module/hashtag.module';
 import { ImageModule } from './module/image.module';
 import { GenreModule } from './module/genre.module';
-import { GenreMovieEntity } from './database/entities/genreMovie.entity';
 import { MovieModule } from './module/movie.module';
-import { MovieOptionEntity } from './database/entities/movieOption.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -30,8 +28,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 		ImageModule,
 		GenreModule,
 		MovieModule,
-		MovieOptionEntity,
-		GenreMovieEntity,
 	],
 	controllers: [],
 	providers: [],

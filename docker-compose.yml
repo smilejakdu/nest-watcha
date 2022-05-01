@@ -1,0 +1,12 @@
+version: "3"
+services:
+  nestjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - /usr/src/app/node_modules
+      - ./:/usr/src/app
+    stdin_open: true

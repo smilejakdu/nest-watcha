@@ -19,10 +19,6 @@ export class MovieRepository extends Repository<MovieEntity>{
     const newMovie = new MovieEntity();
     Object.assign(newMovie, createMovieDto);
     const createdMovie = await transactionManager.save(MovieEntity, newMovie);
-    // return await this.makeQueryBuilder()
-    //   .insert()
-    //   .values(createMovieDto)
-    //   .execute();
     return createdMovie.id;
   }
 
@@ -35,12 +31,7 @@ export class MovieRepository extends Repository<MovieEntity>{
       .addSelect([
         'subMovieImage.id',
         'subMovieImage.imageString',
-        'subMovieImage.updatedAt',
-      ])
-      .addSelect([
-        'subMovieImage.id',
-        'subMovieImage.imageString',
-        'subMovieImage.updatedAt',
+        'subMovieImage.createdAt',
       ])
       .addSelect([
         'movieOption.price'
@@ -56,9 +47,8 @@ export class MovieRepository extends Repository<MovieEntity>{
 
   findOneById(id:number) {
     return this.makeQueryBuilder()
-      .leftJoinAndSelect('movie.subImage','subImage')
-      .where('movie.id=:id ', {id:id})
-      .andWhere('movie.deletedAt is null');
+      .leftJoinAndSelect('movie.subMovieImage','subImage')
+      .where('movie.id=:id ', {id:id});
   }
 
   updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {

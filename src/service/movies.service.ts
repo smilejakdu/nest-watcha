@@ -39,7 +39,7 @@ export class MoviesService{
 
   async findAllMovie(pagination) {
     const skip = Number((pagination.page - 1) * pagination.limit);
-    const foundAllMovie =  await this.movieRepository
+    const foundAllMovie = await this.movieRepository
       .findAll()
       .skip(skip)
       .take(pagination.limit)
@@ -58,6 +58,7 @@ export class MoviesService{
     if(isNil(foundOneMovie)) {
       throw new NotFoundException(`does not found movie ${id}`);
     }
+
     return {
       ok : true,
       statusCode :HttpStatus.OK,

@@ -33,70 +33,72 @@ import { PermissionsGuard } from '../../shared/common/permissions/permissionChec
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
 @Controller('movies')
-export class MoviesController{
+export class MoviesController {
   constructor(
-    private movieService : MoviesService,
-    private genreMovieService : GenreMovieService,
-    ) {}
+    private movieService: MoviesService,
+    private genreMovieService: GenreMovieService
+  ) {
+  }
 
-  @ApiOperation({summary:'영화 만들기'})
-  @ApiCreatedResponse({ description:'성공'})
-  @UseGuards(UserAuthGuard,PermissionsGuard)
+  @ApiOperation({ summary: '영화 만들기' })
+  @ApiCreatedResponse({ description: '성공' })
+  @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post()
-  async createMovie(@Req() req, @Body() body:CreateMovieDto) {
-    const {genreId , ...movieDto} = body;
+  async createMovie(@Req() req, @Body() body: CreateMovieDto) {
+    const { genreId, ...movieDto } = body;
     const responseCreatedMovie = await this.movieService.createMovie(movieDto);
-    if(!responseCreatedMovie.ok) {
+    if (!responseCreatedMovie.ok) {
       throw new BadRequestException('영화 만들기 실패했습니다.');
     }
     await this.genreMovieService.createGenreMovie(
       {
         genreId: genreId,
-        movieId :responseCreatedMovie.data,
+        movieId: responseCreatedMovie.data
       }
     );
     return {
-      statusCode : HttpStatus.CREATED,
-      message : 'SUCCESS'
+      statusCode: HttpStatus.CREATED,
+      message: 'SUCCESS'
     };
   }
 
-  @ApiOperation({summary:'모든 영화 가져오기'})
-  @ApiOkResponse({ description:'성공' })
+  @ApiOperation({ summary: '모든 영화 가져오기' })
+  @ApiOkResponse({ description: '성공' })
   @Get()
   async findAllMovie(@Query() pagination: Pagination) {
     pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
     pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
-
+    console.log('movie backend');
     return await this.movieService.findAllMovie(pagination);
   }
 
-  @ApiOperation({summary:'해당 영화 가져오기'})
+  @ApiOperation({ summary: '해당 영화 가져오기' })
   @ApiOkResponse({
-    description:'성공',
-    type:GetGenreDto,
+    description: '성공',
+    type: GetGenreDto
   })
   @Get(':id')
-  async findMovieById(@Param('id', ParseIntPipe) id: number, @Res() res:Response) {
+  async findMovieById(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    console.log('server movie id :',id);
     return await this.movieService.findOneById(id);
   }
 
-  @ApiOperation({summary:'영화 수정하기'})
-  @ApiCreatedResponse({ description:'성공'})
-  @UseGuards(UserAuthGuard,PermissionsGuard)
+  @ApiOperation({ summary: '영화 수정하기' })
+  @ApiCreatedResponse({ description: '성공' })
+  @UseGuards(UserAuthGuard, PermissionsGuard)
   @Put(':id')
-  async updateMovie(@Req() req,@Param('id', ParseIntPipe) id: number,@Body() body:UpdateMovieDto){
-    const {genreId , ...movieDto} = body;
-    const responseUpdatedMovie = await this.movieService.updateMovieByIds([id],movieDto);
+  async updateMovie(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateMovieDto) {
+    const { genreId, ...movieDto } = body;
+    const responseUpdatedMovie = await this.movieService.updateMovieByIds([id], movieDto);
     await this.genreMovieService.updateGenreMovie(
       {
         genreId: genreId,
-        movieId :responseUpdatedMovie.data,
+        movieId: responseUpdatedMovie.data
       }
     );
     return {
-      statusCode : HttpStatus.OK,
-      message : 'SUCCESS'
+      statusCode: HttpStatus.OK,
+      message: 'SUCCESS'
     };
   }
 }

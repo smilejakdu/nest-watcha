@@ -1,6 +1,7 @@
 import { isNil } from 'lodash';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardImageRepository } from '../database/repository/boardImage.repository';
+import { CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
 
 @Injectable()
 export class BoardImageService {
@@ -10,31 +11,25 @@ export class BoardImageService {
 
 	async uploadFiles(files) {
 		const uploadedFile = await this.boardImageRepository.uploadFiles(files);
-		return {
-			ok: !isNil(uploadedFile),
-			statusCode :!isNil(uploadedFile) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-			message: !isNil(uploadedFile) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(uploadedFile) ? uploadedFile : null,
-		};
+		if(!isNil(uploadedFile)){
+			throw new NotFoundException(`does not found ${uploadedFile}`);
+		}
+		return CreateSuccessFulResponse(uploadedFile);
 	}
 
 	async findAllImages(): Promise<any> {
 		const foundAllImage = await this.boardImageRepository.findAllImages();
-		return {
-			ok: !isNil(foundAllImage),
-			statusCode :!isNil(foundAllImage) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-			message: !isNil(foundAllImage) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(foundAllImage) ? foundAllImage : null,
-		};
+		if(!isNil(foundAllImage)){
+			throw new NotFoundException(`does not found ${foundAllImage}`);
+		}
+		return SuccessResponse(foundAllImage);
 	}
 
 	async insertImages(boardId: number, imagePathList: string[]) {
 		const responseInsertImages = await this.boardImageRepository.insertImages(boardId,imagePathList);
-		return {
-			ok: !isNil(responseInsertImages),
-			statusCode :!isNil(responseInsertImages) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-			message: !isNil(responseInsertImages) ?'SUCCESS': 'BAD_REQUEST',
-			data:!isNil(responseInsertImages) ? responseInsertImages : [],
-		};
+		if(!isNil(responseInsertImages)){
+			throw new BadRequestException('BAD REQUEST');
+		}
+		return CreateSuccessFulResponse(responseInsertImages);
 	}
 }

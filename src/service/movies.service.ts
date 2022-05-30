@@ -1,5 +1,5 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CoreResponse } from '../shared/CoreResponse';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
 import { getConnection, QueryRunner } from 'typeorm';
 import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
@@ -29,12 +29,7 @@ export class MoviesService{
       throw new BadRequestException('BAD REQUEST');
     }
 
-    return {
-      ok : true,
-      statusCode : HttpStatus.CREATED,
-      message: 'SUCCESS',
-      data:createdMovie.raw.insertId,
-    };
+    return CreateSuccessFulResponse(createdMovie.raw.insertId);
   }
 
   async findAllMovie(pagination) {
@@ -45,12 +40,7 @@ export class MoviesService{
       .take(pagination.limit)
       .getMany();
 
-    return {
-      ok : true,
-      statusCode :HttpStatus.OK,
-      message: 'SUCCESS',
-      data:foundAllMovie ,
-    };
+    return SuccessResponse(foundAllMovie);
   }
 
   async findOneById(id:number): Promise<CoreResponse> {
@@ -59,32 +49,17 @@ export class MoviesService{
       throw new NotFoundException(`does not found movie ${id}`);
     }
 
-    return {
-      ok : true,
-      statusCode :HttpStatus.OK,
-      message: 'SUCCESS',
-      data:foundOneMovie,
-    };
+    return SuccessResponse(foundOneMovie);
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
-    return {
-      ok : true,
-      statusCode :HttpStatus.OK,
-      message: 'SUCCESS',
-      data: updatedMovie.raw.insertId,
-    };
+    return SuccessResponse(updatedMovie.raw.insertId);
   }
 
   async deleteMovieById(ids:number[],queryRunner?: QueryRunner) {
     const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
-    return {
-      ok : true,
-      statusCode : HttpStatus.OK,
-      message: 'SUCCESS',
-      data: deletedMovie.raw.insertId,
-    };
+    return SuccessResponse(deletedMovie.raw.insertId);
   }
 }
 

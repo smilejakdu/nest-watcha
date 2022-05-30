@@ -1,5 +1,11 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { CoreResponse } from '../shared/CoreResponse';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequest,
+  CoreResponse,
+  CreateSuccessFulResponse,
+  NotFoundResponse,
+  SuccessResponse
+} from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/genre.repository';
 
 @Injectable()
@@ -12,74 +18,35 @@ export class GenreService {
       const createdGenre = await this.genreRepository.createGenre(genreName);
 
       if (!createdGenre) {
-        return {
-          ok: false,
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'NOT_FOUND',
-        };
+        throw new NotFoundException('does not found');
       }
-
-      return {
-        ok: true,
-        statusCode: HttpStatus.CREATED,
-        message: 'CREATED',
-        data: createdGenre,
-      };
+      return CreateSuccessFulResponse(createdGenre);
   }
 
   async findById(id: number): Promise<CoreResponse> {
     const foundGenre = await this.genreRepository.findById(id);
-    return {
-      ok : true,
-      statusCode : HttpStatus.OK,
-      message: 'SUCCESS',
-      data:foundGenre ,
-    };
+    return SuccessResponse(foundGenre);
   }
 
   async findAllGenre(): Promise<CoreResponse> {
     const foundAllGenre =  await this.genreRepository.findAll();
-    return {
-      ok : true,
-      statusCode : HttpStatus.OK,
-      message: 'SUCCESS',
-      data: foundAllGenre,
-    };
+    return SuccessResponse(foundAllGenre);
   }
 
   async updateGenre(data) {
       const updatedGenre = await this.genreRepository.updatedGenre(data);
 
       if (updatedGenre){
-        return {
-          ok : true,
-          statusCode : HttpStatus.OK,
-          message : 'SUCCESS',
-          data : updatedGenre,
-        };
+        return SuccessResponse(updatedGenre);
       }
-
-    return {
-      ok : false,
-      statusCode : HttpStatus.BAD_REQUEST,
-      message : 'BAD_REQUEST',
-    };
+      return BadRequest();
   }
 
   async deletedGenre(genreId:number) {
     const deletedGenre = await this.genreRepository.deletedGenre(genreId);
     if (!deletedGenre) {
-      return {
-        ok : false,
-        statusCode : HttpStatus.NOT_FOUND,
-        message: 'NOT_FOUND',
-      };
+      return NotFoundResponse(deletedGenre);
     }
-    return {
-      ok : true,
-      statusCode :HttpStatus.OK,
-      message: 'SUCCESS',
-      data:deletedGenre,
-    };
+    return SuccessResponse(deletedGenre);
   }
 }

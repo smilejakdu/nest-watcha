@@ -86,8 +86,8 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async findMyProfile(@Req() req:any) {
-		const {id} = req.user;
-		return await this.usersService.findById(id);
+		const {email} = req.user;
+		return await this.usersService.findByEmail(email);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })

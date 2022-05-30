@@ -1,6 +1,6 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/boards.repository';
-import { CoreResponse } from '../shared/CoreResponse';
+import { CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
 import { getConnection } from 'typeorm';
 
@@ -27,12 +27,7 @@ export class BoardsService {
 		if(!createdBoard){
 			throw new BadRequestException('BAD REQUEST');
 		}
-		return {
-			ok: true,
-			statusCode : HttpStatus.CREATED,
-			message: 'SUCCESS',
-			data: createdBoard ,
-		};
+		return CreateSuccessFulResponse(createdBoard);
 	}
 
 	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
@@ -41,12 +36,7 @@ export class BoardsService {
 			.skip(skip)
 			.take(pagination.limit)
 			.getMany();
-		return {
-			ok : true,
-			statusCode : HttpStatus.OK ,
-			message: 'SUCCESS',
-			data: foundAllBoards,
-		};
+		return SuccessResponse(foundAllBoards);
 	}
 
 	async updateBoard(boardId: number, title: string, content: string) {
@@ -58,12 +48,7 @@ export class BoardsService {
 			.updateBoardOne(foundBoard.id,{title,content})
 			.execute();
 
-		return {
-			ok: true,
-			statusCode : HttpStatus.OK ,
-			message: 'SUCCESS',
-			data: responseUpdatedBoard.raw.insertId,
-		};
+		return SuccessResponse(responseUpdatedBoard.raw.insertId);
 	}
 
 	async deleteBoardOne(boardId: number) {
@@ -71,11 +56,6 @@ export class BoardsService {
 			.deleteBoardOne(boardId)
 			.execute();
 
-		return {
-			ok: true,
-			statusCode : HttpStatus.OK ,
-			message: 'SUCCESS',
-			data: responseDeletedBoardId.raw.insertId,
-		};
+		return SuccessResponse(responseDeletedBoardId.raw.insertId);
 	}
 }

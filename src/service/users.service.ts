@@ -1,8 +1,8 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
-import { CoreResponse } from '../shared/CoreResponse';
+import { BadRequest, CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
 import bcrypt from 'bcrypt';
 import * as Jwt from 'jsonwebtoken';
@@ -21,12 +21,7 @@ export class UsersService {
 			throw new NotFoundException(`해당하는 유저를 찾을 수 없습니다 ${email}`);
 		}
 		const {password , ...userData} = foundUser;
-		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: userData,
-		};
+		return SuccessResponse(userData);
 	}
 
 	async findById(id:number) {
@@ -35,22 +30,15 @@ export class UsersService {
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
-		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: userData,
-		};
+		return SuccessResponse(userData);
 	}
 
 	async findMyBoards(email:string) {
 		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
-		return {
-			ok: !isNil(foundMyBoards),
-			statusCode: !isNil(foundMyBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-			message: !isNil(foundMyBoards) ? 'SUCCESS' : 'NOT_FOUND',
-			data: !isNil(foundMyBoards) ? foundMyBoards : [],
-		};
+		if(!isNil(foundMyBoards)){
+			throw new NotFoundException(`does not found user :${email}`);
+		}
+		return SuccessResponse(foundMyBoards);
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
@@ -60,42 +48,22 @@ export class UsersService {
 			throw new BadRequestException('exsit user');
 		}
 		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
-		return {
-			ok: true,
-			statusCode: HttpStatus.CREATED,
-			message: 'SUCCESS',
-			data: responseCreatedUser,
-		};
+		return CreateSuccessFulResponse(responseCreatedUser);
 	}
 
 	async socialSignUp(data:any , loginType : LoginType) {
 		const responseCreateUser = await this.userRepository.createKakaoUser(data);
-		return {
-			ok: true,
-			statusCode: HttpStatus.CREATED,
-			message: 'SUCCESS',
-			data: responseCreateUser.raw.insertId,
-		};
+		return CreateSuccessFulResponse(responseCreateUser.raw.insertId);
 	}
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
-		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: foundUserByAuthId,
-		};
+		return SuccessResponse(foundUserByAuthId);
 	}
 
 	async findAuthLoginId(id:number) {
 		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
-		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: foundUserAuthId,
-		};
+		return SuccessResponse(foundUserAuthId);
 	}
 
 	async checkRegister(loginType:string, tokenString:string) {
@@ -117,11 +85,7 @@ export class UsersService {
 		const {email ,password}= logInDto;
 		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (isNil(foundUser)) {
-			return {
-				ok: false,
-				statusCode: HttpStatus.NOT_FOUND,
-				message: 'does not found user'
-			};
+			throw new NotFoundException(`does not found user ${email}`);
 		}
 
 		const result = await bcrypt.compare(password, foundUser.password);
@@ -130,22 +94,12 @@ export class UsersService {
 
 		if (result) {
 			delete foundUser.password;
-			return {
-				ok:true,
-				statusCode:HttpStatus.OK,
-				message:'SUCCESS',
-				data:{
-					user : foundUser,
-					access_token : jwt
-				}
-			};
+			return SuccessResponse({
+				user : foundUser,
+				access_token : jwt
+			});
 		}
-
-		return {
-			ok:false,
-			statusCode:HttpStatus.BAD_REQUEST,
-			message:'username 과 password 를 확인하세요'
-		};
+		return BadRequest();
 	}
 
 	async createToken(user: any) {

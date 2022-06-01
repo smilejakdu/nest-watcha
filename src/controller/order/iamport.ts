@@ -43,6 +43,5 @@ export class Iamport {
     }
 
     return paymentData;
-
   }
 }

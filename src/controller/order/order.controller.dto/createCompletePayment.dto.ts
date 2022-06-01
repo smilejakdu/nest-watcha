@@ -7,8 +7,24 @@ export class CompletePaymentDto {
   @IsString()
   imp_uid: string;
 
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  merchant_uid: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  impUid: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   movie_number: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  orderNumber: string;
 }

@@ -54,6 +54,13 @@ export class OrderEntity extends CoreEntity{
   @Column('int', { name: 'movieId', nullable: true })
   movieId: number|null;
 
+  @Column({
+    comment: '총 결제 금액',
+    default: 0,
+    nullable: true,
+  })
+  price: number;
+
   @ManyToOne(() => UsersEntity,
       users => users.Boards, {
     onDelete: 'SET NULL',

@@ -1,7 +1,7 @@
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { LoginType, UsersEntity } from '../entities/users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 import * as Jwt from 'jsonwebtoken';
 import axios from 'axios';

@@ -4,7 +4,7 @@ import { SignUpRequestDto } from '../controller/users/users.controller.dto/signU
 import { UserRepository } from '../database/repository/user.repository';
 import { BadRequest, CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 import { LoginType } from '../database/entities/users.entity';
@@ -92,14 +92,14 @@ export class UsersService {
 		const payload = {email: foundUser.email};
 		const jwt = await Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
 
-		if (result) {
-			delete foundUser.password;
-			return SuccessResponse({
-				user : foundUser,
-				access_token : jwt
-			});
+		if (!result) {
+			return BadRequest();
 		}
-		return BadRequest();
+		delete foundUser.password;
+		return SuccessResponse({
+			user : foundUser,
+			access_token : jwt
+		});
 	}
 
 	async createToken(user: any) {

@@ -42,27 +42,15 @@ export class UsersController {
 	@Get('findUser')
 	async findByEmail(@Body() data: UserFindRequestDto, @Res() res:Response) {
 		const responseUserByEmail = await this.usersService.findByEmail(data.email);
-		return res.status(responseUserByEmail.statusCode).json({
-			ok : responseUserByEmail.ok,
-			statusCode : responseUserByEmail.statusCode,
-			message : responseUserByEmail.message,
-			data : responseUserByEmail.data,
-		});
+		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
 
-	@ApiCreatedResponse({
-		description: 'success',
-	})
+	@ApiCreatedResponse({ description: 'success' })
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto, @Res() res:Response) {
 		const  responseSignUp = await this.usersService.signUp(data);
-		return res.status(responseSignUp.statusCode).json({
-			ok : responseSignUp.ok,
-			statusCode : responseSignUp.statusCode,
-			message : responseSignUp.message,
-			data : responseSignUp.data,
-		});
+		return res.status(responseSignUp.statusCode).json(responseSignUp);
 	}
 
 	@ApiOperation({ summary: 'login' })
@@ -72,13 +60,8 @@ export class UsersController {
 	})
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
-		const responseLogin =  await this.usersService.logIn(data);
-		return res.status(responseLogin.statusCode).json({
-			ok : responseLogin.ok,
-			statusCode : responseLogin.statusCode,
-			message : responseLogin.message,
-			data : responseLogin.data,
-		});
+		const responseLogin = await this.usersService.logIn(data);
+		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
 	@ApiOperation({ summary: 'profile' })

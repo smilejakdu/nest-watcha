@@ -1,5 +1,5 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -39,8 +39,8 @@ export class UsersController {
 	})
 	@ApiOperation({ summary: '회원검색' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Get('findUser')
-	async findByEmail(@Body() data: UserFindRequestDto, @Res() res:Response) {
+	@Get(':email')
+	async findByEmail(@Param() data: UserFindRequestDto, @Res() res:Response) {
 		const responseUserByEmail = await this.usersService.findByEmail(data.email);
 		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
@@ -103,11 +103,6 @@ export class UsersController {
 			httpOnly: true,
 			secure: true,
 		});
-		return res.json({
-			ok:foundUser.ok,
-			statusCdoe : foundUser.statusCode,
-			message : foundUser.message,
-			data :foundUser.data,
-		});
+		return res.status(foundUser.statusCode).json(foundUser);
 	}
 }

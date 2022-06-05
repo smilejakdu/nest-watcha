@@ -35,7 +35,10 @@ export abstract class AbstractService {
 	}
 
 	async findOne(condition, relations: any = []): Promise<any> {
-		const responseData = this.repository.findOne(condition, { relations });
+		const responseData = this.repository.findOne({
+			where: condition,
+			relations,
+		});
 		return SuccessFulResponse(responseData);
 	}
 

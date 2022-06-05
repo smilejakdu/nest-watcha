@@ -2,15 +2,16 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
 import { getConnection, QueryRunner } from 'typeorm';
-import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
 import { isNil } from '@nestjs/common/utils/shared.utils';
+import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
-export class MoviesService{
+export class MoviesService extends AbstractService {
   constructor(
     private readonly movieRepository: MovieRepository,
-    private readonly genreMovieRepository : GenreMovieRepository,
-  ) {}
+  ) {
+    super(movieRepository);
+  }
 
   async createMovie(createMovieDto) {
     const queryRunner = await getConnection().createQueryRunner();
@@ -41,15 +42,6 @@ export class MoviesService{
       .getMany();
 
     return SuccessFulResponse(foundAllMovie);
-  }
-
-  async findOneById(id:number): Promise<CoreResponse> {
-    const foundOneMovie = await this.movieRepository.findOneById(id).getOne();
-    if(isNil(foundOneMovie)) {
-      throw new NotFoundException(`does not found movie ${id}`);
-    }
-
-    return SuccessFulResponse(foundOneMovie);
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {

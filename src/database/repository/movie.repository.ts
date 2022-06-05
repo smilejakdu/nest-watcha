@@ -45,12 +45,6 @@ export class MovieRepository extends Repository<MovieEntity>{
       .leftJoin('movie.subMovieImage','subMovieImage');
   }
 
-  findOneById(id:number) {
-    return this.makeQueryBuilder()
-      .leftJoinAndSelect('movie.subMovieImage','subImage')
-      .where('movie.id=:id ', {id:id});
-  }
-
   updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     return this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)

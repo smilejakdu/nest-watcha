@@ -18,22 +18,12 @@ export class UsersService extends AbstractService {
 		super(userRepository);
 	}
 
-	async findByEmail(email: string): Promise<CoreResponse> {
-		const foundUser = await this.userRepository.findByEmail(email).getOne();
-		if(!foundUser){
-			throw new NotFoundException(`해당하는 유저를 찾을 수 없습니다 ${email}`);
-		}
-		const {password , ...userData} = foundUser;
-		return SuccessFulResponse(userData);
-	}
-
 	async findById(id:number) {
 		const foundUser = await this.userRepository.findUserById(id).getOne();
-		const {password , ...userData} =foundUser;
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
-		return SuccessFulResponse(userData);
+		return SuccessFulResponse(foundUser);
 	}
 
 	async findMyBoards(email:string) {
@@ -106,8 +96,7 @@ export class UsersService extends AbstractService {
 	}
 
 	async createToken(user: any) {
-		const token = await this.userRepository.getToken({email:user.email});
-		user.accessToken = token;
+		user.accessToken = await this.userRepository.getToken({ email: user.email });
 		return user;
 	}
 }

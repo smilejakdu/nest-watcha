@@ -37,8 +37,7 @@ export class MoviesController {
   constructor(
     private movieService: MoviesService,
     private genreMovieService: GenreMovieService
-  ) {
-  }
+  ) {}
 
   @ApiOperation({ summary: '영화 만들기' })
   @ApiCreatedResponse({ description: '성공' })
@@ -68,7 +67,6 @@ export class MoviesController {
   async findAllMovie(@Query() pagination: Pagination) {
     pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
     pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
-    console.log('movie backend');
     return await this.movieService.findAllMovie(pagination);
   }
 
@@ -79,15 +77,15 @@ export class MoviesController {
   })
   @Get(':id')
   async findMovieById(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    console.log('server movie id :',id);
-    return await this.movieService.findOneById(id);
+    const responseMovie = await this.movieService.findOne(id);
+    return res.status(responseMovie.statusCode).json(responseMovie);
   }
 
   @ApiOperation({ summary: '영화 수정하기' })
   @ApiCreatedResponse({ description: '성공' })
   @UseGuards(UserAuthGuard, PermissionsGuard)
   @Put(':id')
-  async updateMovie(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateMovieDto) {
+  async updateMovie(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateMovieDto, @Res() res:Response) {
     const { genreId, ...movieDto } = body;
     const responseUpdatedMovie = await this.movieService.updateMovieByIds([id], movieDto);
     await this.genreMovieService.updateGenreMovie(
@@ -96,9 +94,6 @@ export class MoviesController {
         movieId: responseUpdatedMovie.data
       }
     );
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'SUCCESS'
-    };
+    return res.status(responseUpdatedMovie.statusCode).json(responseUpdatedMovie);
   }
 }

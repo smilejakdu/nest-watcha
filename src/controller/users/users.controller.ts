@@ -1,11 +1,9 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 // Dto
-import { UserDto } from 'src/shared/common/dto/user.dto';
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
-import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.request.dto';
 import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
@@ -24,19 +22,12 @@ export const BAD_REQUEST = 'bad request';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@ApiOperation({ summary: '회원검색 by email' })
-	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Get(':email')
-	async findByEmail(@Param() data: UserFindRequestDto, @Res() res: Response) {
-		const responseUserByEmail = await this.usersService.findByEmail(data.email);
-		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
-	}
-
 	@ApiOperation({ summary: '회원검색 by id' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get(':id')
-	async get(@Param('id') id: number, @Res() res: Response) {
-		return await this.usersService.findOne(id, ['Boards']);
+	async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+		const responseUserById = await this.usersService.findOne(id, ['Boards','Orders']);
+		return res.status(responseUserById.statusCode).json(responseUserById);
 	}
 
 	@ApiCreatedResponse({ description: 'success' })
@@ -62,9 +53,10 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async findMyProfile(@Req() req: any) {
+	async findMyProfile(@Req() req: any, @Res() res:Response) {
 		const { email } = req.user;
-		return await this.usersService.findByEmail(email);
+		const responseUserByEmail = await this.usersService.findOne(email, ['Boards','Orders']);
+		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })

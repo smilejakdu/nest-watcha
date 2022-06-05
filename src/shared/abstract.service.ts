@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
+import { SuccessFulResponse } from './CoreResponse';
 
 @Injectable()
 export abstract class AbstractService {
@@ -34,14 +35,17 @@ export abstract class AbstractService {
 	}
 
 	async findOne(condition, relations: any = []): Promise<any> {
-		return await this.repository.findOne(condition, { relations });
+		const responseData = this.repository.findOne(condition, { relations });
+		return SuccessFulResponse(responseData);
 	}
 
 	async update(id: number, data): Promise<any> {
-		return this.repository.update(id, data);
+		const updatedData = this.repository.update(id, data);
+		return SuccessFulResponse(updatedData);
 	}
 
 	async delete(id: number): Promise<any> {
-		return this.repository.delete(id);
+		const deletedData = this.repository.delete(id);
+		return SuccessFulResponse(deletedData);
 	}
 }

@@ -10,6 +10,7 @@ import { SchedulesEntity } from './schedules.entity';
 import { OrderClaimEntity } from './orderClaim.entity';
 import { OrderLogEntity } from './orderLog.entity';
 import { PermissionEntity } from './permission.entity';
+import { Exclude } from 'class-transformer';
 
 export enum LoginType {
 	NAVER = 'naver',
@@ -48,6 +49,7 @@ export class UsersEntity extends CoreEntity {
 
 	@IsString()
 	@IsNotEmpty()
+	@Exclude()
 	@ApiProperty({
 		example: 'password',
 		description: 'password',

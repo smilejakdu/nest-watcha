@@ -7,6 +7,7 @@ import {
   SelectQueryBuilder,
   TransactionManager
 } from 'typeorm';
+import { transactionRunner } from '../../shared/common/transaction/transaction';
 
 @EntityRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -14,10 +15,12 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return this.createQueryBuilder('boards', queryRunner);
   }
 
-  async createBoard(data, @TransactionManager() transactionManager:EntityManager) {
+  async createBoard(data) {
     const newBoard = new BoardsEntity();
     Object.assign(newBoard ,data);
-    const createdBoard = await transactionManager.save(BoardsEntity, newBoard);
+    const createdBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
+      return await queryRunner.manager.save(BoardsEntity,newBoard);
+    });
     return createdBoard.id;
   }
 

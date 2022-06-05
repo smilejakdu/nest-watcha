@@ -1,24 +1,24 @@
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../database/repository/order.repository';
-import { UsersService } from './users.service';
 import { isNil } from 'lodash';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
 import { MoviesService } from './movies.service';
 import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/order.entity';
+import { UserRepository } from '../database/repository/user.repository';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository : OrderRepository,
-    private readonly usersService: UsersService,
+    private readonly usersRepository : UserRepository,
     private readonly moviesService: MoviesService,
   ) {}
 
   async createOrderNumber(email:string , set:any):Promise<CoreResponse> {
-    const foundUser = await this.usersService.findByEmail(email);
-    const createdOrder = await this.ordersRepository.createOrder(foundUser.data , set);
+    const foundUserByEmail = await this.usersRepository.findByEmail(email).getOne();
+    const createdOrder = await this.ordersRepository.createOrder(foundUserByEmail.id , set);
     if(isNil(createdOrder)){
       throw new BadRequestException('bad request create_order_number');
     }
@@ -46,7 +46,6 @@ export class OrdersService {
     let paymentData;
     try{
       paymentData = await iamport.getPaymentData(imp_uid,access_token);
-      console.log(paymentData);
     }catch (error) {
       console.log(error);
       throw new BadRequestException(`결제 정보 오류 : ${error.response.data.message}`);

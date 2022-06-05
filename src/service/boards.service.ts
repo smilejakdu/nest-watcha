@@ -1,14 +1,17 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/boards.repository';
-import { CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
+import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
 import { getConnection } from 'typeorm';
+import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
-export class BoardsService {
+export class BoardsService extends AbstractService {
 	constructor(
 		private readonly boardsRepository : BoardsRepository,
-	) {}
+	) {
+		super(boardsRepository);
+	}
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {
 		const queryRunner = await getConnection().createQueryRunner();
@@ -27,7 +30,7 @@ export class BoardsService {
 		if(!createdBoard){
 			throw new BadRequestException('BAD REQUEST');
 		}
-		return CreateSuccessFulResponse(createdBoard);
+		return SuccessFulResponse(createdBoard,HttpStatus.CREATED);
 	}
 
 	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
@@ -36,7 +39,7 @@ export class BoardsService {
 			.skip(skip)
 			.take(pagination.limit)
 			.getMany();
-		return SuccessResponse(foundAllBoards);
+		return SuccessFulResponse(foundAllBoards);
 	}
 
 	async updateBoard(boardId: number, title: string, content: string) {
@@ -48,7 +51,7 @@ export class BoardsService {
 			.updateBoardOne(foundBoard.id,{title,content})
 			.execute();
 
-		return SuccessResponse(responseUpdatedBoard.raw.insertId);
+		return SuccessFulResponse(responseUpdatedBoard.raw.insertId);
 	}
 
 	async deleteBoardOne(boardId: number) {
@@ -56,6 +59,6 @@ export class BoardsService {
 			.deleteBoardOne(boardId)
 			.execute();
 
-		return SuccessResponse(responseDeletedBoardId.raw.insertId);
+		return SuccessFulResponse(responseDeletedBoardId.raw.insertId);
 	}
 }

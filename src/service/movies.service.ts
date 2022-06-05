@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
 import { getConnection, QueryRunner } from 'typeorm';
 import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
@@ -29,7 +29,7 @@ export class MoviesService{
       throw new BadRequestException('BAD REQUEST');
     }
 
-    return CreateSuccessFulResponse(createdMovie.raw.insertId);
+    return SuccessFulResponse(createdMovie.raw.insertId,HttpStatus.CREATED);
   }
 
   async findAllMovie(pagination) {
@@ -40,7 +40,7 @@ export class MoviesService{
       .take(pagination.limit)
       .getMany();
 
-    return SuccessResponse(foundAllMovie);
+    return SuccessFulResponse(foundAllMovie);
   }
 
   async findOneById(id:number): Promise<CoreResponse> {
@@ -49,17 +49,17 @@ export class MoviesService{
       throw new NotFoundException(`does not found movie ${id}`);
     }
 
-    return SuccessResponse(foundOneMovie);
+    return SuccessFulResponse(foundOneMovie);
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
-    return SuccessResponse(updatedMovie.raw.insertId);
+    return SuccessFulResponse(updatedMovie.raw.insertId);
   }
 
   async deleteMovieById(ids:number[],queryRunner?: QueryRunner) {
     const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
-    return SuccessResponse(deletedMovie.raw.insertId);
+    return SuccessFulResponse(deletedMovie.raw.insertId);
   }
 }
 

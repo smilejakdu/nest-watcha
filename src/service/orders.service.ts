@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../database/repository/order.repository';
 import { UsersService } from './users.service';
 import { isNil } from 'lodash';
-import { CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
+import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
 import { MoviesService } from './movies.service';
@@ -22,7 +22,7 @@ export class OrdersService {
     if(isNil(createdOrder)){
       throw new BadRequestException('bad request create_order_number');
     }
-    return CreateSuccessFulResponse(createdOrder.raw.insertId);
+    return SuccessFulResponse(createdOrder.raw.insertId,HttpStatus.CREATED);
   }
 
   async orderPaymentComplete(body: CompletePaymentDto) {
@@ -107,11 +107,11 @@ export class OrdersService {
 
   async findOneUserOrder(userId: number):Promise<CoreResponse> {
     const foundOrderByUser = await this.ordersRepository.findUserOrders(userId).getMany();
-    return SuccessResponse(foundOrderByUser);
+    return SuccessFulResponse(foundOrderByUser);
   }
 
   async findOrderByOrderNumber(orderNumber: string) {
     const foundOrder = await this.ordersRepository.findOrderByOrderNumber(orderNumber).getOne();
-    return SuccessResponse(foundOrder);
+    return SuccessFulResponse(foundOrder);
   }
 }

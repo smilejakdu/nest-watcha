@@ -1,13 +1,6 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
 import { Body, Controller, Get, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-	ApiBadRequestResponse,
-	ApiCreatedResponse,
-	ApiInternalServerErrorResponse,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 // Dto
 import { UserDto } from 'src/shared/common/dto/user.dto';
@@ -29,27 +22,28 @@ export const BAD_REQUEST = 'bad request';
 @ApiTags('USERS')
 @Controller('users')
 export class UsersController {
-	constructor(
-		private readonly usersService: UsersService
-	) {}
+	constructor(private readonly usersService: UsersService) {}
 
-	@ApiOkResponse({
-		description: 'success',
-		type: UserDto,
-	})
-	@ApiOperation({ summary: '회원검색' })
+	@ApiOperation({ summary: '회원검색 by email' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get(':email')
-	async findByEmail(@Param() data: UserFindRequestDto, @Res() res:Response) {
+	async findByEmail(@Param() data: UserFindRequestDto, @Res() res: Response) {
 		const responseUserByEmail = await this.usersService.findByEmail(data.email);
 		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
+	}
+
+	@ApiOperation({ summary: '회원검색 by id' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@Get(':id')
+	async get(@Param('id') id: number, @Res() res: Response) {
+		return await this.usersService.findOne(id, ['Boards']);
 	}
 
 	@ApiCreatedResponse({ description: 'success' })
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
-	async signUp(@Body() data: SignUpRequestDto, @Res() res:Response) {
-		const  responseSignUp = await this.usersService.signUp(data);
+	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
+		const responseSignUp = await this.usersService.signUp(data);
 		return res.status(responseSignUp.statusCode).json(responseSignUp);
 	}
 
@@ -59,7 +53,7 @@ export class UsersController {
 		type: LoginResponseDto,
 	})
 	@Post('login')
-	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
+	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
 		const responseLogin = await this.usersService.logIn(data);
 		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
@@ -68,8 +62,8 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async findMyProfile(@Req() req:any) {
-		const {email} = req.user;
+	async findMyProfile(@Req() req: any) {
+		const { email } = req.user;
 		return await this.usersService.findByEmail(email);
 	}
 
@@ -77,8 +71,8 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('my_boards')
-	async findMyBoards(@Req() req:any) {
-		const {email} = req.user;
+	async findMyBoards(@Req() req: any) {
+		const { email } = req.user;
 		return await this.usersService.findMyBoards(email);
 	}
 
@@ -86,15 +80,14 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakao/callback')
 	async kakaoCallback(@Req() req: any, @Res() res: Response) {
-		const data:{foundUser: any, kakaoUserData: any} =
-			await this.usersService.checkRegister(LoginType.KAKAO , req.headers.access_token);
+		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers.access_token);
 		let userId = data.foundUser?.id;
 		if (!data.foundUser) {
 			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
 			userId = result.data;
 		}
 
-		const foundUser =  await this.usersService.findById(userId);
+		const foundUser = await this.usersService.findById(userId);
 		const accessToken = await this.usersService.createToken(foundUser.data);
 
 		res.cookie('accessToken', accessToken.accessToken, {

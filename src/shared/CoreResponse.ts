@@ -7,16 +7,15 @@ export interface CoreResponse {
   data?: any;
 }
 
-export function CreateSuccessFulResponse(data){
-  return {
-    ok: true,
-    statusCode: HttpStatus.CREATED,
-    message: 'SUCCESS',
-    data:data
-  };
-}
-
-export function SuccessResponse(data){
+export function SuccessFulResponse(data,status = HttpStatus.OK){
+  if(status == HttpStatus.CREATED){
+    return {
+      ok: true,
+      statusCode: HttpStatus.CREATED,
+      message: 'SUCCESS',
+      data:data
+    };
+  }
   return {
     ok: true,
     statusCode: HttpStatus.OK,

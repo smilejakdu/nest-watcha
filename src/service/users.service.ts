@@ -1,19 +1,22 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
-import { BadRequest, CoreResponse, CreateSuccessFulResponse, SuccessResponse } from '../shared/CoreResponse';
+import { BadRequest, CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 import { LoginType } from '../database/entities/users.entity';
+import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends AbstractService {
 	constructor(
 		private readonly userRepository: UserRepository,
-	) {}
+	) {
+		super(userRepository);
+	}
 
 	async findByEmail(email: string): Promise<CoreResponse> {
 		const foundUser = await this.userRepository.findByEmail(email).getOne();
@@ -21,7 +24,7 @@ export class UsersService {
 			throw new NotFoundException(`해당하는 유저를 찾을 수 없습니다 ${email}`);
 		}
 		const {password , ...userData} = foundUser;
-		return SuccessResponse(userData);
+		return SuccessFulResponse(userData);
 	}
 
 	async findById(id:number) {
@@ -30,7 +33,7 @@ export class UsersService {
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
-		return SuccessResponse(userData);
+		return SuccessFulResponse(userData);
 	}
 
 	async findMyBoards(email:string) {
@@ -38,7 +41,7 @@ export class UsersService {
 		if(!isNil(foundMyBoards)){
 			throw new NotFoundException(`does not found user :${email}`);
 		}
-		return SuccessResponse(foundMyBoards);
+		return SuccessFulResponse(foundMyBoards);
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
@@ -48,22 +51,22 @@ export class UsersService {
 			throw new BadRequestException('exsit user');
 		}
 		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
-		return CreateSuccessFulResponse(responseCreatedUser);
+		return SuccessFulResponse(responseCreatedUser,HttpStatus.CREATED);
 	}
 
 	async socialSignUp(data:any , loginType : LoginType) {
 		const responseCreateUser = await this.userRepository.createKakaoUser(data);
-		return CreateSuccessFulResponse(responseCreateUser.raw.insertId);
+		return SuccessFulResponse(responseCreateUser.raw.insertId,HttpStatus.CREATED);
 	}
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
-		return SuccessResponse(foundUserByAuthId);
+		return SuccessFulResponse(foundUserByAuthId);
 	}
 
 	async findAuthLoginId(id:number) {
 		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
-		return SuccessResponse(foundUserAuthId);
+		return SuccessFulResponse(foundUserAuthId);
 	}
 
 	async checkRegister(loginType:string, tokenString:string) {
@@ -96,7 +99,7 @@ export class UsersService {
 			return BadRequest();
 		}
 		delete foundUser.password;
-		return SuccessResponse({
+		return SuccessFulResponse({
 			user : foundUser,
 			access_token : jwt
 		});

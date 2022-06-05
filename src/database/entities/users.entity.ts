@@ -71,7 +71,6 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'naver_auth_id', length: 150, nullable: true })
 	naver_auth_id: string;
 
-
 	@IsString()
 	@ApiProperty({
 		example: 'ash@gmail.com',
@@ -80,17 +79,14 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'google_auth_id', length: 150, nullable: true })
 	google_auth_id: string;
 
-	@Column('int', { name: 'permissionId', nullable:true })
-	permissionId: number|null;
+	@Column('int', { name: 'permissionId', nullable: true })
+	permissionId: number | null;
 
-	@ManyToOne(
-		() => PermissionEntity,
-		permission => permission.users,
-		{
-			onDelete: 'CASCADE',
-			onUpdate: 'CASCADE',
-		})
-	@JoinColumn({name:'permissionId'})
+	@ManyToOne(() => PermissionEntity, permission => permission.users, {
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
+	})
+	@JoinColumn({ name: 'permissionId' })
 	permission: PermissionEntity;
 
 	@OneToMany(() => BoardsEntity, boards => boards.User)

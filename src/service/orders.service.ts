@@ -32,7 +32,7 @@ export class OrdersService {
       body.orderNumber = merchant_uid;
     }
 
-    const foundMovie = await this.moviesService.findOneById(movie_number);
+    const foundMovie = await this.moviesService.findOne(movie_number);
     if(isNil(foundMovie)) {
       throw new NotFoundException(`does not movie ${movie_number}`);
     }

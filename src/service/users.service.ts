@@ -19,7 +19,7 @@ export class UsersService extends AbstractService {
 	}
 
 	async findById(id:number) {
-		const foundUser = await this.userRepository.findUserById(id).getOne();
+		const foundUser = await this.userRepository.findOne(id);
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}

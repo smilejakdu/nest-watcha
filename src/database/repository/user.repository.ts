@@ -75,12 +75,6 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
   }
 
-  findUserById(id: number) {
-    return this.makeQueryBuilder()
-      .where('users.id = :id', { id })
-      .addSelect(['users.kakao_auth_id', 'users.google_auth_id', 'users.naver_auth_id']);
-  }
-
   getToken(user_auth: any) {
     const payload = {sub: user_auth};
     const jwt = Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});

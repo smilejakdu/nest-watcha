@@ -23,7 +23,6 @@ export class CommentsService {
 
 	async createComment(content: string, boardId: number, userId: number) {
 		const createdComment = await this.commentsRepository.createComment(content,boardId,userId);
-		console.log('createdComment:',createdComment);
 		return createdComment.raw.insertId;
 	}
 

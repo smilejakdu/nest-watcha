@@ -3,6 +3,7 @@ import { BoardsRepository } from '../database/repository/boards.repository';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
 import { AbstractService } from '../shared/abstract.service';
+import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-board.dto';
 
 @Injectable()
 export class BoardsService extends AbstractService {
@@ -29,23 +30,20 @@ export class BoardsService extends AbstractService {
 		return SuccessFulResponse(foundAllBoards);
 	}
 
-	async updateBoard(boardId: number, title: string, content: string) {
+	async updateBoard(boardId: number, data: UpdateBoardDto) {
 		const foundBoard = await this.boardsRepository.findById(boardId).getOne();
+
 		if(!foundBoard){
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
-		const responseUpdatedBoard = await this.boardsRepository
-			.updateBoardOne(foundBoard.id,{title,content})
-			.execute();
 
-		return SuccessFulResponse(responseUpdatedBoard.raw.insertId);
+		const updatedBoard = await this.boardsRepository.update(foundBoard.id, data);
+
+		return SuccessFulResponse(updatedBoard);
 	}
 
 	async deleteBoardOne(boardId: number) {
-		const responseDeletedBoardId = await this.boardsRepository
-			.deleteBoardOne(boardId)
-			.execute();
-
-		return SuccessFulResponse(responseDeletedBoardId.raw.insertId);
+		const deletedBoard = await this.boardsRepository.softDelete(boardId);
+		return SuccessFulResponse(deletedBoard.raw.insertId);
 	}
 }

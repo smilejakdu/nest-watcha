@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import { SuccessFulResponse } from './CoreResponse';
+import { transactionRunner } from './common/transaction/transaction';
 
 @Injectable()
 export abstract class AbstractService {
@@ -30,8 +31,11 @@ export abstract class AbstractService {
 		};
 	}
 
-	async create(data): Promise<any> {
-		return this.repository.save(data);
+	async create(entity, data): Promise<any> {
+		const created = await transactionRunner(async (queryRunner:QueryRunner)=>{
+			return await queryRunner.manager.save(entity,data);
+		});
+		return created;
 	}
 
 	async findOne(condition, relations: any = []): Promise<any> {

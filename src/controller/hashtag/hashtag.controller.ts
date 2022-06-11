@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Query } from '@nestjs/common';
 
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -19,7 +19,7 @@ export class HashtagController {
 		type: SelectHashtagDto,
 	})
 	@Get()
-	async getMyHashTag(@Body() data: SelectHashtagDto): Promise<object> {
+	async getMyHashTag(@Query() data: SelectHashtagDto) {
 		return this.hashTagService.getMyHashTag(data.hashtag);
 	}
 }

@@ -19,7 +19,6 @@ export enum LoginType {
 }
 
 @Entity({ schema: 'nest_watcha', name: 'users' })
-@Unique('email', ['email'])
 export class UsersEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()

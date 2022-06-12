@@ -1,11 +1,9 @@
 import { BoardsEntity } from '../entities/boards.entity';
 import {
-  EntityManager,
   EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
-  TransactionManager
 } from 'typeorm';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 
@@ -31,7 +29,7 @@ export class BoardsRepository extends Repository<BoardsEntity>{
         'boards.title',
         'boards.content',
         'boards.updatedAt',
-        'user.username',
+        'user.email',
       ])
       .addSelect([
         'images.id',
@@ -43,28 +41,7 @@ export class BoardsRepository extends Repository<BoardsEntity>{
         'comments.updatedAt',
       ])
       .innerJoin('boards.User','user')
-      .innerJoin('boards.Comments','comments')
+      .leftJoin('boards.Comments','comments')
       .leftJoin('boards.Images','images');
-  }
-
-  findAllBoardsWithUser(){
-    return this.makeQueryBuilder()
-      .leftJoin('boards.User', 'user');
-  }
-
-   findById(boardId:number){
-    return this.makeQueryBuilder()
-      .where('boards.id=:id',{id:boardId});
-  }
-
-   updateBoardOne(boardId:number,set:any){
-    return this.findById(boardId)
-      .update<BoardsEntity>(BoardsEntity, set);
-  }
-
-   deleteBoardOne(boardId:number){
-    return this.findById(boardId)
-      .softDelete()
-      .from(BoardsEntity);
   }
 }

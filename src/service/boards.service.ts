@@ -31,7 +31,7 @@ export class BoardsService extends AbstractService {
 	}
 
 	async updateBoard(boardId: number, data: UpdateBoardDto) {
-		const foundBoard = await this.boardsRepository.findOne({id:boardId});
+		const foundBoard = await this.boardsRepository.findOneBy({id:boardId});
 		if(!foundBoard){
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}

@@ -7,8 +7,9 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import { LoginType } from '../database/entities/users.entity';
+import { LoginType, UsersEntity } from '../database/entities/users.entity';
 import { AbstractService } from '../shared/abstract.service';
+import { AppDataSource } from '../data-source';
 
 @Injectable()
 export class UsersService extends AbstractService {
@@ -19,10 +20,12 @@ export class UsersService extends AbstractService {
 	}
 
 	async findById(id:number) {
-		const foundUser = await this.userRepository.findOne(id);
+		const foundUser = await AppDataSource.manager.findOneBy(UsersEntity,{id:id});
+
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);
 		}
+		delete foundUser.password;
 		return SuccessFulResponse(foundUser);
 	}
 

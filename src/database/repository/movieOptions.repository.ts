@@ -1,10 +1,8 @@
 import {
-  EntityManager,
   EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
-  TransactionManager
 } from 'typeorm';
 import { MovieOptionEntity } from '../entities/movieOption.entity';
 

@@ -38,7 +38,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^1.1.0",
     "@nestjs/swagger": "^5.0.9",
-    "@nestjs/typeorm": "^8.0.2",
+    "@nestjs/typeorm": "^8.1.2",
     "@types/passport-kakao": "^0.2.1",
     "aws-sdk": "^2.999.0",
     "axios": "^0.26.1",
@@ -63,8 +63,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.1.6",
-    "typeorm": "^0.2.37",
-    "typeorm-seeding": "^1.6.1"
+    "typeorm": "^0.3.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

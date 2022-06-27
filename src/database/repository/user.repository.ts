@@ -12,11 +12,6 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.createQueryBuilder('users', queryRunner);
   }
 
-  findOneUserById(id:number) {
-    return this.makeQueryBuilder()
-      .where('users.id=:id ', {id});
-  }
-
   findMyBoard(email:string) {
     return this.makeQueryBuilder()
       .select([
@@ -77,8 +72,7 @@ export class UserRepository extends Repository<UsersEntity> {
 
   getToken(user_auth: any) {
     const payload = {sub: user_auth};
-    const jwt = Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
-    return jwt;
+    return Jwt.sign(payload, process.env.JWT, { expiresIn: '30d' });
   }
 
   async findAuthId(id:string, type:LoginType) {
@@ -132,8 +126,9 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   removeUser(id: number, queryRunner?: QueryRunner) {
-    return this.findOneUserById(id)
+    return this.makeQueryBuilder()
       .softDelete()
+      .where('users.id =: id',{id:id})
       .from(UsersEntity);
   }
 

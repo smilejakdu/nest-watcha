@@ -38,7 +38,7 @@ export class UserAuthGuard implements CanActivate {
       throw new HttpException('로그인 정보가 만료되었습니다.02', HttpStatus.UNAUTHORIZED);
     }
 
-    const userData = await UsersEntity.findOne({email:userEmail});
+    const userData = await UsersEntity.findOneBy({email:userEmail});
     if (!userData) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],

@@ -1,24 +1,13 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { CommentsEntity } from '../entities/comments.entity';
 
-@EntityRepository(CommentsEntity)
 export class CommentsRepository extends Repository<CommentsEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<CommentsEntity> {
     return this.createQueryBuilder('comments', queryRunner);
   }
 
-  findAll() {
+  async findOneWithBoardAndUserById(commentId:number){
     return this.makeQueryBuilder()
-      .where('comments.deletedAt is NULL');
-  }
-
-  findOneById(commentId:number){
-    return this.findAll()
-      .andWhere('comments.id=:id ', {id:commentId});
-  }
-
-  findOneWithBoardAndUserById(commentId:number){
-    return this.findOneById(commentId)
       .addSelect([
         'board.id'
       ])
@@ -26,7 +15,8 @@ export class CommentsRepository extends Repository<CommentsEntity>{
         'user.id'
       ])
       .innerJoin('comments.Board','board')
-      .innerJoin('comments.User','user');
+      .innerJoin('comments.User','user')
+      .where('comments.id=:id ', {id:commentId});
   }
 
   createComment(content: string, boardId: number, userId: number) {
@@ -39,19 +29,21 @@ export class CommentsRepository extends Repository<CommentsEntity>{
       }).execute();
   }
 
-  updateComment(content:string , commentId:number) {
-    return this.findOneById(commentId)
+  async updateComment(content:string , commentId:number) {
+    return this.makeQueryBuilder()
       .update()
       .set({
         content : content,
       })
+      .where('comments.id=:id ', {id:commentId})
       .execute();
   }
 
-  deleteComment(commentId: number) {
-    return this.findOneById(commentId)
+  async deleteComment(commentId: number) {
+    return this.makeQueryBuilder()
       .softDelete()
       .from(CommentsEntity)
+      .where('comments.id=:id ', {id:commentId})
       .execute();
   }
 }

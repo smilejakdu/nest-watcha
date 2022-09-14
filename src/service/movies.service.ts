@@ -1,24 +1,25 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import { BadRequestException, HttpStatus, Injectable} from '@nestjs/common';
+import { SuccessFulResponse } from '../shared/CoreResponse';
 import { MovieRepository } from '../database/repository/movie.repository';
-import { getConnection, QueryRunner } from 'typeorm';
-import { isNil } from '@nestjs/common/utils/shared.utils';
+import { DataSource, QueryRunner } from 'typeorm';
 import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
 export class MoviesService extends AbstractService {
   constructor(
     private readonly movieRepository: MovieRepository,
+    private dataSource: DataSource
   ) {
     super(movieRepository);
   }
 
   async createMovie(createMovieDto) {
-    const queryRunner = await getConnection().createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
     await queryRunner.startTransaction();
     let createdMovie;
     try{
-      createdMovie = await this.movieRepository.createMovie(createMovieDto,queryRunner.manager);
+      createdMovie = await this.movieRepository.createMovie(createMovieDto);
     }catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();

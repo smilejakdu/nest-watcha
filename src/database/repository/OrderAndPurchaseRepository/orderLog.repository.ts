@@ -1,5 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { OrderLogEntity } from '../entities/orderLog.entity';
+import { OrderLogEntity } from '../../entities/Order/orderLog.entity';
 
 @EntityRepository(OrderLogEntity)
 export class OrderLogRepository extends Repository<OrderLogEntity>{

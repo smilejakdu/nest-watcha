@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { UsersEntity } from './users.entity';
 
 export enum PermissionType {

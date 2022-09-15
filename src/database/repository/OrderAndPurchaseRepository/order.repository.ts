@@ -1,5 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { OrderEntity, OrderStatus } from '../entities/order.entity';
+import { OrderEntity, OrderStatus } from '../../entities/Order/order.entity';
 import dayjs from 'dayjs';
 
 @EntityRepository(OrderEntity)

@@ -4,7 +4,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { MovieOptionEntity } from '../entities/movieOption.entity';
+import { MovieOptionEntity } from '../../entities/MovieAndGenre/movieOption.entity';
 
 @EntityRepository(MovieOptionEntity)
 export class MovieOptionsRepository extends Repository<MovieOptionEntity>{

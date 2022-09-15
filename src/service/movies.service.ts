@@ -1,6 +1,6 @@
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
-import { MovieRepository } from '../database/repository/movie.repository';
+import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import { getConnection, QueryRunner } from 'typeorm';
 import { isNil } from '@nestjs/common/utils/shared.utils';
 import { AbstractService } from '../shared/abstract.service';

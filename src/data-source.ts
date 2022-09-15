@@ -2,21 +2,21 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 dotenv.config();
 import dotenv from 'dotenv';
-import { UsersEntity } from './database/entities/users.entity';
+import { UsersEntity } from './database/entities/User/users.entity';
 import { HashTagEntity } from './database/entities/hashTag.entity';
 import { CoreEntity } from './database/entities/core.entity';
 import { CommentsEntity } from './database/entities/comments.entity';
-import { BoardImageEntity } from './database/entities/BoardImage.entity';
-import { BoardHashTagEntity } from './database/entities/BoardHashTag.entity';
-import { MovieEntity } from './database/entities/movie.entity';
-import { GenreEntity } from './database/entities/genre.entity';
-import { GenreMovieEntity } from './database/entities/genreMovie.entity';
-import { subMovieImageEntity } from './database/entities/subMovieImage.entity';
-import { OrderEntity } from './database/entities/order.entity';
-import { OrderLogEntity } from './database/entities/orderLog.entity';
-import { OrderClaimEntity } from './database/entities/orderClaim.entity';
-import { MovieOptionEntity } from './database/entities/movieOption.entity';
-import { PermissionEntity } from './database/entities/permission.entity';
+import { BoardImageEntity } from './database/entities/Board/BoardImage.entity';
+import { BoardHashTagEntity } from './database/entities/Board/BoardHashTag.entity';
+import { MovieEntity } from './database/entities/MovieAndGenre/movie.entity';
+import { GenreEntity } from './database/entities/MovieAndGenre/genre.entity';
+import { GenreMovieEntity } from './database/entities/MovieAndGenre/genreMovie.entity';
+import { subMovieImageEntity } from './database/entities/MovieAndGenre/subMovieImage.entity';
+import { OrderEntity } from './database/entities/Order/order.entity';
+import { OrderLogEntity } from './database/entities/Order/orderLog.entity';
+import { OrderClaimEntity } from './database/entities/Order/orderClaim.entity';
+import { MovieOptionEntity } from './database/entities/MovieAndGenre/movieOption.entity';
+import { PermissionEntity } from './database/entities/User/permission.entity';
 
 
 export const AppDataSource = new DataSource({

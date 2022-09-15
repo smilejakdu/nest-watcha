@@ -1,11 +1,11 @@
-import { BoardsEntity } from '../entities/boards.entity';
+import { BoardsEntity } from '../../entities/Board/boards.entity';
 import {
   EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { transactionRunner } from '../../shared/common/transaction/transaction';
+import { transactionRunner } from '../../../shared/common/transaction/transaction';
 
 @EntityRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{

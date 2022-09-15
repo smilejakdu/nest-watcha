@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { AgeLimitStatus } from '../../../database/entities/genre.entity';
+import { AgeLimitStatus } from '../../../database/entities/MovieAndGenre/genre.entity';
 import { Type } from 'class-transformer';
 
 export class CreateMovieDto {

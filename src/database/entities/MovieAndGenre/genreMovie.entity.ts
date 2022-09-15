@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { GenreEntity } from './genre.entity';
 import { MovieEntity } from './movie.entity';
 

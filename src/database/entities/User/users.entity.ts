@@ -2,13 +2,13 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner, Unique }
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
-import { BoardsEntity } from './boards.entity';
-import { CommentsEntity } from './comments.entity';
-import { CoreEntity } from './core.entity';
-import { OrderEntity } from './order.entity';
-import { SchedulesEntity } from './schedules.entity';
-import { OrderClaimEntity } from './orderClaim.entity';
-import { OrderLogEntity } from './orderLog.entity';
+import { BoardsEntity } from '../Board/boards.entity';
+import { CommentsEntity } from '../comments.entity';
+import { CoreEntity } from '../core.entity';
+import { OrderEntity } from '../Order/order.entity';
+import { SchedulesEntity } from '../schedules.entity';
+import { OrderClaimEntity } from '../Order/orderClaim.entity';
+import { OrderLogEntity } from '../Order/orderLog.entity';
 import { PermissionEntity } from './permission.entity';
 import { Exclude } from 'class-transformer';
 

@@ -7,7 +7,7 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import { LoginType, UsersEntity } from '../database/entities/users.entity';
+import { LoginType, UsersEntity } from '../database/entities/User/users.entity';
 import { AbstractService } from '../shared/abstract.service';
 import { AppDataSource } from '../data-source';
 

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import * as Jwt from 'jsonwebtoken';
-import { UsersEntity } from '../../../database/entities/users.entity';
+import { UsersEntity } from '../../../database/entities/User/users.entity';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {

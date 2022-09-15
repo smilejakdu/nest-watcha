@@ -1,11 +1,11 @@
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { OrderRepository } from '../database/repository/order.repository';
+import { OrderRepository } from '../database/repository/OrderAndPurchaseRepository/order.repository';
 import { isNil } from 'lodash';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
 import { MoviesService } from './movies.service';
-import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/order.entity';
+import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/Order/order.entity';
 import { UserRepository } from '../database/repository/user.repository';
 
 @Injectable()

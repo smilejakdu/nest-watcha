@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BadRequest, CoreResponse, NotFoundResponse, SuccessFulResponse } from '../shared/CoreResponse';
-import { GenreRepository } from '../database/repository/genre.repository';
+import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 
 @Injectable()
 export class GenreService {

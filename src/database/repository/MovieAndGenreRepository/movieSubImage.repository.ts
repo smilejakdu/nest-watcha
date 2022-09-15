@@ -1,5 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { subMovieImageEntity } from '../entities/subMovieImage.entity';
+import { subMovieImageEntity } from '../../entities/MovieAndGenre/subMovieImage.entity';
 
 @EntityRepository(subMovieImageEntity)
 export class MovieSubImageRepository extends Repository<subMovieImageEntity>{

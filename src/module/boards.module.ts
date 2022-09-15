@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BoardsService } from '../service/boards.service';
 import { BoardsController } from '../controller/board/boards.controller';
-import { BoardsRepository } from '../database/repository/boards.repository';
+import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { BoardImageService } from '../service/boardImage.service';
-import { BoardImageRepository } from '../database/repository/boardImage.repository';
+import { BoardImageRepository } from '../database/repository/BoardRepository/boardImage.repository';
 import { HashtagService } from '../service/hashtag.service';
-import { BoardHashTagEntity } from '../database/entities/BoardHashTag.entity';
+import { BoardHashTagEntity } from '../database/entities/Board/BoardHashTag.entity';
 import { HashtagRepository } from '../database/repository/hashtag.repository';
 
 @Module({

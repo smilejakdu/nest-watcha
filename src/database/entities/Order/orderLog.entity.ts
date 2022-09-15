@@ -1,8 +1,8 @@
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { JsonTransformer } from '../transformer';
-import { UsersEntity } from './users.entity';
-import { MovieEntity } from './movie.entity';
+import { JsonTransformer } from '../../transformer';
+import { UsersEntity } from '../User/users.entity';
+import { MovieEntity } from '../MovieAndGenre/movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'order_log' })
 export class OrderLogEntity extends CoreEntity {

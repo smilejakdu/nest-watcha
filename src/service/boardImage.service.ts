@@ -1,13 +1,13 @@
 import { isNil } from 'lodash';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { BoardImageRepository } from '../database/repository/boardImage.repository';
+import { BoardImageRepository } from '../database/repository/BoardRepository/boardImage.repository';
 import { SuccessFulResponse} from '../shared/CoreResponse';
 
 @Injectable()
 export class BoardImageService {
 	constructor(
-		private readonly boardImageRepository : BoardImageRepository) {}
-
+		private readonly boardImageRepository : BoardImageRepository,
+	) {}
 
 	async uploadFiles(files) {
 		const uploadedFile = await this.boardImageRepository.uploadFiles(files);
@@ -19,7 +19,7 @@ export class BoardImageService {
 
 	async findAllImages(): Promise<any> {
 		const foundAllImage = await this.boardImageRepository.findAllImages();
-		if(!isNil(foundAllImage)){
+		if(!foundAllImage){
 			throw new NotFoundException(`does not found ${foundAllImage}`);
 		}
 		return SuccessFulResponse(foundAllImage);

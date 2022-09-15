@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
+import { GenreMovieRepository } from '../database/repository/MovieAndGenreRepository/genreMovie.repository';
 import { CreateGenreMovieDto } from '../controller/movies/genreMovie.controller.dto/createGenreMovie.dto';
 import { isNil } from 'lodash';
 import { UpdateGenreMovieDto } from '../controller/movies/genreMovie.controller.dto/updateGenreMovie.dto';

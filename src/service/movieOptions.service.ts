@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { MovieOptionsRepository } from '../database/repository/movieOptions.repository';
+import { MovieOptionsRepository } from '../database/repository/MovieAndGenreRepository/movieOptions.repository';
 import { getConnection } from 'typeorm';
 
 @Injectable()

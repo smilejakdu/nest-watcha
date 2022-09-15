@@ -5,8 +5,8 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { MovieEntity } from '../entities/movie.entity';
-import { CreateMovieDto } from '../../controller/movies/movie.controller.dto/createMovie.dto';
+import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
+import { CreateMovieDto } from '../../../controller/movies/movie.controller.dto/createMovie.dto';
 
 @EntityRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{

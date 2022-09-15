@@ -1,6 +1,6 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { GenreEntity } from '../entities/genre.entity';
-import { transactionRunner } from '../../shared/common/transaction/transaction';
+import { GenreEntity } from '../../entities/MovieAndGenre/genre.entity';
+import { transactionRunner } from '../../../shared/common/transaction/transaction';
 
 @EntityRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {

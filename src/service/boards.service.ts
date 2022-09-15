@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { BoardsRepository } from '../database/repository/boards.repository';
+import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
 import { AbstractService } from '../shared/abstract.service';

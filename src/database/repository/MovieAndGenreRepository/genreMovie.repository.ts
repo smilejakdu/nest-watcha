@@ -1,6 +1,6 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { GenreMovieEntity } from '../entities/genreMovie.entity';
-import { CreateGenreMovieDto } from '../../controller/movies/genreMovie.controller.dto/createGenreMovie.dto';
+import { GenreMovieEntity } from '../../entities/MovieAndGenre/genreMovie.entity';
+import { CreateGenreMovieDto } from '../../../controller/movies/genreMovie.controller.dto/createGenreMovie.dto';
 
 @EntityRepository(GenreMovieEntity)
 export class GenreMovieRepository extends Repository<GenreMovieEntity>{

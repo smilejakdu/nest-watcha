@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { OrderLogRepository } from '../database/repository/orderLog.repository';
+import { OrderLogRepository } from '../database/repository/OrderAndPurchaseRepository/orderLog.repository';
 import { isNil } from 'lodash';
 
 @Injectable()

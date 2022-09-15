@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // Entity
 import { CommentsRepository } from '../database/repository/comments.repository';
-import { BoardsRepository } from '../database/repository/boards.repository';
+import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { UserRepository } from '../database/repository/user.repository';
 
 @Injectable()

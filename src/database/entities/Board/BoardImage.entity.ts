@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { BoardsEntity } from './boards.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_images' })

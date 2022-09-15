@@ -102,7 +102,7 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id')
 	async updateBoard(
-		@Req() req:any,
+		@Req() req: Request,
 		@Param('id', ParseIntPipe) id: number,
 		@Body() data: UpdateBoardDto) {
 		return this.boardsService.updateBoard(id, data);

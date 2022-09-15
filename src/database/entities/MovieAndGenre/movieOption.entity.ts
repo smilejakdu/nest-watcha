@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { MovieEntity } from './movie.entity';
 

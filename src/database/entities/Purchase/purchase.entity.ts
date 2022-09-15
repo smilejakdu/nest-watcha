@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 import { BigIntTransformer } from 'src/database/transformer';
-import { OrderEntity } from './order.entity';
+import { OrderEntity } from '../Order/order.entity';
 import { PurchaseVbankEntity } from './purchase_vbank.entity';
 
 export enum PGType {

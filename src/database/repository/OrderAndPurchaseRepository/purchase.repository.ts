@@ -1,5 +1,5 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { PurchaseEntity, PurchaseStatus } from '../entities/purchase.entity';
+import { PurchaseEntity, PurchaseStatus } from '../../entities/Purchase/purchase.entity';
 import dayjs from 'dayjs';
 
 

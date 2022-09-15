@@ -1,6 +1,6 @@
-import { CoreEntity } from './core.entity';
+import { CoreEntity } from '../core.entity';
 import { Column, Entity, JoinColumn, ManyToOne, QueryRunner } from 'typeorm';
-import { UsersEntity } from './users.entity';
+import { UsersEntity } from '../User/users.entity';
 
 export enum OrderClaimStatus {
 	INIT = 'init', // 기본

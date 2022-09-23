@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /compose
+/mysql
 
 # Logs
 logs

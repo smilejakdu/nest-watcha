@@ -9,18 +9,19 @@ import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 import { LoginType, UsersEntity } from '../database/entities/User/users.entity';
 import { AbstractService } from '../shared/abstract.service';
-import { AppDataSource } from '../data-source';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class UsersService extends AbstractService {
 	constructor(
 		private readonly userRepository: UserRepository,
+		private readonly dataSource: DataSource,
 	) {
 		super(userRepository);
 	}
 
 	async findById(id:number) {
-		const foundUser = await AppDataSource.manager.findOneBy(UsersEntity,{id:id});
+		const foundUser = await this.dataSource.manager.findOneBy(UsersEntity,{id:id});
 
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);

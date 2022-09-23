@@ -15,7 +15,7 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-.env
+*.env
 .eslintrc.js
 .prettierrc
 # Tests
@@ -25,6 +25,7 @@ ormconfig.ts
 tsconfig.json
 # IDEs and editors
 /.idea
+Dockerfile.dev
 .project
 .classpath
 .c9/

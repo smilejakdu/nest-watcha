@@ -1,8 +1,18 @@
-FROM node:16.13 AS builder
+FROM node:16.13 as node
 
+FROM node AS install
 WORKDIR /app
-COPY package.json ./
+COPY package.json .
 RUN npm install
-COPY ./ ./
 
-CMD ["npm", "run", "start:dev"]
+FROM node as builder
+WORKDIR /app
+COPY . .
+COPY --from=install /app/node_modules ./node_modules
+RUN npm run build
+
+FROM node
+WORKDIR /usr/src/app
+COPY --from=builder /app .
+
+CMD node ./dist/main.js

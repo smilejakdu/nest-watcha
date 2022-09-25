@@ -4,6 +4,7 @@
 /compose
 
 # Logs
+mysql
 logs
 *.log
 npm-debug.log*

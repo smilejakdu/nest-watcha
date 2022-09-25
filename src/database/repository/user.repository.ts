@@ -1,12 +1,13 @@
-import { EntityRepository, QueryRunner, Repository } from 'typeorm';
+import {QueryRunner, Repository } from 'typeorm';
 import { LoginType, UsersEntity } from '../entities/User/users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { transactionRunner } from '../../shared/common/transaction/transaction';
 import * as Jwt from 'jsonwebtoken';
 import axios from 'axios';
+import {CustomRepository} from "../../shared/typeorm-ex.decorator";
 
-@EntityRepository(UsersEntity)
+@CustomRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {
   makeQueryBuilder(queryRunner?: QueryRunner) {
     return this.createQueryBuilder('users', queryRunner);

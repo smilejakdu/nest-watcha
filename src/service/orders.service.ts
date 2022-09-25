@@ -4,16 +4,16 @@ import { isNil } from 'lodash';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
-import { MoviesService } from './movies.service';
 import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/Order/order.entity';
 import { UserRepository } from '../database/repository/user.repository';
+import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository : OrderRepository,
     private readonly usersRepository : UserRepository,
-    private readonly moviesService: MoviesService,
+    private readonly movieRepository: MovieRepository,
   ) {}
 
   async createOrderNumber(email:string , set:any):Promise<CoreResponse> {
@@ -26,15 +26,15 @@ export class OrdersService {
   }
 
   async orderPaymentComplete(body: CompletePaymentDto) {
-    const {impUid, imp_uid, merchant_uid,movie_number} = body;
+    const {impUid, imp_uid, merchant_uid,movie_id} = body;
     if (!impUid && imp_uid) {
       body.impUid = imp_uid;
       body.orderNumber = merchant_uid;
     }
 
-    const foundMovie = await this.moviesService.findOne(movie_number);
-    if(isNil(foundMovie)) {
-      throw new NotFoundException(`does not movie ${movie_number}`);
+    const foundMovie = await this.movieRepository.findOneBy({id: movie_id})
+    if(!foundMovie) {
+      throw new NotFoundException(`does not movie ${movie_id}`);
     }
     console.log('iamport imp_uid:',body.impUid, body.orderNumber);
 
@@ -53,7 +53,7 @@ export class OrdersService {
 
     const {amount, status} = paymentData;
     console.log(status);
-    if (foundMovie.data.price == amount) {
+    if (foundMovie.MovieOption.price == amount) {
       switch (status) {
         case IamportPaymentStatus.PAID: // 결제 완료
           console.log(status);

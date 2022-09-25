@@ -21,7 +21,7 @@ export class CompletePaymentDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
-  movie_number: number;
+  movie_id: number;
 
   @ApiPropertyOptional()
   @IsOptional()

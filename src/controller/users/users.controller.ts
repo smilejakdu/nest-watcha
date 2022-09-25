@@ -1,14 +1,15 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
 // Dto
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
 import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import { LoginType } from '../../database/entities/User/users.entity';
+import { LoginType, UsersEntity } from '../../database/entities/User/users.entity';
+import { Request, Response } from 'express';
+
 
 export const BAD_REQUEST = 'bad request';
 
@@ -26,8 +27,7 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get(':id')
 	async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-		const responseUserById = await this.usersService.findOne(id, ['Boards','Orders']);
-		return res.status(responseUserById.statusCode).json(responseUserById);
+		return this.usersService.findById(id);
 	}
 
 	@ApiCreatedResponse({ description: 'success' })
@@ -53,7 +53,10 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async findMyProfile(@Req() req: any, @Res() res:Response) {
+	async findMyProfile(@Req() req: Request, @Res() res:Response) {
+		const user = req.user as UsersEntity;
+		delete user.password;
+
 		const { email } = req.user;
 		const responseUserByEmail = await this.usersService.findOne(email, ['Boards','Orders']);
 		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);

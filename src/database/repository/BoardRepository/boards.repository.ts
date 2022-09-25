@@ -1,13 +1,13 @@
 import { BoardsEntity } from '../../entities/Board/boards.entity';
 import {
-  EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
 import { transactionRunner } from '../../../shared/common/transaction/transaction';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(BoardsEntity)
+@CustomRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<BoardsEntity> {
     return this.createQueryBuilder('boards', queryRunner);

@@ -30,7 +30,7 @@ export class CommentsEntity extends CoreEntity {
 	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	User: UsersEntity;
 
-	@ManyToOne(() => BoardsEntity, boards => boards.Comments, {
+	@ManyToOne(() => BoardsEntity, boards => boards.comments, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})

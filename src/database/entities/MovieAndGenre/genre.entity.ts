@@ -11,8 +11,6 @@ export enum AgeLimitStatus {
 
 @Entity({ schema: 'nest_watcha', name: 'genre' })
 export class GenreEntity extends CoreEntity {
-    @IsString()
-    @IsNotEmpty()
     @Column('varchar', { name: 'name', length: 150 })
     name: string;
 

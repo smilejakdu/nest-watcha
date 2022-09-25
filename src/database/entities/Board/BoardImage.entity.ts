@@ -7,23 +7,18 @@ import { BoardsEntity } from './boards.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_images' })
 export class BoardImageEntity extends CoreEntity {
-	@IsString()
-	@ApiProperty({
-		example: 'imagePath',
-		description: 'imagePath',
-	})
 	@Column('varchar', { name: 'imagePath', length: 250 })
 	imagePath: string;
 
-	@Column('int', { name: 'boardId', nullable: true })
-	boardId: number;
+	@Column('int', { name: 'board_id', nullable: true })
+	board_id: number;
 
 	@ManyToOne(
 		() => BoardsEntity,
-			boards => boards.Images, {
-		onDelete: 'CASCADE',
+			boards => boards.boardImages, {
+		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
-	Board: BoardsEntity;
+	@JoinColumn([{ name: 'board_id', referencedColumnName: 'id' }])
+	board: BoardsEntity;
 }

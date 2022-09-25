@@ -8,37 +8,33 @@ import { BoardHashTagEntity } from './BoardHashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'boards' })
 export class BoardsEntity extends CoreEntity {
-	@IsString()
-	@IsNotEmpty()
 	@Column('varchar', { name: 'title', length: 100 })
 	title: string;
 
-	@IsString()
-	@IsNotEmpty()
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 
-	@Column('int', { name: 'userId', nullable: true })
-	userId: number | null;
+	@Column('int', { name: 'user_id', nullable: true })
+	user_id: number | null;
 
 	@ManyToOne(() => UsersEntity, users => users.Boards, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
 	User: UsersEntity;
 
 	@OneToMany(
 		() => BoardImageEntity,
-			boardImage => boardImage.Board
+			boardImage => boardImage.board
 	)
-	Images: BoardImageEntity[];
+	boardImages: BoardImageEntity[];
 
 	@OneToMany(
 		() => CommentsEntity,
 			comments => comments.Board
 	)
-	Comments: CommentsEntity[];
+	comments: CommentsEntity[];
 
 	@OneToMany(
 		() => BoardHashTagEntity,

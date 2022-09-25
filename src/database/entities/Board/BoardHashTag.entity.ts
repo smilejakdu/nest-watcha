@@ -5,23 +5,23 @@ import { HashTagEntity } from '../hashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_hashtag' })
 export class BoardHashTagEntity extends CoreEntity {
-	@Column('int', { name: 'boardId' })
-	boardId: number;
+	@Column('int', { name: 'board_id' })
+	board_id: number;
 
-	@Column('int', { name: 'hashId' })
-	hashId: number;
+	@Column('int', { name: 'hash_id' })
+	hash_id: number;
 
 	@ManyToOne(() => BoardsEntity, boards => boards.boardHashTag, {
-		onDelete: 'CASCADE',
+		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn({name:'boardId'})
+	@JoinColumn({name:'board_id'})
 	Boards: BoardsEntity;
 
 	@ManyToOne(() => HashTagEntity, hashTag => hashTag.boardHashTag, {
-		onDelete: 'CASCADE',
+		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn({name:'hashId'})
+	@JoinColumn({name:'hash_id'})
 	Hashtag: HashTagEntity;
 }

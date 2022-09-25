@@ -14,12 +14,9 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 	imports: [
 		TypeOrmExModule.forCustomRepository([
 			BoardsRepository,
-			HashtagRepository,
-			BoardImageRepository,
 		]),
-		TypeOrmModule.forFeature([BoardHashTagEntity]),
 	],
-	providers: [BoardsService,BoardImageService,HashtagService],
+	providers: [BoardsService],
 	controllers: [BoardsController],
 })
 export class BoardsModule {}

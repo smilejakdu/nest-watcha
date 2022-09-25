@@ -5,9 +5,18 @@ import { HashtagService } from '../service/hashtag.service';
 import { BoardHashTagEntity } from 'src/database/entities/Board/BoardHashTag.entity';
 import { HashtagRepository } from '../database/repository/hashtag.repository';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
+import {TypeOrmExModule} from "../shared/typeorm-ex.module";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([HashtagRepository, BoardsRepository, BoardHashTagEntity])],
+	imports: [
+		TypeOrmExModule.forCustomRepository([
+			BoardsRepository,
+			HashtagRepository,
+		]),
+		TypeOrmModule.forFeature([
+			BoardHashTagEntity,
+		]),
+	],
 	providers: [HashtagService],
 	controllers: [HashtagController],
 	exports: [HashtagService],

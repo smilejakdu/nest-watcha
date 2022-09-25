@@ -9,6 +9,7 @@ import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { LoginType, UsersEntity } from '../../database/entities/User/users.entity';
 import { Request, Response } from 'express';
+import { User } from 'src/shared/common/decorator/user.decorator';
 
 
 export const BAD_REQUEST = 'bad request';
@@ -55,8 +56,8 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async findMyProfile(@Req() req: Request, @Res() res:Response) {
-		const user = req.user as UsersEntity;
+	async findMyProfile(@Res() res:Response, @User() user:UsersEntity){
+		console.log(user);
 		delete user.password;
 		const {id, email } = user;
 		const responseUserByEmail = await this.usersService.findById(id);

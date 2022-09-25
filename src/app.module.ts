@@ -13,7 +13,6 @@ import { MovieModule } from './module/movie.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import Joi from 'joi';
 
-
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -34,12 +33,14 @@ import Joi from 'joi';
 		TypeOrmModule.forRoot({
 			type: 'mysql',
 			host: process.env.MYSQL_HOST,
-			port: Number(process.env.MYSQL_PORT) as number,
+			port: Number(process.env.MYSQL_PORT),
 			username: process.env.MYSQL_USER,
 			password: process.env.MYSQL_PASSWORD,
 			database: process.env.MYSQL_DATABASE,
 			entities: ['src/**/*{.entity.ts}'],
-			synchronize: false,
+			autoLoadEntities: true,
+			charset: "utf8mb4",
+			synchronize: true,
 		}),
 		ScheduleModule.forRoot(),
 		UsersModule,

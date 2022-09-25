@@ -22,6 +22,14 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return createdBoard.id;
   }
 
+  findBoardAndComments(boardId: number) {
+    return this.makeQueryBuilder()
+      .leftJoinAndSelect('board.Comments', 'comments')
+      .where('board.id=:boardId', { boardId })
+      .orderBy('board.createdAt', 'DESC')
+      .getManyAndCount();
+  }
+
   findAllBoards(){
     return this.makeQueryBuilder()
       .select([

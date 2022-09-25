@@ -1,14 +1,14 @@
 import {
   EntityManager,
-  EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
 import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
 import { CreateMovieDto } from '../../../controller/movies/movie.controller.dto/createMovie.dto';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(MovieEntity)
+@CustomRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<MovieEntity> {
     return this.createQueryBuilder('movie', queryRunner);

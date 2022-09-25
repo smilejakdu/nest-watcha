@@ -2,16 +2,13 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { Pagination } from '../shared/pagination';
-import { AbstractService } from '../shared/abstract.service';
 import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-board.dto';
 
 @Injectable()
-export class BoardsService extends AbstractService {
+export class BoardsService {
 	constructor(
 		private readonly boardsRepository : BoardsRepository,
-	) {
-		super(boardsRepository);
-	}
+	) { }
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {
 		const createdBoard = await this.boardsRepository.createBoard({data, userId});

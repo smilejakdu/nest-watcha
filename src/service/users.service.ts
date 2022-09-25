@@ -8,17 +8,14 @@ import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 import { LoginType, UsersEntity } from '../database/entities/User/users.entity';
-import { AbstractService } from '../shared/abstract.service';
 import {DataSource} from 'typeorm';
 
 @Injectable()
-export class UsersService extends AbstractService {
+export class UsersService {
 	constructor(
 		private readonly userRepository: UserRepository,
 		private readonly dataSource: DataSource,
-	) {
-		super(userRepository);
-	}
+	) {}
 
 	async findById(id:number) {
 		const foundUser = await this.dataSource.manager.findOneBy(UsersEntity,{id:id});

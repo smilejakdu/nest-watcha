@@ -70,17 +70,6 @@ export class MoviesController {
     return await this.movieService.findAllMovie(pagination);
   }
 
-  @ApiOperation({ summary: '해당 영화 가져오기' })
-  @ApiOkResponse({
-    description: '성공',
-    type: GetGenreDto
-  })
-  @Get(':id')
-  async findMovieById(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const responseMovie = await this.movieService.findOne(id);
-    return res.status(responseMovie.statusCode).json(responseMovie);
-  }
-
   @ApiOperation({ summary: '영화 수정하기' })
   @ApiCreatedResponse({ description: '성공' })
   @UseGuards(UserAuthGuard, PermissionsGuard)

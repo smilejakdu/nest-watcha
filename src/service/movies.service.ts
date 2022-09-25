@@ -1,17 +1,14 @@
 import { BadRequestException, HttpStatus, Injectable} from '@nestjs/common';
 import { SuccessFulResponse } from '../shared/CoreResponse';
 import { DataSource, QueryRunner } from 'typeorm';
-import { AbstractService } from '../shared/abstract.service';
 import {MovieRepository} from '../database/repository/MovieAndGenreRepository/movie.repository';
 
 @Injectable()
-export class MoviesService extends AbstractService {
+export class MoviesService {
   constructor(
     private readonly movieRepository: MovieRepository,
-    private dataSource: DataSource
-  ) {
-    super(movieRepository);
-  }
+    private dataSource: DataSource,
+  ) { }
 
   async createMovie(createMovieDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -32,6 +29,11 @@ export class MoviesService extends AbstractService {
     }
 
     return SuccessFulResponse(createdMovie.raw.insertId,HttpStatus.CREATED);
+  }
+
+  async findMovieById(id: number) {
+    const movie = await this.movieRepository.findOneBy({ id });
+    SuccessFulResponse(movie);
   }
 
   async findAllMovie(pagination) {

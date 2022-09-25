@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, QueryRunner } from 'typeorm';
 import { CoreEntity } from './core.entity';
-import { UsersEntity } from './user/users.entity';
+import { UsersEntity } from './User/users.entity';
 
 export enum PermissionType {
   ADMIN = 'admin',
@@ -19,7 +19,7 @@ export class PermissionsEntity extends CoreEntity {
   @Column('int', { name: 'user_id', nullable: true })
   user_id: number | null;
 
-  @ManyToOne(() => UsersEntity, (users) => users.id, {
+  @ManyToOne(() => UsersEntity, (users) => users.permission, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   })

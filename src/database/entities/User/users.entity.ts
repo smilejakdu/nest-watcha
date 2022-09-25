@@ -9,8 +9,8 @@ import { OrderEntity } from '../Order/order.entity';
 import { SchedulesEntity } from '../schedules.entity';
 import { OrderClaimEntity } from '../Order/orderClaim.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
-import { PermissionEntity } from './permission.entity';
 import { Exclude } from 'class-transformer';
+import { PermissionEntity } from './permission.entity';
 
 export enum LoginType {
 	NAVER = 'naver',

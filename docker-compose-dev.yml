@@ -4,20 +4,20 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/nginx/Dockerfile
-    container_name: fym_nginx
+    container_name: watcha_nginx
     depends_on:
-      - nest-watcha
+      - watcha
       - db
     ports:
       - "80:80"
     links:
-      - nest-watcha
+      - watcha
 
-  nest-watcha:
+  watcha:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: fym_backend
+    container_name: watcha_backend
     ports:
       - '8000:8000'
     env_file:
@@ -33,7 +33,7 @@ services:
   db:
     image: mysql:8.0.23
     restart: unless-stopped
-    container_name: fym_mysql
+    container_name: watcha_mysql
     platform: linux/x86_64
     ports:
       - '3306:3306'

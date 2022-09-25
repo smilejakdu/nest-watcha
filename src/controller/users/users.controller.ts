@@ -21,7 +21,9 @@ export const BAD_REQUEST = 'bad request';
 @ApiTags('USERS')
 @Controller('users')
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(
+		private readonly usersService: UsersService,
+	) {}
 
 	@ApiOperation({ summary: '회원검색 by id' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
@@ -56,9 +58,8 @@ export class UsersController {
 	async findMyProfile(@Req() req: Request, @Res() res:Response) {
 		const user = req.user as UsersEntity;
 		delete user.password;
-
-		const { email } = req.user;
-		const responseUserByEmail = await this.usersService.findOne(email, ['Boards','Orders']);
+		const {id, email } = user;
+		const responseUserByEmail = await this.usersService.findById(id);
 		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
 
@@ -68,7 +69,7 @@ export class UsersController {
 	@Get('my_boards')
 	async findMyBoards(@Req() req: any) {
 		const { email } = req.user;
-		return await this.usersService.findMyBoards(email);
+		return this.usersService.findMyBoards(email);
 	}
 
 	@ApiOperation({ summary: 'kakao_login' })

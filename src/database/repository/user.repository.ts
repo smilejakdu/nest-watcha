@@ -13,6 +13,22 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.createQueryBuilder('users', queryRunner);
   }
 
+  findUserById(id:number) {
+    return this.makeQueryBuilder()
+      .select([
+        'users.id',
+        'users.email',
+        'users.username',
+        'users.phone',
+        'users.kakao_auth_id',
+        'users.naver_auth_id',
+        'users.google_auth_id',
+      ])
+      .leftJoin('users.Boards','boards')
+      .leftJoin('users.Orders','orders')
+      .where('users.id=:id',{id:id});
+  }
+
   findMyBoard(email:string) {
     return this.makeQueryBuilder()
       .select([

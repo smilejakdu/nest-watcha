@@ -7,7 +7,7 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import { LoginType, UsersEntity } from '../database/entities/User/users.entity';
+import { LoginType } from '../database/entities/User/users.entity';
 import {DataSource} from 'typeorm';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class UsersService {
 	) {}
 
 	async findById(id:number) {
-		const foundUser = await this.dataSource.manager.findOneBy(UsersEntity,{id:id});
+		const foundUser = await this.userRepository.findUserById(id).getOne();
 
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user :${id}`);

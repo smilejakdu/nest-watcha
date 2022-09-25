@@ -1,9 +1,10 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import {QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { BoardImageEntity } from '../../entities/Board/BoardImage.entity';
 import { createImageURL } from '../../../shared/lib/multerOptions';
 import { isNil } from 'lodash';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(BoardImageEntity)
+@CustomRepository(BoardImageEntity)
 export class BoardImageRepository extends Repository<BoardImageEntity> {
 	makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<BoardImageEntity> {
 		return this.createQueryBuilder('board_images', queryRunner);

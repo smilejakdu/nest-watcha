@@ -38,7 +38,7 @@ export class BoardsEntity extends CoreEntity {
 
 	@OneToMany(
 		() => BoardHashTagEntity,
-			boardHashTagEntity => boardHashTagEntity.Boards
+			boardHashTag => boardHashTag.boards
 	)
 	boardHashTag: BoardHashTagEntity[];
 }

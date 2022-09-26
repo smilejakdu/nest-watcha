@@ -11,10 +11,10 @@ import { HashtagRepository } from '../database/repository/hashtag.repository';
 @Injectable()
 export class HashtagService {
 	constructor(
-		private readonly boardsRepository : BoardsRepository,
-		private readonly hashTagRepository : HashtagRepository,
+		private readonly boardsRepository: BoardsRepository,
+		private readonly hashTagRepository: HashtagRepository,
 		@InjectRepository(BoardHashTagEntity)
-		private boardHashTagRepository: Repository<BoardHashTagEntity>,
+		private readonly boardHashTagRepository: Repository<BoardHashTagEntity>,
 	) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<any> {

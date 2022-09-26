@@ -16,12 +16,12 @@ export class BoardHashTagEntity extends CoreEntity {
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({name:'board_id'})
-	Boards: BoardsEntity;
+	boards: BoardsEntity;
 
 	@ManyToOne(() => HashTagEntity, hashTag => hashTag.boardHashTag, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({name:'hash_id'})
-	Hashtag: HashTagEntity;
+	hashtag: HashTagEntity;
 }

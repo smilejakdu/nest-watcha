@@ -7,7 +7,7 @@ import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-
 @Injectable()
 export class BoardsService {
 	constructor(
-		private readonly boardsRepository : BoardsRepository,
+		private readonly boardsRepository: BoardsRepository,
 	) { }
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {

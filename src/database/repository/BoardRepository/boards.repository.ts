@@ -1,4 +1,4 @@
-import { BoardsEntity } from '../../entities/Board/boards.entity';
+import { BoardsEntity } from '../../entities/Board/Boards.entity';
 import {
   QueryRunner,
   Repository,

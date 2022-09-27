@@ -1,7 +1,5 @@
 import { isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 // Entity
 import { HashTagEntity } from '../database/entities/hashTag.entity';
 import { BoardHashTagEntity } from '../database/entities/Board/BoardHashTag.entity';
@@ -13,8 +11,6 @@ export class HashtagService {
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
 		private readonly hashTagRepository: HashtagRepository,
-		@InjectRepository(BoardHashTagEntity)
-		private readonly boardHashTagRepository: Repository<BoardHashTagEntity>,
 	) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<any> {
@@ -74,8 +70,8 @@ export class HashtagService {
 					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 
-				await this.boardHashTagRepository
-					.createQueryBuilder('boardHashTag')
+				await BoardHashTagEntity
+					.makeQueryBuilder()
 					.insert()
 					.values(BoardIdhashId).execute();
 			}

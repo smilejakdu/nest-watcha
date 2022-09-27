@@ -1,8 +1,9 @@
 import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../../entities/MovieAndGenre/genre.entity';
 import { transactionRunner } from '../../../shared/common/transaction/transaction';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(GenreEntity)
+@CustomRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<GenreEntity> {
     return this.createQueryBuilder('genre', queryRunner);

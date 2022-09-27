@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from './core.entity';
-import { BoardsEntity } from './Board/boards.entity';
+import { BoardsEntity } from './Board/Boards.entity';
 import { UsersEntity } from './User/users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })

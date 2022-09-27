@@ -7,13 +7,17 @@ export enum PermissionType {
 	USER = 'user',
 }
 
-@Entity({ schema: 'nest_watcha', name: 'permission' })
+@Entity({ schema: 'nest_watcha', name: 'permissions' })
 export class PermissionEntity extends CoreEntity {
 	@Column({
 		type: 'enum',
 		enum: PermissionType,
+		comment: '권한 타입',
 	})
 	type: PermissionType;
+
+	@Column('int', { name: 'user_id', nullable: true })
+	user_id: number | null;
 
 	@OneToMany(() => UsersEntity, user => user.permission)
 	users: UsersEntity[];

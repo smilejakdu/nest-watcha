@@ -3,7 +3,7 @@ import { IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from '../core.entity';
-import { BoardsEntity } from './boards.entity';
+import { BoardsEntity } from './Boards.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_images' })
 export class BoardImageEntity extends CoreEntity {

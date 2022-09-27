@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner, Unique }
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
-import { BoardsEntity } from '../Board/boards.entity';
+import { BoardsEntity } from '../Board/Boards.entity';
 import { CommentsEntity } from '../comments.entity';
 import { CoreEntity } from '../core.entity';
 import { OrderEntity } from '../Order/order.entity';
@@ -80,14 +80,14 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'google_auth_id', length: 150, nullable: true })
 	google_auth_id: string;
 
-	@Column('int', { name: 'permissionId', nullable: true })
-	permissionId: number | null;
+	@Column('int', { name: 'permission_id', nullable: true })
+	permission_id: number | null;
 
 	@ManyToOne(() => PermissionEntity, permission => permission.users, {
-		onDelete: 'CASCADE',
+		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn({ name: 'permissionId' })
+	@JoinColumn({ name: 'permission_id' })
 	permission: PermissionEntity;
 
 	@OneToMany(() => BoardsEntity, boards => boards.User)

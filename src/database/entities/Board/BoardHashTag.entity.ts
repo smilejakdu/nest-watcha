@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, QueryRunner} from 'typeorm';
 import { CoreEntity } from '../core.entity';
-import { BoardsEntity } from './boards.entity';
+import { BoardsEntity } from './Boards.entity';
 import { HashTagEntity } from '../hashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_hashtag' })
@@ -24,4 +24,12 @@ export class BoardHashTagEntity extends CoreEntity {
 	})
 	@JoinColumn({name:'hash_id'})
 	hashtag: HashTagEntity;
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(BoardHashTagEntity, 'board_hashtag');
+		} else {
+			return this.createQueryBuilder('board_hashtag');
+		}
+	}
 }

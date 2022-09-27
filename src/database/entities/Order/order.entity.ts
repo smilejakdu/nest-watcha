@@ -1,7 +1,7 @@
 import { CoreEntity } from '../core.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { UsersEntity } from '../User/users.entity';
+import { UsersEntity } from '../User/Users.entity';
 import { MovieEntity } from '../MovieAndGenre/movie.entity';
 
 export enum OrderStatus {

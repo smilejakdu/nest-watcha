@@ -7,7 +7,7 @@ import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import { LoginType, UsersEntity } from '../../database/entities/User/users.entity';
+import { LoginType, UsersEntity } from '../../database/entities/User/Users.entity';
 import { Request, Response } from 'express';
 import { User } from 'src/shared/common/decorator/user.decorator';
 

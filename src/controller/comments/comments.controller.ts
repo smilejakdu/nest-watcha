@@ -4,7 +4,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post} from '@nestjs/
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentsService } from '../../service/comments.service';
 import { User } from 'src/shared/common/decorator/user.decorator';
-import { UsersEntity } from 'src/database/entities/User/users.entity';
+import { UsersEntity } from 'src/database/entities/User/Users.entity';
 import { DeleteCommentDto } from './comments.controller.dto/delete-comment.dto';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })

@@ -7,7 +7,7 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import { LoginType } from '../database/entities/User/users.entity';
+import { LoginType } from '../database/entities/User/Users.entity';
 import {DataSource} from 'typeorm';
 
 @Injectable()

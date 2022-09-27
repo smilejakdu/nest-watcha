@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from './core.entity';
 import { BoardsEntity } from './Board/Boards.entity';
-import { UsersEntity } from './User/users.entity';
+import { UsersEntity } from './User/Users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class CommentsEntity extends CoreEntity {

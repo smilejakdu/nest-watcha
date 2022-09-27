@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './core.entity';
-import { UsersEntity } from './User/users.entity';
+import { UsersEntity } from './User/Users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
 export class SchedulesEntity extends CoreEntity {

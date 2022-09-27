@@ -1,5 +1,5 @@
 import {QueryRunner, Repository } from 'typeorm';
-import { LoginType, UsersEntity } from '../entities/User/users.entity';
+import { LoginType, UsersEntity } from '../entities/User/Users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { transactionRunner } from '../../shared/common/transaction/transaction';

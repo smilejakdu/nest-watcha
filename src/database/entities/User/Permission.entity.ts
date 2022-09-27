@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, QueryRunner } from 'typeorm';
 import { CoreEntity } from '../core.entity';
-import { UsersEntity } from './users.entity';
+import { UsersEntity } from './Users.entity';
 
 export enum PermissionType {
 	ADMIN = 'admin',
@@ -15,9 +15,6 @@ export class PermissionEntity extends CoreEntity {
 		comment: '권한 타입',
 	})
 	type: PermissionType;
-
-	@Column('int', { name: 'user_id', nullable: true })
-	user_id: number | null;
 
 	@OneToMany(() => UsersEntity, user => user.permission)
 	users: UsersEntity[];

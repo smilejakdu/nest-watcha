@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CommentsEntity } from '../comments.entity';
 import { CoreEntity } from '../core.entity';
-import { UsersEntity } from '../User/users.entity';
+import { UsersEntity } from '../User/Users.entity';
 import { BoardImageEntity } from './BoardImage.entity';
 import { BoardHashTagEntity } from './BoardHashTag.entity';
 

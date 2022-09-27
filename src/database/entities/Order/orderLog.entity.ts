@@ -1,7 +1,7 @@
 import { CoreEntity } from '../core.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JsonTransformer } from '../../transformer';
-import { UsersEntity } from '../User/users.entity';
+import { UsersEntity } from '../User/Users.entity';
 import { MovieEntity } from '../MovieAndGenre/movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'order_log' })

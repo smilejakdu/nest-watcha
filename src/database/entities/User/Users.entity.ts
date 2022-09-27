@@ -10,7 +10,7 @@ import { SchedulesEntity } from '../schedules.entity';
 import { OrderClaimEntity } from '../Order/orderClaim.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
 import { Exclude } from 'class-transformer';
-import { PermissionEntity } from './permission.entity';
+import { PermissionEntity } from './Permission.entity';
 
 export enum LoginType {
 	NAVER = 'naver',
@@ -84,7 +84,7 @@ export class UsersEntity extends CoreEntity {
 	permission_id: number | null;
 
 	@ManyToOne(() => PermissionEntity, permission => permission.users, {
-		onDelete: 'SET NULL',
+		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({ name: 'permission_id' })

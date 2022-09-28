@@ -42,7 +42,6 @@ export enum PurchaseSettlementStatus {
 }
 
 @Entity({ name: 'purchase' })
-@Index(['impUid', 'purchaseNumber', 'order'], { unique: true })
 export class PurchaseEntity extends BaseEntity {
 	@Generated()
 	@PrimaryColumn({

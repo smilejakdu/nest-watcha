@@ -26,10 +26,10 @@ export class UserRepository extends Repository<UsersEntity> {
       ])
       .leftJoin('users.Boards','boards')
       .leftJoin('users.Orders','orders')
-      .where('users.id=:id',{id:id});
+      .where('users.id=:id',{id});
   }
 
-  findMyBoard(email:string) {
+  findMyBoard(email: string) {
     return this.makeQueryBuilder()
       .select([
         'boards.id',
@@ -81,7 +81,7 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.email=:email',{email:email});
     }
 
-  findAuthLoginId(id:number, queryRunner?: QueryRunner) {
+  findAuthLoginId(id: number, queryRunner?: QueryRunner) {
     return this.makeQueryBuilder()
       .select(['users.id', 'users.username' , 'users.status'])
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});

@@ -31,10 +31,7 @@ export enum IamportValidateStatus {
 }
 
 @Entity({ schema: 'nest_watcha', name: 'orders' })
-@Index(['order_number'])
 export class OrderEntity extends CoreEntity {
-	@IsString()
-	@IsNotEmpty()
 	@Column('varchar', { name: 'order_number', length: 250 })
 	order_number: string;
 
@@ -47,11 +44,11 @@ export class OrderEntity extends CoreEntity {
 	})
 	order_status: OrderStatus;
 
-	@Column('int', { name: 'userId', nullable: true })
-	userId: number | null;
+	@Column('int', { name: 'user_id', nullable: true })
+	user_id: number | null;
 
-	@Column('int', { name: 'movieId', nullable: true })
-	movieId: number | null;
+	@Column('int', { name: 'movie_id', nullable: true })
+	movie_id: number | null;
 
 	@Column({
 		comment: '총 결제 금액',
@@ -60,14 +57,14 @@ export class OrderEntity extends CoreEntity {
 	})
 	price: number;
 
-	@ManyToOne(() => UsersEntity, users => users.Boards, {
+	@ManyToOne(() => UsersEntity, users => users.Orders, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+	@JoinColumn({ name: 'user_id' })
 	User: UsersEntity;
 
-	@OneToOne(() => MovieEntity, movieEntity => movieEntity.id)
-	@JoinColumn([{ name: 'movieId', referencedColumnName: 'id' }])
+	@OneToOne(() => MovieEntity, movie => movie.id)
+	@JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
 	Movie: MovieEntity;
 }

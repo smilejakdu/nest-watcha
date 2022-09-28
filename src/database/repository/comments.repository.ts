@@ -1,6 +1,8 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { CommentsEntity } from '../entities/comments.entity';
+import { CustomRepository } from "../../shared/typeorm-ex.decorator";
 
+@CustomRepository(CommentsEntity)
 export class CommentsRepository extends Repository<CommentsEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<CommentsEntity> {
     return this.createQueryBuilder('comments', queryRunner);

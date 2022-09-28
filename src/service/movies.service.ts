@@ -1,25 +1,39 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { isNil } from 'lodash';
-import { CoreResponse } from '../shared/CoreResponse';
-import { MovieRepository } from '../database/repository/movie.repository';
-import { QueryRunner } from 'typeorm';
-import { GenreMovieRepository } from '../database/repository/genreMovie.repository';
+import { BadRequestException, HttpStatus, Injectable} from '@nestjs/common';
+import { SuccessFulResponse } from '../shared/CoreResponse';
+import { DataSource, QueryRunner } from 'typeorm';
+import {MovieRepository} from '../database/repository/MovieAndGenreRepository/movie.repository';
 
 @Injectable()
-export class MoviesService{
+export class MoviesService {
   constructor(
     private readonly movieRepository: MovieRepository,
-    private readonly genreMovieRepository : GenreMovieRepository,
-  ) {}
+    private dataSource: DataSource,
+  ) { }
 
   async createMovie(createMovieDto) {
-    const createdMovie = await this.movieRepository.createMovie(createMovieDto);
-    return {
-      ok : !isNil(createdMovie),
-      statusCode :!isNil(createdMovie) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST,
-      message: !isNil(createdMovie) ?'SUCCESS': 'BAD_REQUEST',
-      data:createdMovie,
-    };
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let createdMovie;
+    try{
+      createdMovie = await this.movieRepository.createMovie(createMovieDto);
+    }catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+    }finally {
+      await queryRunner.release();
+    }
+
+    if(!createdMovie){
+      throw new BadRequestException('BAD REQUEST');
+    }
+
+    return SuccessFulResponse(createdMovie.raw.insertId,HttpStatus.CREATED);
+  }
+
+  async findMovieById(id: number) {
+    const movie = await this.movieRepository.findOneBy({ id });
+    SuccessFulResponse(movie);
   }
 
   async findAllMovie(pagination) {
@@ -29,50 +43,19 @@ export class MoviesService{
       .skip(skip)
       .take(pagination.limit)
       .getMany();
-  }
 
-  async findOneById(id:number): Promise<CoreResponse> {
-    const foundOneMovie = await this.movieRepository.findOneById(id).getOne();
-    return {
-      ok : !isNil(foundOneMovie),
-      statusCode :!isNil(foundOneMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-      message: !isNil(foundOneMovie) ?'SUCCESS': 'NOT_FOUND_GENRE',
-      data:!isNil(foundOneMovie) ? foundOneMovie : [],
-    };
+    return SuccessFulResponse(foundAllMovie);
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
-    return {
-      ok : !isNil(updatedMovie),
-      statusCode :!isNil(updatedMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-      message: !isNil(updatedMovie) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(updatedMovie) ? updatedMovie : null,
-    };
+    return SuccessFulResponse(updatedMovie.raw.insertId);
   }
 
   async deleteMovieById(ids:number[],queryRunner?: QueryRunner) {
     const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
-    return {
-      ok : !isNil(deletedMovie),
-      statusCode :!isNil(deletedMovie) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-      message: !isNil(deletedMovie) ?'SUCCESS': 'BAD_REQUEST',
-      data:!isNil(deletedMovie) ? deletedMovie : null,
-    };
+    return SuccessFulResponse(deletedMovie.raw.insertId);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

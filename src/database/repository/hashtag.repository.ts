@@ -1,7 +1,8 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import {QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { HashTagEntity } from '../entities/hashTag.entity';
+import {CustomRepository} from "../../shared/typeorm-ex.decorator";
 
-@EntityRepository(HashTagEntity)
+@CustomRepository(HashTagEntity)
 export class HashtagRepository extends Repository<HashTagEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<HashTagEntity> {
     return this.createQueryBuilder('hash_tag', queryRunner);

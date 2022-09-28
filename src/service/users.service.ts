@@ -1,80 +1,77 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
-import { CoreResponse } from '../shared/CoreResponse';
+import { BadRequest, CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
+import { LoginType } from '../database/entities/User/Users.entity';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class UsersService {
 	constructor(
 		private readonly userRepository: UserRepository,
+		private readonly dataSource: DataSource,
 	) {}
 
-	async findByEmail(email: string): Promise<CoreResponse> {
-		const foundUser = await this.userRepository.findByEmail(email).getOne();
-		if(!foundUser){
-			throw new NotFoundException(`해당하는 유저를 찾을 수 없습니다 ${email}`);
+	async findById(id:number) {
+		const foundUser = await this.userRepository.findUserById(id).getOne();
+
+		if (!foundUser) {
+			throw new NotFoundException(`does not found user :${id}`);
 		}
-		const {password , ...userData} = foundUser;
-		return {
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: foundUser,
-		};
+		delete foundUser.password;
+		return SuccessFulResponse(foundUser);
 	}
 
 	async findMyBoards(email:string) {
 		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
-		return {
-			ok: !isNil(foundMyBoards),
-			statusCode: !isNil(foundMyBoards) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-			message: !isNil(foundMyBoards) ? 'SUCCESS' : 'NOT_FOUND',
-			data: !isNil(foundMyBoards) ? foundMyBoards : [],
-		};
+		if(!isNil(foundMyBoards)){
+			throw new NotFoundException(`does not found user :${email}`);
+		}
+		return SuccessFulResponse(foundMyBoards);
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
 		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (foundUser) {
-			return {
-				ok: false,
-				statusCode: HttpStatus.BAD_REQUEST,
-				message: 'exist user',
-				data:[],
-			};
+			throw new BadRequestException('exsit user');
 		}
 		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
-		return {
-			ok: true,
-			statusCode: HttpStatus.CREATED,
-			message: 'SUCCESS',
-			data: responseCreatedUser,
-		};
+		return SuccessFulResponse(responseCreatedUser,HttpStatus.CREATED);
+	}
+
+	async socialSignUp(data:any , loginType : LoginType) {
+		const responseCreateUser = await this.userRepository.createKakaoUser(data);
+		return SuccessFulResponse(responseCreateUser.raw.insertId,HttpStatus.CREATED);
 	}
 
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
-		return {
-			ok: !isNil(foundUserByAuthId),
-			statusCode: !isNil(foundUserByAuthId) ? HttpStatus.OK : HttpStatus.NOT_FOUND,
-			message: !isNil(foundUserByAuthId) ? 'SUCCESS' : 'NOT_FOUND',
-			data: !isNil(foundUserByAuthId) ? foundUserByAuthId : null,
-		};
+		return SuccessFulResponse(foundUserByAuthId);
 	}
 
 	async findAuthLoginId(id:number) {
 		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
+		return SuccessFulResponse(foundUserAuthId);
+	}
+
+	async checkRegister(loginType:string, tokenString:string) {
+		let foundUser;
+		let kakaoUserData;
+
+		if (loginType === LoginType.KAKAO) {
+			kakaoUserData = await this.userRepository.kakaoCallback(tokenString);
+			foundUser = await this.findAuthId(kakaoUserData.id,LoginType.KAKAO);
+		}
+
 		return {
-			ok: !isNil(foundUserAuthId),
-			statusCode: !isNil(foundUserAuthId) ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
-			message: !isNil(foundUserAuthId) ? 'SUCCESS' : 'BAD_REQUEST',
-			data: !isNil(foundUserAuthId) ? foundUserAuthId : null,
+			foundUser: foundUser.data,
+			kakaoUserData: kakaoUserData
 		};
 	}
 
@@ -82,44 +79,25 @@ export class UsersService {
 		const {email ,password}= logInDto;
 		const foundUser = await this.userRepository.findByEmail(email).getOne();
 		if (isNil(foundUser)) {
-			return {
-				ok: false,
-				statusCode: HttpStatus.NOT_FOUND,
-				message: 'does not found user'
-			};
+			throw new NotFoundException(`does not found user ${email}`);
 		}
 
 		const result = await bcrypt.compare(password, foundUser.password);
-		const payload = {username: foundUser.username};
+		const payload = {email: foundUser.email};
 		const jwt = await Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
 
-		if (result) {
-			delete foundUser.password;
-			return {
-				ok:true,
-				statusCode:HttpStatus.OK,
-				message:'SUCCESS',
-				data:{
-					user : foundUser,
-					jwt : jwt
-				}
-			};
+		if (!result) {
+			return BadRequest();
 		}
-
-		return {
-			ok:false,
-			statusCode:HttpStatus.BAD_REQUEST,
-			message:'username 과 password 를 확인하세요'
-		};
+		delete foundUser.password;
+		return SuccessFulResponse({
+			user : foundUser,
+			access_token : jwt
+		});
 	}
 
-	// async kakaoCallback(){
-	//
-	// }
-
-		// async kakaoSignUp(signUpDto :SignUpRequestDto){
-		// 	const createUser = await this.usersRepository.save(signUpDto);
-		// 	delete createUser.password;
-		// 	return createUser;
-		// }
+	async createToken(user: any) {
+		user.accessToken = await this.userRepository.getToken({ email: user.email });
+		return user;
+	}
 }

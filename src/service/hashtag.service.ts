@@ -1,22 +1,16 @@
 import { isEmpty } from 'lodash';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 // Entity
 import { HashTagEntity } from '../database/entities/hashTag.entity';
-import { BoardHashTagEntity } from '../database/entities/BoardHashTag.entity';
-import { BoardsRepository } from '../database/repository/boards.repository';
+import { BoardHashTagEntity } from '../database/entities/Board/BoardHashTag.entity';
+import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { HashtagRepository } from '../database/repository/hashtag.repository';
 
 @Injectable()
 export class HashtagService {
 	constructor(
-		private readonly boardsRepository : BoardsRepository,
-		private readonly hashTagRepository : HashtagRepository,
-		// @InjectRepository(BoardsEntity) private boardRepository: Repository<BoardsEntity>,
-		// @InjectRepository(HashTagEntity) private hashTagRepository: Repository<HashTagEntity>,
-		@InjectRepository(BoardHashTagEntity)
-		private boardHashTagRepository: Repository<BoardHashTagEntity>,
+		private readonly boardsRepository: BoardsRepository,
+		private readonly hashTagRepository: HashtagRepository,
 	) {}
 
 	async getMyHashTag(hashtag: string[]): Promise<any> {
@@ -76,8 +70,8 @@ export class HashtagService {
 					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
 				}
 
-				await this.boardHashTagRepository
-					.createQueryBuilder('boardHashTag')
+				await BoardHashTagEntity
+					.makeQueryBuilder()
 					.insert()
 					.values(BoardIdhashId).execute();
 			}

@@ -1,51 +1,46 @@
-import { ForbiddenException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { PermissionEntity, PermissionType } from '../../../database/entities/User/Permission.entity';
 
-export enum PermissionType {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+@Injectable()
+export class PermissionsGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
 
-export class AllowPermissionOption {
-  permissionType: PermissionType;
-}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest();
+    const {user} = req;
 
-export function nonThrowableCheckAdminPermission(request: Request, detailPermissions: AllowPermissionOption[]) {
-  const req = Object.assign(request);
-  const {auth} = req;
-
-  if (!req.auth) {
-    return false;
-  }
-
-  if (detailPermissions.length === 0) {
-    return true;
-  }
-
-  let allow = false;
-  console.log('auth.permissions:',auth.permissions);
-  for (let i = 0; i < auth.permissions.length; i++) {
-    const perm = auth.permissions[i];
-    if ( perm.type === PermissionType.ADMIN ) {
-      allow = true;
-      break;
-    }else {
+    if (!user) {
       return false;
     }
+
+    const foundPermissionWithUser = await this.getPermissionForUser(user.id);
+    if(!foundPermissionWithUser){
+      throw new ForbiddenException('권한이 필요한 요청입니다.01');
+    }
+
+    if (foundPermissionWithUser.type !== PermissionType.ADMIN) {
+      throw new ForbiddenException('권한이 필요한 요청입니다.02');
+    }
+
+    return foundPermissionWithUser.type === PermissionType.ADMIN;
   }
 
-  return true;
-}
+  async getPermissionForUser(userId) {
+    const permissions = await PermissionEntity.makeQueryBuilder()
+      .select([
+        'permission.id',
+        'permission.type'
+      ])
+      .addSelect([
+        'users.id',
+        'users.username',
+        'users.email',
+        'users.phone'
+      ])
+      .innerJoin('permission.users','users','users.id =:userId',{userId:userId})
+      .getOne();
 
-export function checkAdminPermission(request: Request, detailPermissions: AllowPermissionOption[]) {
-  const req = Object.assign(request);
-
-  if (!req.auth) {
-    throw new ForbiddenException('권한이 필요한 요청입니다.');
+    return permissions;
   }
-
-  if (!this.nonThrowableCheckAdminPermission(request, detailPermissions)) {
-    throw new ForbiddenException('권한이 필요한 요청입니다.');
-  }
-
-  return true;
 }

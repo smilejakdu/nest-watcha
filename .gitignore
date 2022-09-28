@@ -5,6 +5,7 @@
 /mysql
 
 # Logs
+mysql
 logs
 *.log
 npm-debug.log*
@@ -12,10 +13,11 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+/src/controller/order/iamport.ts
 
 # OS
 .DS_Store
-.env
+*.env
 .eslintrc.js
 .prettierrc
 # Tests
@@ -25,6 +27,7 @@ ormconfig.ts
 tsconfig.json
 # IDEs and editors
 /.idea
+Dockerfile.dev
 .project
 .classpath
 .c9/

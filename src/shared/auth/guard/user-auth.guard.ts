@@ -1,26 +1,24 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import * as Jwt from 'jsonwebtoken';
-import { UsersEntity } from '../../../database/entities/users.entity';
+import { UsersEntity } from '../../../database/entities/User/Users.entity';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
-
     let accessToken = req.headers['access-token'];
 
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;
-      console.log('cookies access-token', accessToken);
     }
 
-    let user: any;
+    let userEmail: any;
 
     try {
       const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
-      user = decodedUserJwt.username;
+      userEmail = decodedUserJwt?.sub?.email;
     } catch (jwtErr) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
@@ -30,8 +28,7 @@ export class UserAuthGuard implements CanActivate {
       });
       throw new HttpException('로그인 정보가 만료되었습니다.01', HttpStatus.UNAUTHORIZED);
     }
-
-    if (!user) {
+    if (!userEmail) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
         expires: new Date(new Date().getTime() - 1),
@@ -41,7 +38,7 @@ export class UserAuthGuard implements CanActivate {
       throw new HttpException('로그인 정보가 만료되었습니다.02', HttpStatus.UNAUTHORIZED);
     }
 
-    const userData = await UsersEntity.findOne({username:user});
+    const userData = await UsersEntity.findOneBy({email:userEmail});
     if (!userData) {
       res.cookie('accessToken', null, {
         domain: process.env['DB_HOST'],
@@ -64,7 +61,7 @@ export class UserAuthGuardOptional implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
 
-    let accessToken = req.headers['access-token'];
+    let accessToken = req.headers['access_token'];
 
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;

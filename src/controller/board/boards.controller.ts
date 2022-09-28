@@ -4,6 +4,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpStatus,
 	Param,
 	ParseIntPipe,
 	Post,
@@ -30,6 +31,7 @@ import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
 import { Response } from 'express';
+import { SuccessFulResponse } from '../../shared/CoreResponse';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -89,13 +91,7 @@ export class BoardsController {
 		}
 		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
 
-		return res.status(responseBoard.statusCode).json({
-			ok:responseBoard.ok,
-			statusCode : responseBoard.statusCode,
-			message : responseBoard.message,
-			data : responseBoard.data,
-		});
-
+		return SuccessFulResponse(responseBoard,HttpStatus.CREATED);
 	}
 
 	@ApiOkResponse({
@@ -105,8 +101,11 @@ export class BoardsController {
 	@UseGuards(UserAuthGuard)
 	@ApiOperation({ summary: '게시판수정하기' })
 	@Put(':id')
-	async updateBoard(@Req() req:any, @Param('id', ParseIntPipe) id: number, @Body() data: UpdateBoardDto) {
-		return this.boardsService.updateBoard(id, data.title, data.content);
+	async updateBoard(
+		@Req() req: Request,
+		@Param('id', ParseIntPipe) id: number,
+		@Body() data: UpdateBoardDto) {
+		return this.boardsService.updateBoard(id, data);
 	}
 
 	@ApiOkResponse({

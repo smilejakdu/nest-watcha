@@ -1,4 +1,4 @@
-import { getConnection, QueryRunner } from 'typeorm';
+import { Connection, getConnection, QueryRunner } from 'typeorm';
 
 export async function transactionRunner(
   connectionName: string,
@@ -41,16 +41,16 @@ export async function transactionRunner(
 }
 
 export async function queryRunnerManager(
-  connectionName: 'nest_watcha',
   queryFunction: (queryRunner: QueryRunner) => Promise<any>,
   parentQueryRunner?: QueryRunner,
   errorHandler?: (err: Error) => Promise<void>,
 ): Promise<any> {
+  const connection:Connection = getConnection();
   let queryRunner = parentQueryRunner;
   let result: any;
   let needRelease = false;
   if (!parentQueryRunner) {
-    queryRunner = getConnection(connectionName).createQueryRunner();
+    queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
     needRelease = true;
   }

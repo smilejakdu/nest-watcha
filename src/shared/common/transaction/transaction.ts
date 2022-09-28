@@ -1,11 +1,12 @@
-import { getConnection, QueryRunner } from 'typeorm';
+import { QueryRunner, DataSource } from 'typeorm';
 
 export type TFunctionTransction = (queryRunner: QueryRunner) => any;
 
 export async function transactionRunner(
-  transactionFunction: TFunctionTransction
+  transactionFunction: TFunctionTransction,
+  dataSource?: DataSource,
 ) {
-  const queryRunner = getConnection().createQueryRunner();
+  const queryRunner = dataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
   let transactionResult: any;

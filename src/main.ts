@@ -14,12 +14,18 @@ declare const module: any;
 
 async function bootstrap() {
 	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
-	const port = process.env.PORT || 3000;
+	app.setGlobalPrefix('api/v1');
+	const port = process.env.HOST || 4000;
 
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 
-	const config = new DocumentBuilder().setTitle('nestWatcha API').setDescription('nestWatcha Swagger').setVersion('1.0').addCookieAuth('connect.sid').build();
+	const config = new DocumentBuilder()
+		.setTitle('nestWatcha API')
+		.setDescription('nestWatcha Swagger')
+		.setVersion('1.0')
+		.addCookieAuth('connect.sid')
+		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document);
@@ -35,7 +41,11 @@ async function bootstrap() {
 			},
 		}),
 	);
-
+	app.enableCors({
+		origin: true,
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+		credentials: true,
+	});
 	app.use('/public', express.static(join(__dirname, '../public')));
 
 	app.use(passport.initialize());

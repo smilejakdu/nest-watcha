@@ -8,5 +8,5 @@ export class UpdateGenreDto {
     example:'name',
     description:'name'
   })
-  name: string;
+  genreName: string;
 }

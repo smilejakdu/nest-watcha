@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { AgeLimitStatus } from '../../../database/entities/genre.entity';
+import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { AgeLimitStatus } from '../../../database/entities/MovieAndGenre/genre.entity';
+import { Type } from 'class-transformer';
 
 export class CreateMovieDto {
   @IsNotEmpty()
@@ -35,12 +36,14 @@ export class CreateMovieDto {
   movieImage:string;
 
   @IsNotEmpty()
-  @ApiProperty({ type: [String] })
-  director:string[]
+  @IsDefined()
+  @Type(() => Object)
+  director:Record<string, any>;
 
   @IsNotEmpty()
-  @ApiProperty({ type: [String] })
-  appearance:string[]
+  @IsDefined()
+  @Type(() => Object)
+  appearance:Record<string, any>;
 
   @IsNotEmpty()
   @ApiProperty({

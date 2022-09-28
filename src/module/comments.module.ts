@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentsController } from '../controller/comments/comments.controller';
 import { CommentsService } from '../service/comments.service';
 import { CommentsRepository } from '../database/repository/comments.repository';
-import { BoardsRepository } from '../database/repository/boards.repository';
+import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { UserRepository } from '../database/repository/user.repository';
 
 @Module({

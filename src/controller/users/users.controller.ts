@@ -1,22 +1,16 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-	ApiBadRequestResponse,
-	ApiCreatedResponse,
-	ApiInternalServerErrorResponse,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger';
-import { Response } from 'express';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 // Dto
-import { UserDto } from 'src/shared/common/dto/user.dto';
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
-import { UserFindRequestDto } from './users.controller.dto/userFindDto/userFind.request.dto';
 import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
+import { LoginType, UsersEntity } from '../../database/entities/User/Users.entity';
+import { Request, Response } from 'express';
+import { User } from 'src/shared/common/decorator/user.decorator';
+
 
 export const BAD_REQUEST = 'bad request';
 
@@ -25,70 +19,80 @@ export const BAD_REQUEST = 'bad request';
 })
 @UseInterceptors(UndefinedToNullInterceptor)
 @ApiBadRequestResponse({ description: 'bad request' })
-@ApiTags('USER')
+@ApiTags('USERS')
 @Controller('users')
 export class UsersController {
 	constructor(
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
 	) {}
 
-	@ApiOkResponse({
-		description: 'success',
-		type: UserDto,
-	})
-	@ApiOperation({ summary: '회원검색' })
+	@ApiOperation({ summary: '회원검색 by id' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Get('findUser')
-	async findByEmail(@Body() data: UserFindRequestDto) {
-		return await this.usersService.findByEmail(data.email);
+	@Get(':id')
+	async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+		return this.usersService.findById(id);
 	}
 
-	@ApiCreatedResponse({
-		description: 'success',
-	})
+	@ApiCreatedResponse({ description: 'success' })
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
-	async signUp(@Body() data: SignUpRequestDto,@Res() res:Response) {
-		const  responseSignUp = await this.usersService.signUp(data);
-		return res.status(responseSignUp.statusCode).json({
-			ok : responseSignUp.ok,
-			statusCode : responseSignUp.statusCode,
-			message : responseSignUp.message,
-			data : responseSignUp.data,
-		});
+	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
+		const responseSignUp = await this.usersService.signUp(data);
+		return res.status(responseSignUp.statusCode).json(responseSignUp);
 	}
 
+	@ApiOperation({ summary: 'login' })
 	@ApiOkResponse({
 		description: 'success',
 		type: LoginResponseDto,
 	})
-	@ApiOperation({ summary: 'login' })
 	@Post('login')
-	async logIn(@Body() data: LoginRequestDto, @Res() res:Response) {
-		const responseLogin =  await this.usersService.logIn(data);
-		return res.status(responseLogin.statusCode).json({
-			ok : responseLogin.ok,
-			statusCode : responseLogin.statusCode,
-			message : responseLogin.message,
-			data : responseLogin.data,
-		});
+	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
+		const responseLogin = await this.usersService.logIn(data);
+		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
 	@ApiOperation({ summary: 'profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
-	async findMyProfile(@Req() req:any) {
-		const {email} = req.user;
-		return await this.usersService.findByEmail(email);
+	async findMyProfile(@Res() res:Response, @User() user:UsersEntity){
+		console.log(user);
+		delete user.password;
+		const {id, email } = user;
+		const responseUserByEmail = await this.usersService.findById(id);
+		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('my_boards')
-	async findMyBoards(@Req() req:any) {
-		const {email} = req.user;
-		return await this.usersService.findMyBoards(email);
+	async findMyBoards(@Req() req: any) {
+		const { email } = req.user;
+		return this.usersService.findMyBoards(email);
+	}
+
+	@ApiOperation({ summary: 'kakao_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@Get('/kakao/callback')
+	async kakaoCallback(@Req() req: any, @Res() res: Response) {
+		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers.access_token);
+		let userId = data.foundUser?.id;
+		if (!data.foundUser) {
+			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
+			userId = result.data;
+		}
+
+		const foundUser = await this.usersService.findById(userId);
+		const accessToken = await this.usersService.createToken(foundUser.data);
+
+		res.cookie('accessToken', accessToken.accessToken, {
+			domain: 'localhost',
+			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+			httpOnly: true,
+			secure: true,
+		});
+		return res.status(foundUser.statusCode).json(foundUser);
 	}
 }

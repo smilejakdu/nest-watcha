@@ -21,9 +21,9 @@ export class PermissionEntity extends CoreEntity {
 
 	static makeQueryBuilder(queryRunner?: QueryRunner) {
 		if (queryRunner) {
-			return queryRunner.manager.createQueryBuilder(PermissionEntity, 'permission');
+			return queryRunner.manager.createQueryBuilder(PermissionEntity, 'permissions');
 		} else {
-			return this.createQueryBuilder('permission');
+			return this.createQueryBuilder('permissions');
 		}
 	}
 }

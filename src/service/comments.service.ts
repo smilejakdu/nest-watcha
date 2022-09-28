@@ -9,7 +9,7 @@ import { DataSource } from 'typeorm';
 @Injectable()
 export class CommentsService {
 	constructor(
-		private readonly userRepository:UserRepository,
+		private readonly userRepository: UserRepository,
 		private readonly boardsRepository: BoardsRepository,
 		private readonly commentsRepository: CommentsRepository,
 		private readonly dataSource: DataSource,

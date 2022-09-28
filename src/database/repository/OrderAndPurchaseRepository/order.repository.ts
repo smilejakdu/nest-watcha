@@ -1,8 +1,9 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { OrderEntity, OrderStatus } from '../../entities/Order/order.entity';
 import dayjs from 'dayjs';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(OrderEntity)
+@CustomRepository(OrderEntity)
 export class OrderRepository extends Repository<OrderEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<OrderEntity> {
     return this.createQueryBuilder('order', queryRunner);
@@ -19,7 +20,7 @@ export class OrderRepository extends Repository<OrderEntity>{
     const order = new OrderEntity();
     order.order_number = await this.createOrderNumber();
     order.order_status = OrderStatus.INIT;
-    order.userId = userId;
+    order.user_id = userId;
 
     return await this.makeQueryBuilder()
       .insert()

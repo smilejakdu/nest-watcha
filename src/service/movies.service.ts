@@ -1,7 +1,7 @@
 import { BadRequestException, HttpStatus, Injectable} from '@nestjs/common';
 import { SuccessFulResponse } from '../shared/CoreResponse';
 import { DataSource, QueryRunner } from 'typeorm';
-import {MovieRepository} from '../database/repository/MovieAndGenreRepository/movie.repository';
+import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 
 @Injectable()
 export class MoviesService {

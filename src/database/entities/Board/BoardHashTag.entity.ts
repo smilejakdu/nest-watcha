@@ -5,10 +5,10 @@ import { HashTagEntity } from '../hashTag.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'board_hashtag' })
 export class BoardHashTagEntity extends CoreEntity {
-	@Column('int', { name: 'board_id' })
+	@Column('int', { name: 'board_id', nullable: true })
 	board_id: number;
 
-	@Column('int', { name: 'hash_id' })
+	@Column('int', { name: 'hash_id', nullable: true })
 	hash_id: number;
 
 	@ManyToOne(() => BoardsEntity, boards => boards.boardHashTag, {

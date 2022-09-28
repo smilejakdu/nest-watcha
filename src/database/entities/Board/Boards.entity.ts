@@ -21,7 +21,7 @@ export class BoardsEntity extends CoreEntity {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
+	@JoinColumn({ name: 'user_id' })
 	User: UsersEntity;
 
 	@OneToMany(

@@ -11,16 +11,16 @@ import { MovieOptionEntity } from './movieOption.entity';
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
 	@Column('varchar', { name: 'movieTitle', length: 100 })
-	movieTitle: string;
+	movie_title: string;
 
 	@Column('decimal', { precision: 5, scale: 2, nullable: true })
-	movieScore: number;
+	movie_score: number;
 
 	@Column('varchar', {
 		name: 'movieImage',
 		nullable: true,
 	})
-	movieImage: string;
+	movie_image: string;
 
 	@Column({
 		type: 'text',
@@ -41,7 +41,7 @@ export class MovieEntity extends CoreEntity {
 		enum: AgeLimitStatus,
 		default: AgeLimitStatus.FIFTEEN_MORE_THAN,
 	})
-	ageLimitStatus: AgeLimitStatus;
+	age_limit_status: AgeLimitStatus;
 
 	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Movie)
 	Genremovie: GenreMovieEntity[];
@@ -52,13 +52,13 @@ export class MovieEntity extends CoreEntity {
 	@OneToMany(() => OrderLogEntity, orderLog => orderLog.Movie)
 	OrderLog: OrderLogEntity[];
 
-	@Column('int', { name: 'movieOptionId', nullable: true })
-	movieOptionId: number | null;
+	@Column('int', { name: 'movie_option_id', nullable: true })
+	movie_option_id: number| null;
 
 	@ManyToOne(() => MovieOptionEntity, movieOption => movieOption.Movies, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'movieOptionId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'movie_option_id', referencedColumnName: 'id' }])
 	MovieOption: MovieOptionEntity;
 }

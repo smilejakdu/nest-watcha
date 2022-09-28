@@ -1,12 +1,12 @@
 import {
-  EntityRepository,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
 import { MovieOptionEntity } from '../../entities/MovieAndGenre/movieOption.entity';
+import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
-@EntityRepository(MovieOptionEntity)
+@CustomRepository(MovieOptionEntity)
 export class MovieOptionsRepository extends Repository<MovieOptionEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<MovieOptionEntity> {
     return this.createQueryBuilder('movie_option', queryRunner);

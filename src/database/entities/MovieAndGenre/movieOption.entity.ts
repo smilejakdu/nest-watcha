@@ -5,8 +5,6 @@ import { MovieEntity } from './movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'movie_options' })
 export class MovieOptionEntity extends CoreEntity {
-  @IsString()
-  @IsNotEmpty()
   @Column('varchar', { name: 'price', length: 150 })
   price: number;
 

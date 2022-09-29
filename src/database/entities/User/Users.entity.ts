@@ -38,45 +38,18 @@ export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'email', length: 150 })
 	email: string;
 
-	@IsString()
-	@ApiProperty({
-		example: '1111111111',
-		description: 'phone',
-	})
 	@Column('varchar', { name: 'phone', length: 200, nullable: true })
 	phone: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@Exclude()
-	@ApiProperty({
-		example: 'password',
-		description: 'password',
-	})
 	@Column('varchar', { name: 'password', length: 150, nullable: true }) // select: false 하면 password 빼고 불러온다.
 	password: string;
 
-	@IsString()
-	@ApiProperty({
-		example: 'ash@kakao.com',
-		description: 'kakao_auth_id',
-	})
 	@Column('varchar', { name: 'kakao_auth_id', length: 150, nullable: true })
 	kakao_auth_id: string;
 
-	@IsString()
-	@ApiProperty({
-		example: 'ash@naver.com',
-		description: 'naver_auth_id',
-	})
 	@Column('varchar', { name: 'naver_auth_id', length: 150, nullable: true })
 	naver_auth_id: string;
 
-	@IsString()
-	@ApiProperty({
-		example: 'ash@gmail.com',
-		description: 'google_auth_id',
-	})
 	@Column('varchar', { name: 'google_auth_id', length: 150, nullable: true })
 	google_auth_id: string;
 

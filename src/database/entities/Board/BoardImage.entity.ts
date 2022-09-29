@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from '../core.entity';

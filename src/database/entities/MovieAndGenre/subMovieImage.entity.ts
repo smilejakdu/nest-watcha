@@ -7,11 +7,6 @@ import { MovieEntity } from './movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'sub_movie_image' })
 export class subMovieImageEntity extends CoreEntity {
-	@IsString()
-	@ApiProperty({
-		example: 'imageString',
-		description: 'imageString',
-	})
 	@Column('varchar', { name: 'imageString', length: 250 })
 	imageString: string;
 

@@ -1,26 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './core.entity';
 import { UsersEntity } from './User/Users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'schedules' })
 export class SchedulesEntity extends CoreEntity {
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'title',
-		description: 'title',
-	})
 	@Column('varchar', { name: 'title', length: 100 })
 	title: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'genre',
-		description: 'genre',
-	})
 	@Column('varchar', { name: 'genre', length: 100 })
 	genre: string;
 

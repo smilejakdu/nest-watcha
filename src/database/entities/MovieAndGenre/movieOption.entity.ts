@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { CoreEntity } from '../core.entity';
-import { IsNotEmpty, IsString } from 'class-validator';
 import { MovieEntity } from './movie.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'movie_options' })

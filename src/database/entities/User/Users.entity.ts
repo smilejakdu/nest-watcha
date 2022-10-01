@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 // Entity
@@ -9,7 +9,6 @@ import { OrderEntity } from '../Order/order.entity';
 import { SchedulesEntity } from '../schedules.entity';
 import { OrderClaimEntity } from '../Order/orderClaim.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
-import { Exclude } from 'class-transformer';
 import { PermissionEntity } from './Permission.entity';
 
 export enum LoginType {

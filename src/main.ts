@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import session from 'express-session';
 import passport from 'passport';
 import { join } from 'path';
 import { AppModule } from './app.module';
@@ -31,16 +30,6 @@ async function bootstrap() {
 	SwaggerModule.setup('api', app, document);
 
 	app.use(cookieParser());
-	app.use(
-		session({
-			resave: false,
-			saveUninitialized: false,
-			secret: process.env.COOKIE_SECRET,
-			cookie: {
-				httpOnly: true,
-			},
-		}),
-	);
 	app.enableCors({
 		origin: true,
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -49,7 +38,6 @@ async function bootstrap() {
 	app.use('/public', express.static(join(__dirname, '../public')));
 
 	app.use(passport.initialize());
-	app.use(passport.session());
 	await app.listen(port);
 
 	if (module.hot) {

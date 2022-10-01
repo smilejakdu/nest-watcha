@@ -1,12 +1,12 @@
-import { Connection, getConnection, QueryRunner } from 'typeorm';
+import { Connection, getConnection, QueryRunner, DataSource } from 'typeorm';
 
 export async function transactionRunner(
-  connectionName: string,
   queryFunction: (queryRunner: QueryRunner) => Promise<void>,
+  dataSource?: DataSource,
   errorHandler?: (err: Error) => Promise<void>,
 ): Promise<boolean> {
   let isSuccessed = true;
-  const queryRunner = getConnection(connectionName).createQueryRunner();
+  const queryRunner = this.dataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
   console.log('transaction start');

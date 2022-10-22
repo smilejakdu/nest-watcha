@@ -12,7 +12,9 @@ export class SchedulesController {
     private readonly schedulesService:SchedulesService
   ) { }
 
-  @Cron(CronExpression.EVERY_9_HOURS)
+  @Cron(CronExpression.EVERY_9_HOURS, {
+    timeZone: 'Asia/Seoul',
+  })
   async handleCron() {
     const foundAccountMoney = await this.schedulesService.findAccountMoney();
     const foundNewUser = await this.schedulesService.findNewUser();

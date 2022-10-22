@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body,Req, Controller, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -11,6 +11,8 @@ import { OrdersService } from '../../service/orders.service';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { CompletePaymentDto } from './order.controller.dto/createCompletePayment.dto';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
+import {Response ,Request} from 'express';
+import {makeLogger} from "ts-loader/dist/logger";
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',
@@ -28,9 +30,9 @@ export class OrderController {
   })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'order create admin' })
-  @UseGuards(UserAuthGuard,PermissionsGuard)
+  @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post('/admin')
-  async createOrderAdmin(@Request() req: any) {
+  async createOrderAdmin(@Req() req: Request) {
     console.log(req.user);
   }
 

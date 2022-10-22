@@ -8,7 +8,7 @@ import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.d
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { LoginType, UsersEntity } from '../../database/entities/User/Users.entity';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { User } from 'src/shared/common/decorator/user.decorator';
 
 
@@ -57,10 +57,7 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('profile')
 	async findMyProfile(@Res() res:Response, @User() user:UsersEntity){
-		console.log(user);
-		delete user.password;
-		const {id, email } = user;
-		const responseUserByEmail = await this.usersService.findById(id);
+		const responseUserByEmail = await this.usersService.findById(user.id);
 		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
 	}
 

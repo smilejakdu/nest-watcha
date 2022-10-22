@@ -37,12 +37,24 @@ export class UsersService {
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByEmail(email).getOne();
-		if (foundUser) {
-			throw new BadRequestException('exsit user');
+		const queryRunner = this.dataSource.createQueryRunner()
+		await queryRunner.connect()
+		try {
+			await queryRunner.startTransaction()
+			const foundUser = await this.userRepository.findByEmail(email).getOne();
+
+			if (foundUser) {
+				throw new BadRequestException('exsit user');
+			}
+
+			const responseCreatedUser = await queryRunner.manager.save(signUpDto);
+			return SuccessFulResponse(responseCreatedUser,HttpStatus.CREATED);
+		} catch (e) {
+			console.log(e);
+			await queryRunner.rollbackTransaction()
+		} finally {
+			await queryRunner.release();
 		}
-		const responseCreatedUser = await this.userRepository.createUser(signUpDto);
-		return SuccessFulResponse(responseCreatedUser,HttpStatus.CREATED);
 	}
 
 	async socialSignUp(data:any , loginType : LoginType) {

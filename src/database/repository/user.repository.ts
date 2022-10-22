@@ -38,16 +38,16 @@ export class UserRepository extends Repository<UsersEntity> {
         'boards.updatedAt',
       ])
       .addSelect([
-        'users.username',
-        'users.email',
+        'users.username username',
+        'users.email email',
       ])
       .addSelect([
-        'images.id',
-        'images.imagePath'
+        'images.id board_image_id',
+        'images.imagePath board_image_path'
       ])
       .addSelect([
-        'comments.id',
-        'comments.content',
+        'comments.id comment_id',
+        'comments.content comment_content',
         'comments.updatedAt',
       ])
       .innerJoin('users.Boards','boards')
@@ -56,7 +56,7 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.email =:email',{email});
   }
 
-  findByEmail(email:string) {
+  findByEmail(email: string) {
     return this.makeQueryBuilder()
       .select([
         'users.id',
@@ -108,16 +108,14 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async createKakaoUser(kakaoUser) {
-    return await transactionRunner(async (queryRunner) => {
-      return await this.makeQueryBuilder()
-        .insert()
-        .values({
-          username:kakaoUser.properties.nickname,
-          email:kakaoUser.kakao_account.email,
-          kakao_auth_id:kakaoUser.id,
-        })
-        .execute();
-    });
+    return await this.makeQueryBuilder()
+      .insert()
+      .values({
+        username:kakaoUser.properties.nickname,
+        email:kakaoUser.kakao_account.email,
+        kakao_auth_id:kakaoUser.id,
+      })
+      .execute();
   }
 
   async createUser(user ,queryRunner?: QueryRunner) {

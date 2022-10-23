@@ -7,7 +7,7 @@ import { LoginRequestDto } from '../controller/users/users.controller.dto/logInD
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import { LoginType } from '../database/entities/User/Users.entity';
+import {LoginType, UsersEntity} from '../database/entities/User/Users.entity';
 import {DataSource} from 'typeorm';
 
 @Injectable()
@@ -37,18 +37,18 @@ export class UsersService {
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
+		const foundUser = await this.userRepository.findByEmail(email).getOne();
+		if (foundUser) {
+			throw new BadRequestException('exsit user');
+		}
 		const queryRunner = this.dataSource.createQueryRunner()
 		await queryRunner.connect()
+		await queryRunner.startTransaction()
 		try {
-			await queryRunner.startTransaction()
-			const foundUser = await this.userRepository.findByEmail(email).getOne();
-
-			if (foundUser) {
-				throw new BadRequestException('exsit user');
-			}
-
-			const responseCreatedUser = await queryRunner.manager.save(signUpDto);
-			return SuccessFulResponse(responseCreatedUser,HttpStatus.CREATED);
+			const responseCreateUser = await queryRunner.manager.save(UsersEntity, signUpDto);
+			console.log(responseCreateUser)
+			await queryRunner.commitTransaction()
+			return SuccessFulResponse(responseCreateUser ,HttpStatus.CREATED);
 		} catch (e) {
 			console.log(e);
 			await queryRunner.rollbackTransaction()

@@ -45,7 +45,7 @@ export class MoviesController {
   @Post()
   async createMovie(@Req() req, @Body() body: CreateMovieDto) {
     const { genreId, ...movieDto } = body;
-    const responseCreatedMovie = await this.movieService.createMovie(movieDto);
+    const responseCreatedMovie = await this.movieService.createMovie(body);
     if (!responseCreatedMovie.ok) {
       throw new BadRequestException('영화 만들기 실패했습니다.');
     }

@@ -24,7 +24,6 @@ export class MoviesService {
       }
       return SuccessFulResponse(responseCreateMovie, HttpStatus.CREATED);
     }catch (error) {
-      console.log(error);
       await queryRunner.rollbackTransaction();
     }finally {
       await queryRunner.release();

@@ -6,8 +6,8 @@ export class UpdateCommentDto extends PickType(CreateCommentDto, ['content'] as 
 	@IsNumber()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'id',
-		description: 'id',
+		example: 'comment_id',
+		description: 'comment_id',
 	})
-	public id: number;
+	comment_id: number;
 }

@@ -2,6 +2,8 @@ import { BadRequestException, HttpStatus, Injectable} from '@nestjs/common';
 import { SuccessFulResponse } from '../shared/CoreResponse';
 import { DataSource, QueryRunner } from 'typeorm';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
+import {MovieEntity} from "../database/entities/MovieAndGenre/movie.entity";
+import {CreateMovieDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
 
 @Injectable()
 export class MoviesService {
@@ -10,25 +12,23 @@ export class MoviesService {
     private dataSource: DataSource,
   ) { }
 
-  async createMovie(createMovieDto) {
+  async createMovie(createMovieDto: CreateMovieDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let createdMovie;
     try{
-      createdMovie = await this.movieRepository.createMovie(createMovieDto);
+      const responseCreateMovie = await queryRunner.manager.save(MovieEntity, createMovieDto);
+      console.log(responseCreateMovie);
+      if(!responseCreateMovie){
+        throw new BadRequestException('BAD REQUEST');
+      }
+      return SuccessFulResponse(responseCreateMovie, HttpStatus.CREATED);
     }catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
     }finally {
       await queryRunner.release();
     }
-
-    if(!createdMovie){
-      throw new BadRequestException('BAD REQUEST');
-    }
-
-    return SuccessFulResponse(createdMovie.raw.insertId,HttpStatus.CREATED);
   }
 
   async findMovieById(id: number) {

@@ -5,6 +5,7 @@ import { BoardsRepository } from '../database/repository/BoardRepository/boards.
 import { UserRepository } from '../database/repository/user.repository';
 import {SuccessFulResponse} from "../shared/CoreResponse";
 import { DataSource } from 'typeorm';
+import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
 
 @Injectable()
 export class CommentsService {
@@ -29,8 +30,7 @@ export class CommentsService {
 		try {
 			await queryRunner.connect();
 			await queryRunner.startTransaction()
-			await this.commentsRepository.createComment(content,boardId,userId);
-
+			await queryRunner.manager.save(this.commentsRepository.create({content, boardId, userId}));
 			await queryRunner.commitTransaction()
 		} catch (e) {
 			await queryRunner.rollbackTransaction()
@@ -45,8 +45,9 @@ export class CommentsService {
 		};
 	}
 
-	async updateComment(content: string, commentId: number) {
-		const updatedComment = await this.commentsRepository.updateComment(content,commentId);
+	async updateComment(query:UpdateCommentDto) {
+		const { comment_id, content} = query
+		const updatedComment = await this.commentsRepository.updateComment(content,comment_id);
 		return updatedComment.raw.insertId;
 	}
 

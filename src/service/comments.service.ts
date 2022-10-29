@@ -6,6 +6,7 @@ import { UserRepository } from '../database/repository/user.repository';
 import {SuccessFulResponse} from "../shared/CoreResponse";
 import { DataSource } from 'typeorm';
 import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
+import {CommentsEntity} from "../database/entities/comments.entity";
 
 @Injectable()
 export class CommentsService {
@@ -45,10 +46,24 @@ export class CommentsService {
 		};
 	}
 
-	async updateComment(query:UpdateCommentDto) {
-		const { comment_id, content} = query
-		const updatedComment = await this.commentsRepository.updateComment(content,comment_id);
-		return updatedComment.raw.insertId;
+	async updateComment(query:UpdateCommentDto, content: string) {
+		const queryRunner = this.dataSource.createQueryRunner()
+		try {
+			await queryRunner.connect();
+			await queryRunner.startTransaction()
+			await queryRunner.manager.save(CommentsEntity,({content: content ,comment_id: query.comment_id}));
+			await queryRunner.commitTransaction()
+		} catch (e){
+			await queryRunner.rollbackTransaction()
+		} finally {
+			await queryRunner.release()
+		}
+
+		return {
+			ok: true,
+			statusCode: HttpStatus.CREATED,
+			message: 'UPDATE SUCCESS',
+		}
 	}
 
 	async deleteComment(commentId: number) {

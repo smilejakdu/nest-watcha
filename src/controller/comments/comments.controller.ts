@@ -56,7 +56,7 @@ export class CommentsController {
 		@Query() query: UpdateCommentDto,
 	) {
 		console.log(query)
-		return this.commentsService.updateComment(query);
+		return this.commentsService.updateComment(query, content);
 	}
 
 	@ApiOperation({ summary: '댓글 삭제' })

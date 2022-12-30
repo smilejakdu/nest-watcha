@@ -15,10 +15,13 @@ export class BoardsRepository extends Repository<BoardsEntity>{
 
   async createBoard(data) {
     const newBoard = new BoardsEntity();
+    console.log('before new Board', newBoard);
     Object.assign(newBoard ,data);
+    console.log('after new Board', newBoard);
     const createdBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
       return await queryRunner.manager.save(BoardsEntity,newBoard);
     });
+    console.log('createdBoard :', createdBoard);
     return createdBoard.id;
   }
 

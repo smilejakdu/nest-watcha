@@ -30,8 +30,9 @@ import { BoardImageService } from '../../service/boardImage.service';
 import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { SuccessFulResponse } from '../../shared/CoreResponse';
+import { UsersEntity } from 'src/database/entities/User/Users.entity';
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -80,11 +81,20 @@ export class BoardsController {
 	@UseGuards(UserAuthGuard)
 	@ApiOperation({ summary: '게시판작성하기' })
 	@Post()
-	async createBoard(@Req() req:any, @Body() data:CreateBoardDto,@Res() res:Response) {
-		const responseBoard = await this.boardsService.createBoard(data, req.user.id);
+	async createBoard(
+		@Req() request: Request,
+		@Body() data:CreateBoardDto,
+		@Res() res:Response,
+	) {
+		const foundUser = request?.user as UsersEntity;
+		if (!foundUser) {
+			throw new BadRequestException('로그인이 필요합니다.');
+		}
+		const responseBoard = await this.boardsService.createBoard(data, foundUser.id);
 		if(!responseBoard.ok){
 			throw new BadRequestException('게시판만들기 실패하였습니다.');
 		}
+
 		const responseImage = await this.boardImageService.insertImages(responseBoard.data, data.imagePath);
 		if(!responseImage.ok){
 			throw new BadRequestException('이미지만들기 실패하였습니다.');

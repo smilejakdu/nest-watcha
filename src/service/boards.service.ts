@@ -12,10 +12,12 @@ export class BoardsService {
 
 	async createBoard(data, userId: number):Promise<CoreResponse> {
 		const createdBoard = await this.boardsRepository.createBoard({data, userId});
+
 		if(!createdBoard){
 			throw new BadRequestException('BAD REQUEST');
 		}
-		return SuccessFulResponse(createdBoard,HttpStatus.CREATED);
+
+		return SuccessFulResponse(createdBoard, HttpStatus.CREATED);
 	}
 
 	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
@@ -32,7 +34,9 @@ export class BoardsService {
 		if(!foundBoard){
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
-
+		console.log('foundBoard :', foundBoard);
+		console.log('data :', data);
+		Object.assign(foundBoard, data);
 		const updatedBoard = await this.boardsRepository.update(foundBoard.id, data);
 
 		return SuccessFulResponse(updatedBoard);

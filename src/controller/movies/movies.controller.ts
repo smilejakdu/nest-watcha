@@ -74,7 +74,11 @@ export class MoviesController {
   @ApiCreatedResponse({ description: '성공' })
   @UseGuards(UserAuthGuard, PermissionsGuard)
   @Put(':id')
-  async updateMovie(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateMovieDto, @Res() res:Response) {
+  async updateMovie(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateMovieDto, @Res() res:Response,
+  ) {
     const { genreId, ...movieDto } = body;
     const responseUpdatedMovie = await this.movieService.updateMovieByIds([id], movieDto);
     await this.genreMovieService.updateGenreMovie(

@@ -1,6 +1,5 @@
 import { CoreEntity } from '../core.entity';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, QueryRunner } from "typeorm";
 import { UsersEntity } from '../User/Users.entity';
 import { MovieEntity } from '../MovieAndGenre/movie.entity';
 
@@ -67,4 +66,12 @@ export class OrderEntity extends CoreEntity {
 	@OneToOne(() => MovieEntity, movie => movie.id)
 	@JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
 	Movie: MovieEntity;
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(UsersEntity, 'orders');
+		} else {
+			return this.createQueryBuilder('orders');
+		}
+	}
 }

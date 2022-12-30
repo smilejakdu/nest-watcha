@@ -1,14 +1,16 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common';
 // Entity
 import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
 import { UserRepository } from '../database/repository/user.repository';
-import { BadRequest, CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
-import {LoginType, UsersEntity} from '../database/entities/User/Users.entity';
-import {DataSource} from 'typeorm';
+import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
+import { DataSource, QueryRunner } from 'typeorm';
+import { transactionRunner } from "../shared/common/transaction/transaction";
+import { Response } from "express";
 
 @Injectable()
 export class UsersService {
@@ -16,16 +18,6 @@ export class UsersService {
 		private readonly userRepository: UserRepository,
 		private readonly dataSource: DataSource,
 	) {}
-
-	async findById(id:number) {
-		const foundUser = await this.userRepository.findUserById(id).getOne();
-
-		if (!foundUser) {
-			throw new NotFoundException(`does not found user :${id}`);
-		}
-		delete foundUser.password;
-		return SuccessFulResponse(foundUser);
-	}
 
 	async findMyBoards(email:string) {
 		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
@@ -91,29 +83,44 @@ export class UsersService {
 		};
 	}
 
-	async logIn(logInDto:LoginRequestDto) {
+	async logIn(logInDto:LoginRequestDto, @Res() res: Response) {
 		const { email, password }= logInDto;
-		const foundUser = await this.userRepository.findOneBy({ email});
+		const foundUser = await this.userRepository.findOneBy({ email });
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user ${email}`);
 		}
 
-		const result = await bcrypt.compare(password, foundUser.password);
-		const payload = {email: foundUser.email};
-		const jwt = await Jwt.sign(payload, process.env.JWT, {expiresIn: '30d'});
-
-		if (!result) {
-			return BadRequest();
+		if (!await bcrypt.compare(password, foundUser.password)) {
+			throw new BadRequestException('password is not correct');
 		}
+
+		const payload = {email: foundUser.email};
+		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '30d'});
 		delete foundUser.password;
+
+		res.cookie('accessToken', accessToken, {
+			domain: 'localhost',
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			maxAge: 14 * 24 * 60 * 60 * 1000,
+		});
+
 		return SuccessFulResponse({
 			user : foundUser,
-			access_token : jwt
+			access_token : accessToken,
 		});
 	}
 
-	async createToken(user: any) {
-		user.accessToken = await this.userRepository.getToken({ email: user.email });
-		return user;
+	async updateUser(userData: UsersEntity) {
+		const updatedUser = await transactionRunner(async (queryRunner:QueryRunner)=>{
+			return await queryRunner.manager.save(UsersEntity, userData);
+		});
+		console.log(updatedUser);
+		return SuccessFulResponse(updatedUser);
+	}
+
+	async createToken(email: string) {
+		return await this.userRepository.getToken({ email });
 	}
 }

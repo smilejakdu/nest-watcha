@@ -1,5 +1,17 @@
 import { UndefinedToNullInterceptor } from '../../shared/common/interceptors/undefinedToNull.interceptor';
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get, HttpStatus, NotFoundException,
+	Param,
+	ParseIntPipe,
+	Post,
+	Put,
+	Req,
+	Res,
+	UseGuards,
+	UseInterceptors
+} from '@nestjs/common';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 // Dto
 import { SignUpRequestDto } from './users.controller.dto/signUpDto/signUp.request.dto';
@@ -8,8 +20,9 @@ import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.d
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { LoginType, UsersEntity } from '../../database/entities/User/Users.entity';
-import { Response } from 'express';
-import { User } from 'src/shared/common/decorator/user.decorator';
+import { Response, Request } from 'express';
+import { UserRepository } from 'src/database/repository/user.repository';
+import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 
 
 export const BAD_REQUEST = 'bad request';
@@ -24,13 +37,18 @@ export const BAD_REQUEST = 'bad request';
 export class UsersController {
 	constructor(
 		private readonly usersService: UsersService,
+		private readonly usersRepository: UserRepository,
 	) {}
 
 	@ApiOperation({ summary: '회원검색 by id' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get(':id')
 	async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-		return this.usersService.findById(id);
+		const foundUser = await this.usersRepository.findOneBy({ id });
+		if(!foundUser) {
+			throw new NotFoundException('해당 유저가 존재하지 않습니다.');
+		}
+		return res.status(200).json(foundUser);
 	}
 
 	@ApiCreatedResponse({ description: 'success' })
@@ -52,13 +70,35 @@ export class UsersController {
 		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
-	@ApiOperation({ summary: 'profile' })
+	@ApiOperation({ summary: 'my_profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
-	@Get('profile')
-	async findMyProfile(@Res() res:Response, @User() user:UsersEntity){
-		const responseUserByEmail = await this.usersService.findById(user.id);
-		return res.status(responseUserByEmail.statusCode).json(responseUserByEmail);
+	@Get('my_profile')
+	async findMyProfile(
+		@Res() res:Response,
+		@Req() req:Request,
+	) {
+		const foundUser = req?.user as UsersEntity;
+		delete foundUser.password;
+		return res.status(HttpStatus.OK).json(foundUser);
+	}
+
+	@ApiOperation({ summary: 'my_profile' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(UserAuthGuard)
+	@Put('my_profile')
+	async updateMyProfile(
+		@Req() req: Request,
+		@Body() data: UpdateUserRequestDto,
+		@Res() res: Response,
+	){
+		const foundUser = req.user as UsersEntity;
+		if (!foundUser) {
+			throw new NotFoundException('해당 유저가 존재하지 않습니다.');
+		}
+		Object.assign(foundUser, data);
+		const responseUpdatedUser = await this.usersService.updateUser(foundUser);
+		return res.status(responseUpdatedUser.statusCode).json(responseUpdatedUser);
 	}
 
 	@ApiOperation({ summary: 'my_boards' })
@@ -81,15 +121,15 @@ export class UsersController {
 			userId = result.data;
 		}
 
-		const foundUser = await this.usersService.findById(userId);
-		const accessToken = await this.usersService.createToken(foundUser.data);
+		const foundUser = await this.usersRepository.findOneBy({ id: userId });
+		const accessToken = await this.usersService.createToken(foundUser.email);
 
-		res.cookie('accessToken', accessToken.accessToken, {
+		res.cookie('accessToken', accessToken, {
 			domain: 'localhost',
 			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
 			httpOnly: true,
 			secure: true,
 		});
-		return res.status(foundUser.statusCode).json(foundUser);
+		return res.status(HttpStatus.OK).json(foundUser);
 	}
 }

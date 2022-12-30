@@ -83,20 +83,21 @@ export class BoardsController {
 	@Post()
 	async createBoard(
 		@Req() request: Request,
-		@Body() data:CreateBoardDto,
-		@Res() res:Response,
+		@Body() data: CreateBoardDto,
+		@Res() res: Response,
 	) {
 		const foundUser = request?.user as UsersEntity;
 		if (!foundUser) {
 			throw new BadRequestException('로그인이 필요합니다.');
 		}
+
 		const responseBoard = await this.boardsService.createBoard(data, foundUser.id);
-		if(!responseBoard.ok){
+		if(!responseBoard.ok) {
 			throw new BadRequestException('게시판만들기 실패하였습니다.');
 		}
 
 		const responseImage = await this.boardImageService.insertImages(responseBoard.data, data.imagePath);
-		if(!responseImage.ok){
+		if(!responseImage.ok) {
 			throw new BadRequestException('이미지만들기 실패하였습니다.');
 		}
 		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
@@ -125,7 +126,10 @@ export class BoardsController {
 	@UseGuards(UserAuthGuard)
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
-	async deleteBoard(@Req() req:any, @Param('id', ParseIntPipe) id: number) {
+	async deleteBoard(
+		@Req() req:any,
+		@Param('id', ParseIntPipe) id: number,
+	) {
 		return this.boardsService.deleteBoardOne(id);
 	}
 }

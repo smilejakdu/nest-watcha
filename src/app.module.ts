@@ -31,6 +31,7 @@ import {CoreEntity} from "./database/entities/core.entity";
 import {CommentsEntity} from "./database/entities/comments.entity";
 import {HashTagEntity} from "./database/entities/hashTag.entity";
 import {SchedulesEntity} from "./database/entities/schedules.entity";
+import { HealthModule } from './module/health.module';
 
 @Module({
 	imports: [
@@ -90,6 +91,7 @@ import {SchedulesEntity} from "./database/entities/schedules.entity";
 		ImageModule,
 		GenreModule,
 		MovieModule,
+		HealthModule,
 	],
 	controllers: [],
 	providers: [],

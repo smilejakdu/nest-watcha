@@ -14,7 +14,7 @@ declare const module: any;
 async function bootstrap() {
 	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
 	app.setGlobalPrefix('api/v1');
-	const port = process.env.HOST || 4000;
+	const port = process.env.HOST || 13014;
 
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
@@ -27,7 +27,7 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('api', app, document);
+	SwaggerModule.setup('api/v1', app, document);
 
 	app.use(cookieParser());
 	app.enableCors({

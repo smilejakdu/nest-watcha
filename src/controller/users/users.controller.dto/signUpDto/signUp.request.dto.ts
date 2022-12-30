@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SignUpRequestDto {
 	@IsString()
@@ -8,7 +8,7 @@ export class SignUpRequestDto {
 		example: 'ash',
 		description: 'username',
 	})
-	public username: string;
+	username: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -16,7 +16,7 @@ export class SignUpRequestDto {
 		example: 'ash@gmail.com',
 		description: 'email',
 	})
-	public email: string;
+	email: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -24,34 +24,33 @@ export class SignUpRequestDto {
 		example: '123123123',
 		description: '비밀번호',
 	})
-	public password: string;
+	password: string;
 
-	@IsString()
-	@IsNotEmpty()
 	@ApiProperty({
-		example: 'phonenumber',
+		example: '01012341234',
 		description: 'phone',
 	})
-	public phone: string;
+	@IsNotEmpty()
+	phone: string;
 
-	@IsString()
-	@ApiProperty({
+	@ApiPropertyOptional({
 		example: 'kakao_auth_id',
 		description: 'kakao_auth_id',
 	})
-	public kakao_auth_id?: string;
+	@IsOptional()
+	kakao_auth_id?: string;
 
-	@IsString()
-	@ApiProperty({
+	@ApiPropertyOptional({
 		example: 'naver_auth_id',
 		description: 'naver_auth_id',
 	})
-	public naver_auth_id?: string;
+	@IsOptional()
+	naver_auth_id?: string;
 
-	@IsString()
-	@ApiProperty({
+	@ApiPropertyOptional({
 		example: 'google_auth_id',
 		description: 'google_auth_id',
 	})
-	public google_auth_id?: string;
+	@IsOptional()
+	google_auth_id?: string;
 }

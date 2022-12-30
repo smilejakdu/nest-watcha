@@ -37,15 +37,19 @@ export class UsersService {
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, username, email, phone } = signUpDto;
-		const foundUser = await this.userRepository.findByEmail(email).getOne();
+		const foundUser = await this.userRepository.findOneBy({ email });
 		if (foundUser) {
 			throw new BadRequestException('exsit user');
 		}
+
+		const hashedPassword = await bcrypt.hash(signUpDto.password, 12);
+		signUpDto.password = hashedPassword;
 		const queryRunner = this.dataSource.createQueryRunner()
 		await queryRunner.connect()
 		await queryRunner.startTransaction()
 		try {
 			const responseCreateUser = await queryRunner.manager.save(UsersEntity, signUpDto);
+			delete responseCreateUser.password;
 			console.log(responseCreateUser)
 			await queryRunner.commitTransaction()
 			return SuccessFulResponse(responseCreateUser ,HttpStatus.CREATED);
@@ -88,9 +92,9 @@ export class UsersService {
 	}
 
 	async logIn(logInDto:LoginRequestDto) {
-		const {email ,password}= logInDto;
-		const foundUser = await this.userRepository.findByEmail(email).getOne();
-		if (isNil(foundUser)) {
+		const { email, password }= logInDto;
+		const foundUser = await this.userRepository.findOneBy({ email});
+		if (!foundUser) {
 			throw new NotFoundException(`does not found user ${email}`);
 		}
 

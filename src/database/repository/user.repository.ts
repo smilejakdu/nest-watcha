@@ -56,31 +56,6 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.email =:email',{email});
   }
 
-  findByEmail(email: string) {
-    return this.makeQueryBuilder()
-      .select([
-        'users.id',
-        'users.email',
-        'users.password',
-        'users.username',
-        'users.kakao_auth_id',
-        'users.naver_auth_id',
-        'users.google_auth_id',
-      ])
-      .addSelect([
-        'boards.id',
-        'boards.title',
-        'boards.content',
-      ])
-      .addSelect([
-        'images.id',
-        'images.imagePath'
-      ])
-      .leftJoin('users.Boards','boards')
-      .innerJoin('boards.Images','images')
-      .where('users.email=:email',{email:email});
-    }
-
   findAuthLoginId(id: number, queryRunner?: QueryRunner) {
     return this.makeQueryBuilder()
       .select(['users.id', 'users.username' , 'users.status'])

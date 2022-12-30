@@ -17,9 +17,9 @@ export class OrdersService {
   ) {}
 
   async createOrderNumber(email:string , set:any):Promise<CoreResponse> {
-    const foundUserByEmail = await this.usersRepository.findByEmail(email).getOne();
-    const createdOrder = await this.ordersRepository.createOrder(foundUserByEmail.id , set);
-    if(isNil(createdOrder)){
+    const foundUser = await this.usersRepository.findOneBy({email});
+    const createdOrder = await this.ordersRepository.createOrder(foundUser.id , set);
+    if(!createdOrder) {
       throw new BadRequestException('bad request create_order_number');
     }
     return SuccessFulResponse(createdOrder.raw.insertId,HttpStatus.CREATED);

@@ -8,8 +8,9 @@ export class UserAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
+    console.log(req.headers);
     let accessToken = req.headers['access-token'];
-
+    console.log('accessToken', accessToken);
     if (!accessToken || accessToken === 'null') {
       accessToken = req.cookies.accessToken;
     }
@@ -17,11 +18,12 @@ export class UserAuthGuard implements CanActivate {
     let userEmail: any;
 
     try {
-      const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
+      const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT_SECRET);
       userEmail = decodedUserJwt?.sub?.email;
+      console.log(userEmail);
     } catch (jwtErr) {
       res.cookie('accessToken', null, {
-        domain: process.env['DB_HOST'],
+        domain: 'localhost',
         expires: new Date(new Date().getTime() - 1),
         httpOnly: true,
         secure: true,
@@ -72,7 +74,7 @@ export class UserAuthGuardOptional implements CanActivate {
     let user: any;
 
     try {
-      const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT);
+      const decodedUserJwt: any = Jwt.verify(accessToken, process.env.JWT_SECRET);
       user = decodedUserJwt.sub;
     } catch (jwtErr) {
       res.cookie('accessToken', null, {
@@ -88,7 +90,7 @@ export class UserAuthGuardOptional implements CanActivate {
       return true;
     }
 
-    let userData = await UsersEntity.findOne(user.id);
+    let userData = await UsersEntity.findOneBy({email:user.email});
     if (!userData) {
       res.cookie('accessToken', null, {
         domain: cookieDomain,

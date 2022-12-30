@@ -98,7 +98,7 @@ export class UsersService {
 		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '30d'});
 		delete foundUser.password;
 
-		res.cookie('accessToken', accessToken, {
+		res.cookie('access-token', accessToken, {
 			domain: 'localhost',
 			httpOnly: true,
 			secure: true,

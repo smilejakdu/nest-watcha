@@ -40,15 +40,18 @@ export class UsersController {
 		private readonly usersRepository: UserRepository,
 	) {}
 
-	@ApiOperation({ summary: '회원검색 by id' })
+	@ApiOperation({ summary: 'my_profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Get(':id')
-	async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-		const foundUser = await this.usersRepository.findOneBy({ id });
-		if(!foundUser) {
-			throw new NotFoundException('해당 유저가 존재하지 않습니다.');
-		}
-		return res.status(200).json(foundUser);
+	@UseGuards(UserAuthGuard)
+	@Get('my_profile')
+	async findMyProfile(
+		@Res() res:Response,
+		@Req() req:Request,
+	) {
+		const foundUser = req?.user as UsersEntity;
+		console.log(foundUser)
+		delete foundUser.password;
+		return res.status(HttpStatus.OK).json(foundUser);
 	}
 
 	@ApiCreatedResponse({ description: 'success' })
@@ -66,22 +69,10 @@ export class UsersController {
 	})
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
-		const responseLogin = await this.usersService.logIn(data);
+		const responseLogin = await this.usersService.logIn(data, res);
 		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
-	@ApiOperation({ summary: 'my_profile' })
-	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@UseGuards(UserAuthGuard)
-	@Get('my_profile')
-	async findMyProfile(
-		@Res() res:Response,
-		@Req() req:Request,
-	) {
-		const foundUser = req?.user as UsersEntity;
-		delete foundUser.password;
-		return res.status(HttpStatus.OK).json(foundUser);
-	}
 
 	@ApiOperation({ summary: 'my_profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })

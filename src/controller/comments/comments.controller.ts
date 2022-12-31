@@ -39,8 +39,8 @@ export class CommentsController {
 		@Body('content') content: string,
 		@Req() request: Request,
 	) {
-		const user = request.user as UsersEntity;
-		return this.commentsService.createComment(content, id, user.id);
+		const foundUser = request.user as UsersEntity;
+		return this.commentsService.createComment(content, id, foundUser.id);
 	}
 
 	@ApiOperation({ summary: '댓글 수정' })
@@ -55,7 +55,6 @@ export class CommentsController {
 		@Req() request: Request,
 		@Query() query: UpdateCommentDto,
 	) {
-		console.log(query)
 		return this.commentsService.updateComment(query, content);
 	}
 

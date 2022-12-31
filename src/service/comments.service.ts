@@ -28,6 +28,10 @@ export class CommentsService {
 	}
 
 	async createComment(content: string, boardId: number, userId: number) {
+		const foundBoard = await this.boardsRepository.findOneBy({id: boardId});
+		if (!foundBoard) {
+			throw new NotFoundException('해당 게시글이 존재하지 않습니다.', String(boardId));
+		}
 		const createdComment = await transactionRunner(async (queryRunner) => {
 			return await queryRunner.manager.save(CommentsEntity,({content: content ,board_id: boardId, user_id: userId}));
 		});
@@ -35,24 +39,19 @@ export class CommentsService {
 		return SuccessFulResponse(createdComment);
 	}
 
-	async updateComment(query:UpdateCommentDto, content: string) {
-		const queryRunner = this.dataSource.createQueryRunner()
-		try {
-			await queryRunner.connect();
-			await queryRunner.startTransaction()
-			await queryRunner.manager.save(CommentsEntity,({content: content ,comment_id: query.comment_id}));
-			await queryRunner.commitTransaction()
-		} catch (e){
-			await queryRunner.rollbackTransaction()
-		} finally {
-			await queryRunner.release()
+	async updateComment(query: UpdateCommentDto, content: string) {
+		const foundComment = await this.commentsRepository.findOneBy({id: query.comment_id});
+
+		if (!foundComment) {
+			throw new NotFoundException('해당 댓글이 존재하지 않습니다.', String(query.comment_id));
 		}
 
-		return {
-			ok: true,
-			statusCode: HttpStatus.CREATED,
-			message: 'UPDATE SUCCESS',
-		}
+		const updatedComment = await transactionRunner(async (queryRunner) => {
+			foundComment.content = content;
+			return await queryRunner.manager.save(CommentsEntity, foundComment);
+		});
+		console.log(updatedComment);
+		return SuccessFulResponse(updatedComment);
 	}
 
 	async deleteComment(commentId: number) {

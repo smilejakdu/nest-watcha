@@ -53,7 +53,7 @@ export class UsersService {
 		}
 	}
 
-	async socialSignUp(data:any , loginType : LoginType) {
+	async socialSignUp(data:any, loginType : LoginType) {
 		const responseCreateUser = await this.userRepository.createKakaoUser(data);
 		return SuccessFulResponse(responseCreateUser.raw.insertId,HttpStatus.CREATED);
 	}

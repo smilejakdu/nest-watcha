@@ -1,8 +1,6 @@
 import {QueryRunner, Repository } from 'typeorm';
 import { LoginType, UsersEntity } from '../entities/User/Users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import bcrypt from 'bcryptjs';
-import { transactionRunner } from '../../shared/common/transaction/transaction';
 import * as Jwt from 'jsonwebtoken';
 import axios from 'axios';
 import {CustomRepository} from "../../shared/typeorm-ex.decorator";
@@ -91,28 +89,6 @@ export class UserRepository extends Repository<UsersEntity> {
         kakao_auth_id:kakaoUser.id,
       })
       .execute();
-  }
-
-  async createUser(user ,queryRunner?: QueryRunner) {
-    const {password , ...newUser}= user;
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    const createUser = await transactionRunner(async (queryRunner) => {
-      return await this.makeQueryBuilder()
-        .insert()
-        .values({
-          username:newUser.username,
-          password:hashedPassword,
-          email:newUser.email,
-          phone:newUser.phone ,
-          kakao_auth_id:newUser.kakao_auth_id,
-          naver_auth_id:newUser.naver_auth_id,
-          google_auth_id:newUser.google_auth_id,
-        })
-        .execute();
-      });
-    delete createUser.password;
-    return createUser.raw.insertId;
   }
 
   removeUser(id: number, queryRunner?: QueryRunner) {

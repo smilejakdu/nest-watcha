@@ -95,7 +95,8 @@ export class UsersService {
 		}
 
 		const payload = {email: foundUser.email};
-		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '30d'});
+		const options = {expiresIn: '1d', issuer: 'ash-admin', algorithm: 'HS256'};
+		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET, options);
 		delete foundUser.password;
 
 		res.cookie('access-token', accessToken, {

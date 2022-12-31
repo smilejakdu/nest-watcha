@@ -1,4 +1,4 @@
-import { EntityRepository, QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
+import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../../entities/MovieAndGenre/genre.entity';
 import { transactionRunner } from '../../../shared/common/transaction/transaction';
 import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
@@ -10,14 +10,25 @@ export class GenreRepository extends Repository<GenreEntity> {
   }
 
   async findAll() {
-    return await this.makeQueryBuilder()
+    // TODO : 페이지 네이션
+    return this.makeQueryBuilder()
       .where('genre.deletedAt is NULL')
       .getMany();
   }
 
   async findById(id: number) {
-    return await this.makeQueryBuilder()
-      .leftJoinAndSelect('genre.Genremovie', 'movies')
+    return this.makeQueryBuilder()
+      .select([
+        'genre.id',
+        'genre.name',
+      ])
+      .addSelect([
+        'movie.id',
+        'movie.name',
+        'movie.description',
+        'movie.image',
+      ])
+      .leftJoin('genre.Genremovie', 'movies')
       .where('genre.id=:id ', { id: id })
       .getOne();
   }
@@ -31,9 +42,9 @@ export class GenreRepository extends Repository<GenreEntity> {
     return createdGenre.id;
   }
 
-  async updatedGenre(data){
+  async updatedGenre(data) {
     const {id , name} = data;
-    const foundGenre = await this.findById(id);
+    const foundGenre = await this.findOneBy({id});
     const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
       foundGenre.name = name;
       return await queryRunner.manager.save(GenreEntity,foundGenre);
@@ -42,9 +53,12 @@ export class GenreRepository extends Repository<GenreEntity> {
   }
 
   async deletedGenre(genreId:number) {
-    const foundGenre = await this.findById(genreId);
+    const foundGenre = await this.findOneBy({id: genreId});
+    if (!foundGenre) {
+      throw new Error('Genre not found');
+    }
     const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      return await queryRunner.manager.softDelete(GenreEntity,foundGenre.id);
+      return await queryRunner.manager.softDelete(GenreEntity, foundGenre.id);
     });
     return deletedGenre.affected;
   }

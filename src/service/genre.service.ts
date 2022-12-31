@@ -14,10 +14,11 @@ export class GenreService {
       if (!createdGenre) {
         throw new NotFoundException('does not found');
       }
+
       return SuccessFulResponse(createdGenre,HttpStatus.CREATED);
   }
 
-  async findById(id: number): Promise<CoreResponse> {
+  async findGenreWithMovieById(id: number): Promise<CoreResponse> {
     const foundGenre = await this.genreRepository.findById(id);
     return SuccessFulResponse(foundGenre);
   }

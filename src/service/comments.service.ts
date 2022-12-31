@@ -1,4 +1,4 @@
-import {HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 // Entity
 import { CommentsRepository } from '../database/repository/comments.repository';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';

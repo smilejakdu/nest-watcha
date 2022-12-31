@@ -42,7 +42,7 @@ export class GenreController {
 	})
 	@Get(':id')
 	async findOneGenre(@Param('id', ParseIntPipe) id: number) {
-		return await this.genreService.findById(id);
+		return this.genreService.findGenreWithMovieById(id);
 	}
 
 	@ApiOperation({ summary: '장르 업데이트' })

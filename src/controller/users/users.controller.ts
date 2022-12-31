@@ -3,8 +3,6 @@ import {
 	Body,
 	Controller,
 	Get, HttpStatus, NotFoundException,
-	Param,
-	ParseIntPipe,
 	Post,
 	Put,
 	Req,

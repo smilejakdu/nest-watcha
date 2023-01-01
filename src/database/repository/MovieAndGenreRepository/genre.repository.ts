@@ -9,11 +9,15 @@ export class GenreRepository extends Repository<GenreEntity> {
     return this.createQueryBuilder('genre', queryRunner);
   }
 
-  async findAll() {
-    // TODO : 페이지 네이션
+  async findAllGenre(pageNumber: number) {
+    const take = 10;
+    const skip = (pageNumber - 1) * take;
+
     return this.makeQueryBuilder()
       .where('genre.deletedAt is NULL')
-      .getMany();
+      .limit(take)
+      .offset(skip)
+      .getRawMany();
   }
 
   async findById(id: number) {

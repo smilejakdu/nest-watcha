@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { BadRequest, CoreResponse, NotFoundResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import { CoreResponse, NotFoundResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 import {transactionRunner} from "../shared/common/transaction/transaction";
 import {QueryRunner} from "typeorm";
@@ -12,13 +12,13 @@ export class GenreService {
   ) {}
 
   async createGenre(genreName : string) {
-      const createdGenre = await this.genreRepository.createGenre(genreName);
+    const createdGenre = await this.genreRepository.createGenre(genreName);
 
-      if (!createdGenre) {
-        throw new NotFoundException('does not found');
-      }
+    if (!createdGenre) {
+      throw new NotFoundException('does not found');
+    }
 
-      return SuccessFulResponse(createdGenre,HttpStatus.CREATED);
+    return SuccessFulResponse(createdGenre,HttpStatus.CREATED);
   }
 
   async findGenreWithMovieById(id: number): Promise<CoreResponse> {
@@ -26,8 +26,8 @@ export class GenreService {
     return SuccessFulResponse(foundGenre);
   }
 
-  async findAllGenre(): Promise<CoreResponse> {
-    const foundAllGenre =  await this.genreRepository.findAll();
+  async findAllGenre(pageNumber: number): Promise<CoreResponse> {
+    const foundAllGenre = await this.genreRepository.findAllGenre(pageNumber || 1);
     return SuccessFulResponse(foundAllGenre);
   }
 

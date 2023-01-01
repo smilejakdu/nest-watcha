@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GenreService } from '../../service/genre.service';
 import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
@@ -7,6 +7,7 @@ import { UpdateGenreDto } from './genre.controller.dto/updateGenre.dto';
 import { DeleteGenreDto } from './genre.controller.dto/deleteGenre.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
+import {Pagination} from "../../shared/common/dto/core.request.dto";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
@@ -31,8 +32,8 @@ export class GenreController {
 		type: GetGenreDto,
 	})
 	@Get()
-	async findAllGenre() {
-		return this.genreService.findAllGenre();
+	async findAllGenre(@Query() page: Pagination) {
+		return this.genreService.findAllGenre(page.pageNumber);
 	}
 
 	@ApiOperation({ summary: '장르 가져오기' })

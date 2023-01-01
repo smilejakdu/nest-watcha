@@ -81,6 +81,7 @@ import { HealthModule } from './module/health.module';
 			autoLoadEntities: true,
 			charset: "utf8mb4",
 			synchronize: true,
+			logging: process.env.NODE_ENV === 'local' ? true : false,
 		}),
 		ScheduleModule.forRoot(),
 		UsersModule,

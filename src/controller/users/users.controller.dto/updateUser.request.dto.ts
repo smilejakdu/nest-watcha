@@ -8,12 +8,19 @@ export class UpdateUserRequestDto extends CoreEntity {
     example: 'dami@gmail.com',
     description: 'email',
   })
-  public email: string;
+  email: string;
 
   @IsString()
   @ApiProperty({
-    example: 'content',
-    description: 'content',
+    example: 'username',
+    description: 'username',
   })
-  public contents: string;
+  username: string;
+
+  @IsString()
+  @ApiProperty({
+    example: 'phone',
+    description: 'phone',
+  })
+  phone: string;
 }

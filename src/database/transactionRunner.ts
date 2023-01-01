@@ -6,7 +6,7 @@ export async function transactionRunner(
   errorHandler?: (err: Error) => Promise<void>,
 ): Promise<boolean> {
   let isSuccessed = true;
-  const queryRunner = this.dataSource.createQueryRunner();
+  const queryRunner = dataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
   console.log('transaction start');

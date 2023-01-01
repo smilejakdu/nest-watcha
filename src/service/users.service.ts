@@ -9,8 +9,8 @@ import * as Jwt from 'jsonwebtoken';
 import { isNil } from 'lodash';
 import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
 import { DataSource, QueryRunner } from 'typeorm';
-import { transactionRunner } from "../shared/common/transaction/transaction";
 import { Response } from "express";
+import { transactionRunner } from 'src/database/transactionRunner';
 
 @Injectable()
 export class UsersService {
@@ -111,9 +111,10 @@ export class UsersService {
 	}
 
 	async updateUser(userData: UsersEntity) {
+		console.log('userData :',userData)
 		const updatedUser = await transactionRunner(async (queryRunner:QueryRunner)=>{
-			return await queryRunner.manager.save(UsersEntity, userData);
-		});
+			await queryRunner.manager.save(UsersEntity, userData);
+		},this.dataSource);
 		console.log(updatedUser);
 		return SuccessFulResponse(updatedUser);
 	}

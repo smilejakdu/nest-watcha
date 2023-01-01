@@ -16,6 +16,7 @@ export async function transactionRunner(
     if (!queryRunner.isReleased) {
       await queryRunner.release();
     }
+    console.log(queryRunner);
     isSuccessed = true;
 
     //return isSuccessed; // add

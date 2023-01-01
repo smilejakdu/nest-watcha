@@ -1,6 +1,9 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BadRequest, CoreResponse, NotFoundResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
+import {transactionRunner} from "../shared/common/transaction/transaction";
+import {QueryRunner} from "typeorm";
+import {GenreEntity} from "../database/entities/MovieAndGenre/genre.entity";
 
 @Injectable()
 export class GenreService {
@@ -28,13 +31,19 @@ export class GenreService {
     return SuccessFulResponse(foundAllGenre);
   }
 
-  async updateGenre(data) {
-      const updatedGenre = await this.genreRepository.updatedGenre(data);
+  async updateGenre(genreId:number, genreName:string) {
+    const foundGenre = await this.genreRepository.findOneBy({id: genreId});
 
-      if (updatedGenre){
-        return SuccessFulResponse(updatedGenre);
-      }
-      return BadRequest();
+    if (!foundGenre) {
+      throw new NotFoundException('does not found genre');
+    }
+
+    const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+      foundGenre.name = genreName;
+      return await queryRunner.manager.save(GenreEntity, foundGenre);
+    });
+
+    return SuccessFulResponse(updatedGenre);
   }
 
   async deletedGenre(genreId:number) {

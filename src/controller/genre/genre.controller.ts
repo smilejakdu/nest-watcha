@@ -53,10 +53,7 @@ export class GenreController {
 	@UseGuards(UserAuthGuard, PermissionsGuard)
 	@Patch(':id')
 	async updateOneGenre(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateGenreDto) {
-		return await this.genreService.updateGenre({
-			id: id,
-			name: body.genreName,
-		});
+		return this.genreService.updateGenre(id, body.genreName);
 	}
 
 	@ApiOperation({ summary: '장르 삭제하기' })

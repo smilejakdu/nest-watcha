@@ -39,7 +39,6 @@ export class UsersController {
 	) {}
 
 	@ApiOperation({ summary: 'my_profile' })
-	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('my_profile')
 	async findMyProfile(
@@ -47,7 +46,6 @@ export class UsersController {
 		@Req() req:Request,
 	) {
 		const foundUser = req?.user as UsersEntity;
-		console.log(foundUser)
 		delete foundUser.password;
 		return res.status(HttpStatus.OK).json(foundUser);
 	}
@@ -94,9 +92,9 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('my_boards')
-	async findMyBoards(@Req() req: any) {
-		const { email } = req.user;
-		return this.usersService.findMyBoards(email);
+	async findMyBoards(@Req() req: Request) {
+		const foundUser = req.user as UsersEntity;
+		return this.usersService.findMyBoardsByEmail(foundUser.email);
 	}
 
 	@ApiOperation({ summary: 'kakao_login' })

@@ -19,11 +19,8 @@ export class UsersService {
 		private readonly dataSource: DataSource,
 	) {}
 
-	async findMyBoards(email:string) {
-		const foundMyBoards = await this.userRepository.findMyBoard(email).getMany();
-		if(!isNil(foundMyBoards)){
-			throw new NotFoundException(`does not found user :${email}`);
-		}
+	async findMyBoardsByEmail(email:string) {
+		const foundMyBoards = await this.userRepository.findMyBoardByEmail(email)
 		return SuccessFulResponse(foundMyBoards);
 	}
 

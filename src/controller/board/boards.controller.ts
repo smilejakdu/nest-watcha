@@ -87,9 +87,6 @@ export class BoardsController {
 		@Res() res: Response,
 	) {
 		const foundUser = request?.user as UsersEntity;
-		if (!foundUser) {
-			throw new BadRequestException('로그인이 필요합니다.');
-		}
 
 		const responseBoard = await this.boardsService.createBoard(data, foundUser.id);
 		if(!responseBoard.ok) {

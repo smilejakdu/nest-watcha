@@ -13,7 +13,7 @@ export class BoardsService {
 	async createBoard(data, userId: number):Promise<CoreResponse> {
 		const createdBoard = await this.boardsRepository.createBoard({data, userId});
 
-		if(!createdBoard){
+		if(!createdBoard) {
 			throw new BadRequestException('BAD REQUEST');
 		}
 

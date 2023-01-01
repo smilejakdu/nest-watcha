@@ -68,9 +68,9 @@ export class UsersEntity extends CoreEntity {
 
 	static makeQueryBuilder(queryRunner?: QueryRunner) {
 		if (queryRunner) {
-			return queryRunner.manager.createQueryBuilder(UsersEntity, 'user');
+			return queryRunner.manager.createQueryBuilder(UsersEntity, 'users');
 		} else {
-			return this.createQueryBuilder('user');
+			return this.createQueryBuilder('users');
 		}
 	}
 }

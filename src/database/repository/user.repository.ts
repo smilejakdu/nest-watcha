@@ -27,31 +27,32 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.id=:id',{id});
   }
 
-  findMyBoard(email: string) {
+  findMyBoardByEmail(email: string) {
     return this.makeQueryBuilder()
       .select([
+        'users.username',
+        'users.email',
+      ])
+      .addSelect([
         'boards.id',
         'boards.title',
         'boards.content',
         'boards.updatedAt',
       ])
       .addSelect([
-        'users.username username',
-        'users.email email',
+        'boardImages.id',
+        'boardImages.imagePath'
       ])
       .addSelect([
-        'images.id board_image_id',
-        'images.imagePath board_image_path'
-      ])
-      .addSelect([
-        'comments.id comment_id',
-        'comments.content comment_content',
+        'comments.id',
+        'comments.content',
         'comments.updatedAt',
       ])
       .innerJoin('users.Boards','boards')
-      .innerJoin('boards.Images','images')
-      .leftJoin('boards.Comments','comments')
-      .where('users.email =:email',{email});
+      .leftJoin('boards.boardImages','boardImages')
+      .leftJoin('boards.comments','comments')
+      .where('users.email =:email',{email:email})
+      .getMany();
   }
 
   findAuthLoginId(id: number, queryRunner?: QueryRunner) {

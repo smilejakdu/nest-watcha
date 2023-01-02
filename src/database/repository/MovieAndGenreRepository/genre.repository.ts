@@ -36,24 +36,4 @@ export class GenreRepository extends Repository<GenreEntity> {
       .where('genre.id=:id ', { id: id })
       .getOne();
   }
-
-  async createGenre(name: string) {
-    const newGenre = new GenreEntity();
-    newGenre.name = name;
-    const createdGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      return await queryRunner.manager.save(GenreEntity,newGenre);
-    });
-    return createdGenre.id;
-  }
-
-  async deletedGenre(genreId:number) {
-    const foundGenre = await this.findOneBy({id: genreId});
-    if (!foundGenre) {
-      throw new Error('Genre not found');
-    }
-    const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      return await queryRunner.manager.softDelete(GenreEntity, foundGenre.id);
-    });
-    return deletedGenre.affected;
-  }
 }

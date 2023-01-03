@@ -21,7 +21,6 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { MoviesService } from '../../service/movies.service';
-import { GetGenreDto } from '../genre/genre.controller.dto/getGenre.dto';
 import { Response } from 'express';
 import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
 import { GenreMovieService } from '../../service/genreMovie.service';
@@ -65,9 +64,7 @@ export class MoviesController {
   @ApiOkResponse({ description: '성공' })
   @Get()
   async findAllMovie(@Query() pagination: Pagination) {
-    pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
-    pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
-    return await this.movieService.findAllMovie(pagination);
+    return await this.movieService.findAllMovie(pagination.pageNumber);
   }
 
   @ApiOperation({ summary: '영화 수정하기' })
@@ -77,7 +74,8 @@ export class MoviesController {
   async updateMovie(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateMovieDto, @Res() res:Response,
+    @Body() body: UpdateMovieDto,
+    @Res() res:Response,
   ) {
     const { genreId, ...movieDto } = body;
     const responseUpdatedMovie = await this.movieService.updateMovieByIds([id], movieDto);

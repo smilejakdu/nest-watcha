@@ -68,10 +68,8 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판 모두 가져오기' })
 	@Get('')
 	async getAllBoards(@Query() pagination: Pagination) {
-		pagination.page ? (pagination.page = Number(pagination.page)) : (pagination.page = 1);
-		pagination.limit ? (pagination.limit = Number(pagination.limit)) : (pagination.limit = 10);
 
-		return this.boardsService.findAllBoards(pagination);
+		return this.boardsService.findAllBoards(pagination.pageNumber);
 	}
 
 	@ApiCreatedResponse({
@@ -89,14 +87,17 @@ export class BoardsController {
 		const foundUser = request?.user as UsersEntity;
 
 		const responseBoard = await this.boardsService.createBoard(data, foundUser.id);
+
 		if(!responseBoard.ok) {
 			throw new BadRequestException('게시판만들기 실패하였습니다.');
 		}
 
 		const responseImage = await this.boardImageService.insertImages(responseBoard.data, data.imagePath);
+
 		if(!responseImage.ok) {
 			throw new BadRequestException('이미지만들기 실패하였습니다.');
 		}
+
 		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
 
 		return SuccessFulResponse(responseBoard,HttpStatus.CREATED);

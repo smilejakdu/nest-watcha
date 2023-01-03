@@ -4,6 +4,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import {MovieEntity} from "../database/entities/MovieAndGenre/movie.entity";
 import {CreateMovieDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
+import {transactionRunner} from "../shared/common/transaction/transaction";
 
 @Injectable()
 export class MoviesService {
@@ -13,21 +14,10 @@ export class MoviesService {
   ) { }
 
   async createMovie(createMovieDto: CreateMovieDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try{
-      const responseCreateMovie = await queryRunner.manager.save(MovieEntity, createMovieDto);
-      console.log(responseCreateMovie);
-      if(!responseCreateMovie){
-        throw new BadRequestException('BAD REQUEST');
-      }
-      return SuccessFulResponse(responseCreateMovie, HttpStatus.CREATED);
-    }catch (error) {
-      await queryRunner.rollbackTransaction();
-    }finally {
-      await queryRunner.release();
-    }
+    const createdMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
+      return await queryRunner.manager.save(MovieEntity, createMovieDto);
+    });
+    return SuccessFulResponse(createdMovie, HttpStatus.CREATED);
   }
 
   async findMovieById(id: number) {
@@ -35,19 +25,21 @@ export class MoviesService {
     SuccessFulResponse(movie);
   }
 
-  async findAllMovie(pagination) {
-    const skip = Number((pagination.page - 1) * pagination.limit);
+  async findAllMovie(pageNumber= 1) {
+    const take = 10;
+    const skip = (pageNumber - 1) * take;
+
     const foundAllMovie = await this.movieRepository
       .findAll()
       .skip(skip)
-      .take(pagination.limit)
+      .take(take)
       .getMany();
 
     return SuccessFulResponse(foundAllMovie);
   }
 
   async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    const updatedMovie = await this.movieRepository.updateMovieByIds(ids,set);
+    const updatedMovie = await this.movieRepository.updateMovieByIds(ids, set);
     return SuccessFulResponse(updatedMovie.raw.insertId);
   }
 

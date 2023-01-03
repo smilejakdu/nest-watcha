@@ -20,17 +20,14 @@ export class BoardsService {
 		return SuccessFulResponse(createdBoard, HttpStatus.CREATED);
 	}
 
-	async findAllBoards(pagination?:Pagination):Promise<CoreResponse> {
-		const skip = Number((pagination.page - 1) * pagination.limit);
-		const foundAllBoards = await this.boardsRepository.findAllBoards()
-			.skip(skip)
-			.take(pagination.limit)
-			.getMany();
+	async findAllBoards(pageNumber: number):Promise<CoreResponse> {
+		const foundAllBoards = await this.boardsRepository.findAllBoards(pageNumber);
 		return SuccessFulResponse(foundAllBoards);
 	}
 
 	async updateBoard(boardId: number, data: UpdateBoardDto) {
 		const foundBoard = await this.boardsRepository.findOneBy({id:boardId});
+
 		if(!foundBoard){
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}

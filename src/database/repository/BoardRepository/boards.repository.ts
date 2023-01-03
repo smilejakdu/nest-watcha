@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { transactionRunner } from '../../../shared/common/transaction/transaction';
 import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import {take} from "rxjs";
 
 @CustomRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -33,7 +34,12 @@ export class BoardsRepository extends Repository<BoardsEntity>{
       .getManyAndCount();
   }
 
-  findAllBoards(){
+  findAllBoards(
+    pageNumber= 1,
+  ) {
+    const take = 10;
+    const skip = (pageNumber - 1) * take;
+
     return this.makeQueryBuilder()
       .select([
         'boards.id',
@@ -53,6 +59,9 @@ export class BoardsRepository extends Repository<BoardsEntity>{
       ])
       .innerJoin('boards.User','user')
       .leftJoin('boards.Comments','comments')
-      .leftJoin('boards.Images','images');
+      .leftJoin('boards.Images','images')
+      .skip(skip)
+      .take(take)
+      .getMany();
   }
 }

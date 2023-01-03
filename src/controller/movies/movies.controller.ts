@@ -64,7 +64,7 @@ export class MoviesController {
   @ApiOkResponse({ description: '성공' })
   @Get()
   async findAllMovie(@Query() pagination: Pagination) {
-    return await this.movieService.findAllMovie(pagination.pageNumber);
+    return this.movieService.findAllMovie(pagination.pageNumber);
   }
 
   @ApiOperation({ summary: '영화 수정하기' })

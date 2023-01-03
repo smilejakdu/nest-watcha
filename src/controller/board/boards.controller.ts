@@ -125,7 +125,7 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판삭제하기' })
 	@Delete(':id')
 	async deleteBoard(
-		@Req() req:any,
+		@Req() req: Request,
 		@Param('id', ParseIntPipe) id: number,
 	) {
 		return this.boardsService.deleteBoardOne(id);

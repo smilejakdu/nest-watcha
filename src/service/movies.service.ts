@@ -20,8 +20,8 @@ export class MoviesService {
     return SuccessFulResponse(createdMovie, HttpStatus.CREATED);
   }
 
-  async findMovieById(id: number) {
-    const movie = await this.movieRepository.findOneBy({ id });
+  async findMovieById(movieId: number) {
+    const movie = await this.movieRepository.findOneBy({ id: movieId });
     SuccessFulResponse(movie);
   }
 

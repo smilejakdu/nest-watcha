@@ -20,15 +20,21 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
 
 	findAllImages() {
     return this.makeQueryBuilder()
-      .select('board_images.imagePath');
+      .select('board_images.imagePath').getMany();
 	}
 
 	findBoardImage() {
-		return this.findAllImages().innerJoin('board_images.Board', 'Board').getMany();
+		return this.makeQueryBuilder()
+			.select('board_images.imagePath')
+			.addSelect([
+				'Board.boardId',
+				'board_images.imageId',
+			])
+			.innerJoin('board_images.Board', 'Board')
+			.getMany();
 	}
 
 	async insertImages(boardId: number, imagePathList: string[]) {
-		console.log(boardId);
 		const insertImagePathResult = [];
 		if (!isNil(imagePathList)) {
 			for (const imagePath of imagePathList) {

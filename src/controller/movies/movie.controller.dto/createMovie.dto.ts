@@ -3,7 +3,7 @@ import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { AgeLimitStatus } from '../../../database/entities/MovieAndGenre/genre.entity';
 import { Type } from 'class-transformer';
 
-export class CreateMovieDto {
+export class CreateMovieRequestDto {
   @IsNotEmpty()
   @ApiProperty({
     example:1,
@@ -33,7 +33,7 @@ export class CreateMovieDto {
     example: 'url_image_string',
     description:'movieImage'
   })
-  movieImage:string;
+  movieImage: string;
 
   @IsNotEmpty()
   @IsDefined()
@@ -52,4 +52,20 @@ export class CreateMovieDto {
     example : AgeLimitStatus.ADLUT_MORE_THAN
   })
   ageLimitStatus:AgeLimitStatus;
+}
+
+export class CreateMovieResponseDto {
+  @IsNumber()
+  @ApiProperty({
+    example:1,
+    description:'movieId'
+  })
+  movieId: number;
+
+  @IsString()
+  @ApiProperty({
+    example:1,
+    description:'movieName'
+  })
+  movieName: string;
 }

@@ -1,11 +1,10 @@
 import {
-  EntityManager,
   QueryRunner,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
 import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
-import { CreateMovieDto } from '../../../controller/movies/movie.controller.dto/createMovie.dto';
+import { CreateMovieRequestDto } from '../../../controller/movies/movie.controller.dto/createMovie.dto';
 import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
 
 @CustomRepository(MovieEntity)
@@ -14,9 +13,9 @@ export class MovieRepository extends Repository<MovieEntity>{
     return this.createQueryBuilder('movie', queryRunner);
   }
 
-  async createMovie(createMovieDto:CreateMovieDto) {
+  async createMovie(createMovieRequestDto: CreateMovieRequestDto) {
     const newMovie = new MovieEntity();
-    Object.assign(newMovie, createMovieDto);
+    Object.assign(newMovie, createMovieRequestDto);
     const createdMovie = await this.makeQueryBuilder()
       .insert()
       .values(newMovie)
@@ -25,7 +24,13 @@ export class MovieRepository extends Repository<MovieEntity>{
     return createdMovie.raw.insertId;
   }
 
-  findAll(queryRunner?: QueryRunner) {
+  findAll(
+    pageNumber: number,
+    queryRunner?: QueryRunner,
+  ) {
+    const take = 10;
+    const skip = (pageNumber - 1) * take;
+
     return this.makeQueryBuilder(queryRunner)
       .addSelect([
         'genre.id',
@@ -45,7 +50,10 @@ export class MovieRepository extends Repository<MovieEntity>{
       .innerJoin('movie.Genremovie','genremovie')
       .innerJoin('movie.MovieOption','movieOption')
       .innerJoin('genremovie.Genre','genre')
-      .leftJoin('movie.subMovieImage','subMovieImage');
+      .leftJoin('movie.subMovieImage','subMovieImage')
+      .skip(skip)
+      .take(take)
+      .getMany();
   }
 
   updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {

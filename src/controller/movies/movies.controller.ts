@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { MoviesService } from '../../service/movies.service';
 import { Response } from 'express';
-import { CreateMovieDto } from './movie.controller.dto/createMovie.dto';
+import { CreateMovieRequestDto } from './movie.controller.dto/createMovie.dto';
 import { GenreMovieService } from '../../service/genreMovie.service';
 import { UpdateMovieDto } from './movie.controller.dto/updateMovie.dto';
 import { Pagination } from '../../shared/pagination';
@@ -42,7 +42,7 @@ export class MoviesController {
   @ApiCreatedResponse({ description: '성공' })
   @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post()
-  async createMovie(@Req() req, @Body() body: CreateMovieDto) {
+  async createMovie(@Req() req, @Body() body: CreateMovieRequestDto) {
     const { genreId, ...movieDto } = body;
     const responseCreatedMovie = await this.movieService.createMovie(body);
     if (!responseCreatedMovie.ok) {

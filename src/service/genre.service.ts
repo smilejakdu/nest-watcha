@@ -1,9 +1,12 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CoreResponse, NotFoundResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
-import {transactionRunner} from "../shared/common/transaction/transaction";
-import {QueryRunner} from "typeorm";
-import {GenreEntity} from "../database/entities/MovieAndGenre/genre.entity";
+import { transactionRunner } from "../shared/common/transaction/transaction";
+import { QueryRunner } from "typeorm";
+import { GenreEntity } from "../database/entities/MovieAndGenre/genre.entity";
+import {CreateGenreResponseDto} from "../controller/genre/genre.controller.dto/createGenre.dto";
+import {UpdateGenreResponseDto} from "../controller/genre/genre.controller.dto/updateGenre.dto";
+import {DeleteGenreResponseDto} from "../controller/genre/genre.controller.dto/deleteGenre.dto";
 
 @Injectable()
 export class GenreService {
@@ -13,17 +16,22 @@ export class GenreService {
 
   async createGenre(genreName : string) {
     const foundGenre = await this.genreRepository.findOneBy({name: genreName});
+
     if (foundGenre) {
       throw new NotFoundException('genre already exists');
     }
 
+    const newGenre = new GenreEntity();
     const createdGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      const newGenre = new GenreEntity();
       newGenre.name = genreName;
       return await queryRunner.manager.save(GenreEntity, newGenre);
     })
 
-    return SuccessFulResponse(createdGenre,HttpStatus.CREATED);
+    const createdGenreResponseDto = new CreateGenreResponseDto();
+    createdGenreResponseDto.id = createdGenre.id;
+    createdGenreResponseDto.genreName = createdGenre.name;
+
+    return SuccessFulResponse(createdGenreResponseDto, HttpStatus.CREATED);
   }
 
   async findGenreWithMovieById(id: number): Promise<CoreResponse> {
@@ -48,10 +56,14 @@ export class GenreService {
       return await queryRunner.manager.save(GenreEntity, foundGenre);
     });
 
-    return SuccessFulResponse(updatedGenre);
+    const updatedGenreResponseDto = new UpdateGenreResponseDto();
+    updatedGenreResponseDto.id = updatedGenre.id;
+    updatedGenreResponseDto.genreName = updatedGenre.name;
+
+    return SuccessFulResponse(updatedGenreResponseDto);
   }
 
-  async deletedGenre(genreId:number) {
+  async deletedGenre(genreId: number) {
     const foundGenre = await this.genreRepository.findOneBy({id: genreId});
 
     if (!foundGenre) {
@@ -59,9 +71,11 @@ export class GenreService {
     }
 
     const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
-      return await queryRunner.manager.softDelete(GenreEntity, foundGenre.id);
+      return await queryRunner.manager.softDelete(GenreEntity, foundGenre);
     });
 
+    const deletedGenreResponseDto = new DeleteGenreResponseDto();
+    deletedGenreResponseDto.id = deletedGenre.raw.id;
     return SuccessFulResponse(deletedGenre);
   }
 }

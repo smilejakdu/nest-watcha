@@ -2,12 +2,12 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query,
 import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GenreService } from '../../service/genre.service';
 import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
-import { createGenreDto } from './genre.controller.dto/createGenre.dto';
-import { UpdateGenreDto } from './genre.controller.dto/updateGenre.dto';
-import { DeleteGenreDto } from './genre.controller.dto/deleteGenre.dto';
+import { UpdateGenreRequestDto } from './genre.controller.dto/updateGenre.dto';
+import { DeleteGenreRequestDto } from './genre.controller.dto/deleteGenre.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
-import {Pagination} from "../../shared/common/dto/core.request.dto";
+import { Pagination } from "../../shared/common/dto/core.request.dto";
+import { CreateGenreRequestDto } from "./genre.controller.dto/createGenre.dto";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
@@ -22,8 +22,8 @@ export class GenreController {
 	})
 	@UseGuards(UserAuthGuard, PermissionsGuard)
 	@Post()
-	async createGenre(@Req() req, @Body() body: createGenreDto) {
-		return await this.genreService.createGenre(body.genreName);
+	async createGenre(@Req() req, @Body() body: CreateGenreRequestDto) {
+		return this.genreService.createGenre(body.genreName);
 	}
 
 	@ApiOperation({ summary: '모든 장르 가져오기' })
@@ -49,22 +49,25 @@ export class GenreController {
 	@ApiOperation({ summary: '장르 업데이트' })
 	@ApiOkResponse({
 		description: '업데이트 성공',
-		type: UpdateGenreDto,
+		type: UpdateGenreRequestDto,
 	})
 	@UseGuards(UserAuthGuard, PermissionsGuard)
 	@Patch(':id')
-	async updateOneGenre(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateGenreDto) {
+	async updateOneGenre(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() body: UpdateGenreRequestDto,
+	) {
 		return this.genreService.updateGenre(id, body.genreName);
 	}
 
 	@ApiOperation({ summary: '장르 삭제하기' })
 	@ApiOkResponse({
 		description: '삭제하기 성공',
-		type: DeleteGenreDto,
+		type: DeleteGenreRequestDto,
 	})
 	@UseGuards(UserAuthGuard, PermissionsGuard)
 	@Delete(':id')
 	async deleteOneGenre(@Param('id', ParseIntPipe) id: number) {
-		return await this.genreService.deletedGenre(id);
+		return this.genreService.deletedGenre(id);
 	}
 }

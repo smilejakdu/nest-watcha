@@ -4,8 +4,7 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
-import { CreateMovieRequestDto } from '../../../controller/movies/movie.controller.dto/createMovie.dto';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
 
 @CustomRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{
@@ -13,18 +12,7 @@ export class MovieRepository extends Repository<MovieEntity>{
     return this.createQueryBuilder('movie', queryRunner);
   }
 
-  async createMovie(createMovieRequestDto: CreateMovieRequestDto) {
-    const newMovie = new MovieEntity();
-    Object.assign(newMovie, createMovieRequestDto);
-    const createdMovie = await this.makeQueryBuilder()
-      .insert()
-      .values(newMovie)
-      .execute();
-
-    return createdMovie.raw.insertId;
-  }
-
-  findAll(
+  async findMovieAll(
     pageNumber: number,
     queryRunner?: QueryRunner,
   ) {
@@ -56,7 +44,7 @@ export class MovieRepository extends Repository<MovieEntity>{
       .getMany();
   }
 
-  updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
+  async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
     return this.makeQueryBuilder(queryRunner)
       .update(MovieEntity)
       .set(set)
@@ -64,7 +52,7 @@ export class MovieRepository extends Repository<MovieEntity>{
       .execute();
   }
 
-  deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
+  async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
     return this.makeQueryBuilder(queryRunner)
       .softDelete()
       .from(MovieEntity)

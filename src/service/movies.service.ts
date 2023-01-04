@@ -34,7 +34,7 @@ export class MoviesService {
   }
 
   async findAllMovie(pageNumber= 1) {
-    const foundAllMovie = await this.movieRepository.findAll(pageNumber);
+    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber);
     return SuccessFulResponse(foundAllMovie);
   }
 

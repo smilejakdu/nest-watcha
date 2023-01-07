@@ -11,8 +11,7 @@ import { OrdersService } from '../../service/orders.service';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { CompletePaymentDto } from './order.controller.dto/createCompletePayment.dto';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
-import {Response ,Request} from 'express';
-import {makeLogger} from "ts-loader/dist/logger";
+import {Request} from 'express';
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',

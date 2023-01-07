@@ -9,26 +9,6 @@ export class OrderRepository extends Repository<OrderEntity>{
     return this.createQueryBuilder('order', queryRunner);
   }
 
-  async createOrderNumber(): Promise<string> {
-    const generateNumber = (): string => {
-      return 'movieOrd' + dayjs().format('YYYYMMDD') + '-' + Math.floor(1000000 + Math.random() * 9000000);
-    };
-    return generateNumber();
-  }
-
-  async createOrder(userId : number,set:any) {
-    const order = new OrderEntity();
-    order.order_number = await this.createOrderNumber();
-    order.order_status = OrderStatus.INIT;
-    order.user_id = userId;
-
-    return await this.makeQueryBuilder()
-      .insert()
-      .into(OrderEntity)
-      .values(set)
-      .execute();
-  }
-
   findOrderByOrderNumber(orderNumber:string){
     return this.makeQueryBuilder()
       .select([

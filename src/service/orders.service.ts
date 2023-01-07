@@ -4,25 +4,53 @@ import { isNil } from 'lodash';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
-import { IamportPaymentStatus, IamportValidateStatus } from '../database/entities/Order/order.entity';
+import {
+  IamportPaymentStatus,
+  IamportValidateStatus,
+  OrderEntity,
+  OrderStatus
+} from '../database/entities/Order/order.entity';
 import { UserRepository } from '../database/repository/user.repository';
 import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
+import {transactionRunner} from "../shared/common/transaction/transaction";
+import {QueryRunner} from "typeorm";
+import {GenreEntity} from "../database/entities/MovieAndGenre/genre.entity";
+import dayjs from "dayjs";
+import {OrderControllerResponseDto} from "../controller/order/order.controller.dto/orderControllerResponse.dto";
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository : OrderRepository,
-    private readonly usersRepository : UserRepository,
+    private readonly usersRepository: UserRepository,
     private readonly movieRepository: MovieRepository,
   ) {}
 
-  async createOrderNumber(email:string , set:any):Promise<CoreResponse> {
+  async createOrderNumber(): Promise<string> {
+    const generateNumber = (): string => {
+      return 'movieOrd' + dayjs().format('YYYYMMDD') + '-' + Math.floor(1000000 + Math.random() * 9000000);
+    };
+    return generateNumber();
+  }
+
+  async createOrder(email:string , set:any):Promise<CoreResponse> {
     const foundUser = await this.usersRepository.findOneBy({email});
-    const createdOrder = await this.ordersRepository.createOrder(foundUser.id , set);
+
+    const newOrder = new OrderEntity();
+    newOrder.order_number = await this.createOrderNumber();
+    newOrder.order_status = OrderStatus.INIT;
+    newOrder.user_id = foundUser.id;
+
+    const createdOrder = await transactionRunner(async (queryRunner:QueryRunner) => {
+      return await queryRunner.manager.save(OrderEntity, newOrder);
+    });
+
     if(!createdOrder) {
       throw new BadRequestException('bad request create_order_number');
     }
-    return SuccessFulResponse(createdOrder.raw.insertId,HttpStatus.CREATED);
+
+    const {order_status, ...responseOrderCreateOrder} = createdOrder
+    return SuccessFulResponse(responseOrderCreateOrder, HttpStatus.CREATED);
   }
 
   async orderPaymentComplete(body: CompletePaymentDto) {
@@ -36,6 +64,7 @@ export class OrdersService {
     if(!foundMovie) {
       throw new NotFoundException(`does not movie ${movie_id}`);
     }
+
     console.log('iamport imp_uid:',body.impUid, body.orderNumber);
 
     const iamport = new Iamport();

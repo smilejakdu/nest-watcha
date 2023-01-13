@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 import { transactionRunner } from "../shared/common/transaction/transaction";
-import { QueryRunner } from "typeorm";
+import {DataSource, QueryRunner } from "typeorm";
 import { GenreEntity } from "../database/entities/MovieAndGenre/genre.entity";
 import {CreateGenreResponseDto} from "../controller/genre/genre.controller.dto/createGenre.dto";
 import {UpdateGenreResponseDto} from "../controller/genre/genre.controller.dto/updateGenre.dto";
@@ -12,6 +12,7 @@ import {DeleteGenreResponseDto} from "../controller/genre/genre.controller.dto/d
 export class GenreService {
   constructor(
     private readonly genreRepository: GenreRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async createGenre(genreName : string) {
@@ -25,7 +26,7 @@ export class GenreService {
     const createdGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
       newGenre.name = genreName;
       return await queryRunner.manager.save(GenreEntity, newGenre);
-    })
+    },this.dataSource);
 
     const createdGenreResponseDto = new CreateGenreResponseDto();
     createdGenreResponseDto.id = createdGenre.id;
@@ -54,7 +55,7 @@ export class GenreService {
     const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
       foundGenre.name = genreName;
       return await queryRunner.manager.save(GenreEntity, foundGenre);
-    });
+    },this.dataSource);
 
     const updatedGenreResponseDto = new UpdateGenreResponseDto();
     updatedGenreResponseDto.id = updatedGenre.id;

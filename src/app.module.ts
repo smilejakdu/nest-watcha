@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {CacheModule, MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './shared/middlewares/logger.middlewares';
 import { UsersModule } from './module/users.module';
@@ -32,9 +32,16 @@ import {CommentsEntity} from "./database/entities/comments.entity";
 import {HashTagEntity} from "./database/entities/hashTag.entity";
 import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
 	imports: [
+		CacheModule.register({
+			isGlobal: true,
+			host: 'localhost',
+			port: 6679,
+			password: process.env.REDIS_PASSWORD,
+		}),
 		ConfigModule.forRoot({
 			isGlobal: true,
 			envFilePath:

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, CacheTTL, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GenreService } from '../../service/genre.service';
 import { GetGenreDto } from './genre.controller.dto/getGenre.dto';
@@ -8,12 +8,16 @@ import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 import { Pagination } from "../../shared/common/dto/core.request.dto";
 import { CreateGenreRequestDto } from "./genre.controller.dto/createGenre.dto";
+import {Cache} from "cache-manager";
+import {SuccessFulResponse} from "../../shared/CoreResponse";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
 @Controller('genre')
 export class GenreController {
-	constructor(private genreService: GenreService) {}
+	constructor(
+		private readonly genreService: GenreService,
+	) {}
 
 	@ApiOperation({ summary: '장르 만들기' })
 	@ApiCreatedResponse({
@@ -41,9 +45,11 @@ export class GenreController {
 		description: '성공',
 		type: GetGenreDto,
 	})
-	@Get(':id')
-	async findOneGenre(@Param('id', ParseIntPipe) id: number) {
-		return this.genreService.findGenreWithMovieById(id);
+	@CacheTTL(5)
+	@Get(':genreName')
+	async findOneGenre(@Query('genreName') genreName: string) {
+		console.log(genreName);
+		return this.genreService.findGenreWithMovieByName(genreName);
 	}
 
 	@ApiOperation({ summary: '장르 업데이트' })

@@ -11,14 +11,14 @@ export class GenreMovieEntity extends CoreEntity {
 	@Column('int', { name: 'movieId', nullable: true })
 	movieId: number;
 
-	@ManyToOne(() => GenreEntity, genre => genre.Genremovie, {
+	@ManyToOne(() => GenreEntity, genre => genre.movies, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({ name: 'genreId' })
 	Genre: GenreEntity;
 
-	@ManyToOne(() => MovieEntity, movie => movie.Genremovie, {
+	@ManyToOne(() => MovieEntity, movie => movie.genre, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})

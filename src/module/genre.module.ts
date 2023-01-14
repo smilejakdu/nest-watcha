@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {Module} from '@nestjs/common';
 import { GenreService } from '../service/genre.service';
 import { GenreController } from '../controller/genre/genre.controller';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';

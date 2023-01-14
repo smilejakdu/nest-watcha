@@ -20,7 +20,7 @@ export class GenreRepository extends Repository<GenreEntity> {
       .getRawMany();
   }
 
-  async findById(id: number) {
+  async findOneByIdWithMovie(genreId: number) {
     return this.makeQueryBuilder()
       .select([
         'genre.id',
@@ -33,7 +33,7 @@ export class GenreRepository extends Repository<GenreEntity> {
         'movie.image',
       ])
       .leftJoin('genre.Genremovie', 'movies')
-      .where('genre.id=:id ', { id: id })
+      .where('genre.id=:genreId ', { genreId })
       .getOne();
   }
 }

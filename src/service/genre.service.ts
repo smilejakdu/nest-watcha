@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {CACHE_MANAGER, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 import { transactionRunner } from "../shared/common/transaction/transaction";
@@ -7,11 +7,13 @@ import { GenreEntity } from "../database/entities/MovieAndGenre/genre.entity";
 import {CreateGenreResponseDto} from "../controller/genre/genre.controller.dto/createGenre.dto";
 import {UpdateGenreResponseDto} from "../controller/genre/genre.controller.dto/updateGenre.dto";
 import {DeleteGenreResponseDto} from "../controller/genre/genre.controller.dto/deleteGenre.dto";
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class GenreService {
   constructor(
     private readonly genreRepository: GenreRepository,
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -35,8 +37,29 @@ export class GenreService {
     return SuccessFulResponse(createdGenreResponseDto, HttpStatus.CREATED);
   }
 
-  async findGenreWithMovieById(id: number): Promise<CoreResponse> {
-    const foundGenre = await this.genreRepository.findById(id);
+  async findGenreWithMovieByName(genreName: string): Promise<CoreResponse> {
+    // genre 와 movie 를 join 하여 가져오는 방법
+    const redisGenre = await this.cacheService.get(genreName);
+    if (redisGenre) {
+      console.log('캐싱이야', redisGenre);
+      return SuccessFulResponse(redisGenre);
+    }
+    const foundGenre = await this.genreRepository.findOne({
+      where: { name: genreName },
+      relations: ['movies'],
+    });
+
+    if (!foundGenre) {
+      throw new NotFoundException('does not found genre');
+    }
+
+    await this.cacheService.set(
+      genreName,
+      foundGenre,
+      5);
+
+    console.log('캐싱 아니야', redisGenre);
+
     return SuccessFulResponse(foundGenre);
   }
 

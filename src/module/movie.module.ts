@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MoviesController } from '../controller/movies/movies.controller';
-import { MoviesService } from '../service/movies.service';
+import {MovieMapper, MoviesService} from '../service/movies.service';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import { GenreMovieRepository } from '../database/repository/MovieAndGenreRepository/genreMovie.repository';
 import { GenreMovieService } from '../service/genreMovie.service';
@@ -17,7 +17,7 @@ import {TypeOrmExModule} from "../shared/typeorm-ex.module";
       MovieOptionsRepository,
     ]),
   ],
-  providers: [MoviesService, GenreMovieService, MovieOptionsService],
+  providers: [MoviesService, GenreMovieService, MovieOptionsService, MovieMapper],
   controllers: [MoviesController, MovieOptionsController],
   exports: [MoviesService],
 })

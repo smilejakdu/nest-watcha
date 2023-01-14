@@ -44,7 +44,7 @@ export class MovieEntity extends CoreEntity {
 	age_limit_status: AgeLimitStatus;
 
 	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Movie)
-	Genremovie: GenreMovieEntity[];
+	genre: GenreMovieEntity[];
 
 	@OneToMany(() => subMovieImageEntity, subMovie => subMovie.movie)
 	subMovieImage: subMovieImageEntity[];

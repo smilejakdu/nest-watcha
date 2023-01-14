@@ -19,5 +19,5 @@ export class GenreEntity extends CoreEntity {
       genreMovieEntity => genreMovieEntity.Genre,{
           cascade: true,
       })
-    Genremovie: GenreMovieEntity[];
+    movies: GenreMovieEntity[];
 }

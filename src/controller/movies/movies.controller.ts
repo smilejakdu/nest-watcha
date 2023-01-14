@@ -78,7 +78,7 @@ export class MoviesController {
     @Res() res:Response,
   ) {
     const { genreId, ...movieDto } = body;
-    const responseUpdatedMovie = await this.movieService.updateMovieByIds([id], movieDto);
+    const responseUpdatedMovie = await this.movieService.updateMovieById(id, movieDto);
     await this.genreMovieService.updateGenreMovie(
       {
         genreId: genreId,

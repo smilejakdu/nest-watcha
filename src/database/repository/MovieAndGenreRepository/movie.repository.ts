@@ -44,14 +44,6 @@ export class MovieRepository extends Repository<MovieEntity>{
       .getMany();
   }
 
-  async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    return this.makeQueryBuilder(queryRunner)
-      .update(MovieEntity)
-      .set(set)
-      .where('movies.id in (:ids)', { ids })
-      .execute();
-  }
-
   async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {
     return this.makeQueryBuilder(queryRunner)
       .softDelete()

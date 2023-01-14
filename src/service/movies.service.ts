@@ -6,11 +6,33 @@ import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
 import { CreateMovieRequestDto, CreateMovieResponseDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
 import { transactionRunner } from "../shared/common/transaction/transaction";
 
+export class MovieMapper {
+  toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
+    const newMovieEntity = new CreateMovieRequestDto();
+    newMovieEntity.movieTitle = createMovieRequestDto.movieTitle;
+    newMovieEntity.movieImage = createMovieRequestDto.movieImage;
+    newMovieEntity.movieScore = createMovieRequestDto.movieScore;
+    newMovieEntity.ageLimitStatus = createMovieRequestDto.ageLimitStatus;
+    newMovieEntity.genreId = createMovieRequestDto.genreId;
+    newMovieEntity.appearance = createMovieRequestDto.appearance;
+    newMovieEntity.director = createMovieRequestDto.director;
+    return newMovieEntity;
+  }
+
+  toDto(movieEntity: MovieEntity): CreateMovieResponseDto {
+    const createMovieResponseDto = new CreateMovieResponseDto();
+    createMovieResponseDto.movieId = movieEntity.id;
+    createMovieResponseDto.movieName = movieEntity.movie_title;
+    return createMovieResponseDto;
+  }
+}
+
 @Injectable()
 export class MoviesService {
   constructor(
     private readonly movieRepository: MovieRepository,
-    private dataSource: DataSource,
+    private readonly dataSource: DataSource,
+    private readonly movieMapper: MovieMapper,
   ) { }
 
   async createMovie(createMovieRequestDto: CreateMovieRequestDto): Promise<CoreResponse> {
@@ -18,11 +40,7 @@ export class MoviesService {
       return await queryRunner.manager.save(MovieEntity, createMovieRequestDto);
     });
 
-    const createMovieResponseDto = new CreateMovieResponseDto();
-    createMovieResponseDto.movieId = createdMovie.id;
-    createMovieResponseDto.movieName = createdMovie.movieName;
-
-    return SuccessFulResponse(createMovieResponseDto, HttpStatus.CREATED);
+    return SuccessFulResponse(this.movieMapper.toDto(createdMovie),HttpStatus.CREATED);
   }
 
   async findMovieById(movieId: number) {
@@ -38,9 +56,17 @@ export class MoviesService {
     return SuccessFulResponse(foundAllMovie);
   }
 
-  async updateMovieByIds(ids: number[], set: any, queryRunner?: QueryRunner) {
-    const updatedMovie = await this.movieRepository.updateMovieByIds(ids, set);
-    return SuccessFulResponse(updatedMovie.raw.insertId);
+  async updateMovieById(movieId: number, set: any, queryRunner?: QueryRunner) {
+    const foundMovie = await this.movieRepository.findOneBy({ id: movieId });
+    if (!foundMovie) {
+      throw new BadRequestException('Movie not found');
+    }
+    Object.assign(foundMovie, set);
+    const updatedMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
+      return await queryRunner.manager.save(MovieEntity, foundMovie);
+    });
+    const responseMovie = this.movieMapper.toDto(updatedMovie);
+    return SuccessFulResponse(responseMovie);
   }
 
   async deleteMovieById(ids:number[], queryRunner?: QueryRunner) {

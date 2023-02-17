@@ -39,6 +39,22 @@ export class CommentsService {
 		return SuccessFulResponse(createdComment);
 	}
 
+	async createCommentWithOpenAI(content: string, userId: number) {
+		console.log(content);
+		console.log(userId);
+		// const { Configuration, OpenAIApi } = require("openai");
+		// const configuration = new Configuration({
+		// 	apiKey: process.env.OPENAI_API_KEY,
+		// });
+		// const openai = new OpenAIApi(configuration);
+		// const response = await openai.createCompletion({
+		// 	model: "text-davinci-003",
+		// 	prompt: "Say this is a test",
+		// 	temperature: 0,
+		// 	max_tokens: 7,
+		// });
+	}
+
 	async updateComment(query: UpdateCommentDto, content: string) {
 		const foundComment = await this.commentsRepository.findOneBy({id: query.comment_id});
 

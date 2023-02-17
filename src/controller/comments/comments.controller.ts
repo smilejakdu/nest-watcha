@@ -44,12 +44,12 @@ export class CommentsController {
 	}
 
 	@ApiOperation({ summary: '댓글 수정' })
-	@Patch(':id')
 	@ApiOkResponse({
 		description: '성공',
 		type: UpdateCommentDto,
 	})
 	@UseGuards(UserAuthGuard)
+	@Patch(':id')
 	async updateComment(
 		@Body('content') content: string,
 		@Req() request: Request,
@@ -68,5 +68,20 @@ export class CommentsController {
 		@Param('id', ParseIntPipe) id: number,
 	) {
 		return this.commentsService.deleteComment(id);
+	}
+
+	@ApiOperation({ summary: '챗 GPT 에 질문을 하고 답변을 받는다.' })
+	@ApiOkResponse({
+		description: '성공',
+		type: CreateCommentDto,
+	})
+	@UseGuards(UserAuthGuard)
+	@Post('openai')
+	async openAipostComments(
+		@Body('content') content: string,
+		@Req() request: Request,
+	) {
+		const foundUser = request?.user as UsersEntity;
+		return this.commentsService.createCommentWithOpenAI(content, foundUser.id);
 	}
 }

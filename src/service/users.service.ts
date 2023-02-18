@@ -6,10 +6,9 @@ import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
-import { isNil } from 'lodash';
 import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
 import { DataSource, QueryRunner } from 'typeorm';
-import { Response } from "express";
+import {Response} from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
 import {FoundUserType} from "../types";
@@ -27,29 +26,20 @@ export class UsersService {
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
-		const { password, username, email, phone } = signUpDto;
+		const { password, email } = signUpDto;
 		const foundUser = await this.userRepository.findOneBy({ email });
 		if (foundUser) {
-			throw new BadRequestException('exsit user');
+			throw new BadRequestException('이미 존재하는 이메일 입니다.');
 		}
 
-		const hashedPassword = await bcrypt.hash(signUpDto.password, 12);
-		signUpDto.password = hashedPassword;
-		const queryRunner = this.dataSource.createQueryRunner()
-		await queryRunner.connect()
-		await queryRunner.startTransaction()
-		try {
-			const responseCreateUser = await queryRunner.manager.save(UsersEntity, signUpDto);
-			delete responseCreateUser.password;
-			console.log(responseCreateUser)
-			await queryRunner.commitTransaction()
-			return SuccessFulResponse(responseCreateUser ,HttpStatus.CREATED);
-		} catch (e) {
-			console.log(e);
-			await queryRunner.rollbackTransaction()
-		} finally {
-			await queryRunner.release();
-		}
+		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+			const hashedPassword = await bcrypt.hash(password, 12);
+			signUpDto.password = hashedPassword;
+			return await queryRunner.manager.save(UsersEntity, signUpDto);
+		},this.dataSource);
+
+		delete responseSignUpUser.password;
+		return SuccessFulResponse(responseSignUpUser ,HttpStatus.CREATED);
 	}
 
 	async socialSignUp(data:any, loginType : LoginType) {

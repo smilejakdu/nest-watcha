@@ -10,12 +10,12 @@ export class UserFindRequestDto extends CoreEntity {
 		example: 'dami@gmail.com',
 		description: 'email',
 	})
-	public email: string;
+	email: string;
 
 	@Optional()
 	@ApiProperty({
 		example: '3',
 		description: 'number',
 	})
-	public id: number;
+	id: number;
 }

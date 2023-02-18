@@ -1,13 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import passport from 'passport';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
+import {SwaggerSetting} from "./shared/swaggerConfig";
 
 declare const module: any;
 
@@ -19,15 +19,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 
-	const config = new DocumentBuilder()
-		.setTitle('nestWatcha API')
-		.setDescription('nestWatcha Swagger')
-		.setVersion('1.0')
-		.addCookieAuth('connect.sid')
-		.build();
-
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('api/v1', app, document);
+	SwaggerSetting(app);
 
 	app.use(cookieParser());
 	app.enableCors({

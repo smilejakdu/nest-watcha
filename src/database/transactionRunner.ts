@@ -29,7 +29,7 @@ export async function transactionRunner(
       await queryRunner.release();
     }
     if (errorHandler) {
-      await errorHandler(err);
+      await errorHandler(err as Error);
     }
     isSuccessed = false;
     throw err;
@@ -62,7 +62,7 @@ export async function queryRunnerManager(
       await queryRunner.release();
     }
     if (errorHandler) {
-      await errorHandler(err);
+      await errorHandler(err as Error);
     } else {
       throw err;
     }

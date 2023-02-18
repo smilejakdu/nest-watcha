@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: watcha_backend
     ports:
-      - '8000:8000'
+      - '13014:13014'
     env_file:
       - compose/local/dev.env
     volumes:

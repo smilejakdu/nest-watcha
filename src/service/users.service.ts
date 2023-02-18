@@ -11,6 +11,8 @@ import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Response } from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
+import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
+import {FoundUserType} from "../types";
 
 @Injectable()
 export class UsersService {
@@ -63,6 +65,14 @@ export class UsersService {
 	async findAuthLoginId(id:number) {
 		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
 		return SuccessFulResponse(foundUserAuthId);
+	}
+
+	async findUserByEmail(email:string): Promise<UserFindResponseDto> {
+		const foundUser: FoundUserType = await this.userRepository.findOne({
+			select: ['id', 'email', 'username', 'phone'],
+			where: { email },
+		})
+		return SuccessFulResponse(foundUser);
 	}
 
 	async checkRegister(loginType:string, tokenString:string) {

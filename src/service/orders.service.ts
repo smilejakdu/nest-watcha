@@ -73,11 +73,11 @@ export class OrdersService {
       throw new BadRequestException('iamport access_token error');
     }
     let paymentData;
-    try{
+    try {
       paymentData = await iamport.getPaymentData(imp_uid,access_token);
-    }catch (error) {
+    } catch (error) {
       console.log(error);
-      throw new BadRequestException(`결제 정보 오류 : ${error.response.data.message}`);
+      throw new BadRequestException(`결제 정보 오류 : ${error}`);
     }
 
     const {amount, status} = paymentData;
@@ -111,7 +111,7 @@ export class OrdersService {
       paymentData = getPayment.data.response;
     } catch (error) {
       console.log('error:',error);
-      throw new BadRequestException('payment information error: ',error.response);
+      throw new BadRequestException('payment information error: '+ error);
     }
 
     const paidOrder = await this.ordersRepository.findOrderByOrderNumber(orderNumber).getOne();

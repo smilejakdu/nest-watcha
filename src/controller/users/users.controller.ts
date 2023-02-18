@@ -3,6 +3,7 @@ import {
 	Body,
 	Controller,
 	Get, HttpStatus, NotFoundException,
+	Param,
 	Post,
 	Put,
 	Req,
@@ -21,6 +22,7 @@ import { LoginType, UsersEntity } from '../../database/entities/User/Users.entit
 import { Response, Request } from 'express';
 import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
+import {UserFindResponseDto} from "./users.controller.dto/userFindDto/userFind.response.dto";
 
 
 export const BAD_REQUEST = 'bad request';
@@ -95,6 +97,18 @@ export class UsersController {
 	async findMyBoards(@Req() req: Request) {
 		const foundUser = req.user as UsersEntity;
 		return this.usersService.findMyBoardsByEmail(foundUser.email);
+	}
+
+	@ApiOperation({ summary: 'find one user by email' })
+	@ApiOkResponse({
+		description: 'success',
+		type: UserFindResponseDto,
+	})
+	@Get(':email')
+	async findOneUserByEmail(
+		@Param('email') email: string,
+	) {
+		return this.usersService.findUserByEmail(email);
 	}
 
 	@ApiOperation({ summary: 'kakao_login' })

@@ -5,6 +5,7 @@ import {ApiProperty} from "@nestjs/swagger";
 
 export function IsNotEmptyNumber(example: number,
                                  description:string) {
+
   return applyDecorators(
     IsInt(),
     IsNotEmpty(),

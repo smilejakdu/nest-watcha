@@ -1,30 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {IsNotEmpty, IsNumber, IsString} from 'class-validator';
+import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
+import {IsNotEmptyNumber} from "../../../decorators/is-not-empty-number.decorator";
 
 export class CreateGenreRequestDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    example:'genreName',
-    description:'genreName'
-  })
+  @IsNotEmptyString(0,1000,
+    'genreName','genreName')
   public genreName: string;
 }
 
 export class CreateGenreResponseDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({
-    example:1,
-    description:'id'
-  })
+  @IsNotEmptyNumber(1,'id')
   id: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    example:'name',
-    description:'name'
-  })
+  @IsNotEmptyString(0,150,
+    'name','name')
   genreName: string;
 }

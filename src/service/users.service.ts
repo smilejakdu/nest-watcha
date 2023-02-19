@@ -6,6 +6,7 @@ import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
 import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
 import bcrypt from 'bcryptjs';
 import * as Jwt from 'jsonwebtoken';
+import * as crypto from 'crypto';
 import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
 import { DataSource, QueryRunner } from 'typeorm';
 import {Response} from "express";
@@ -23,6 +24,29 @@ export class UsersService {
 	async findMyBoardsByEmail(email:string) {
 		const foundMyBoards = await this.userRepository.findMyBoardByEmail(email)
 		return SuccessFulResponse(foundMyBoards);
+	}
+
+	async encryptPhoneNumber(phoneNumber: string) {
+		const algorithm = 'aes-256-ctr';
+		const password = 'MySuperSecretKey';
+
+		const iv = crypto.randomBytes(16);
+		const cipher = crypto.createCipheriv(algorithm, password, iv);
+		let encrypted = cipher.update(phoneNumber, 'utf8', 'hex');
+		encrypted += cipher.final('hex');
+		return iv.toString('hex') + encrypted;
+	}
+
+	async decryptPhoneNumber(phoneNumber: string) {
+		const algorithm = 'aes-256-ctr';
+		const password = 'MySuperSecretKey';
+
+		const iv = Buffer.from(phoneNumber.slice(0, 32), 'hex');
+		const encryptedData = phoneNumber.slice(32);
+		const decipher = crypto.createDecipheriv(algorithm, password, iv);
+		let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+		decrypted += decipher.final('utf8');
+		return decrypted;
 	}
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {

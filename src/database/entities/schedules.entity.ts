@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CoreEntity } from './core.entity';
 import { UsersEntity } from './User/Users.entity';

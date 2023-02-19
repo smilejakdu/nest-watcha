@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
 // Entity
 import { CoreEntity } from '../core.entity';
 import { GenreMovieEntity } from './genreMovie.entity';

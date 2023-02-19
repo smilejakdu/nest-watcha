@@ -33,6 +33,7 @@ import {HashTagEntity} from "./database/entities/hashTag.entity";
 import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
 import * as redisStore from 'cache-manager-redis-store';
+import process from "process";
 
 @Module({
 	imports: [
@@ -87,7 +88,7 @@ import * as redisStore from 'cache-manager-redis-store';
 			],
 			autoLoadEntities: true,
 			charset: "utf8mb4",
-			synchronize: true,
+			synchronize: process.env.NODE_ENV === 'local' ? true : false,
 			logging: process.env.NODE_ENV === 'local' ? true : false,
 		}),
 		ScheduleModule.forRoot(),

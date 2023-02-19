@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { CoreEntity } from './core.entity';
@@ -7,10 +6,6 @@ import { UsersEntity } from './User/Users.entity';
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class CommentsEntity extends CoreEntity {
-	@ApiProperty({
-		example: 'content',
-		description: 'content',
-	})
 	@Column('varchar', { name: 'content', length: 500 })
 	content: string;
 

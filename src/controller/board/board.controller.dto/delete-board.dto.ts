@@ -1,12 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import {IsNotEmptyNumber} from "../../../decorators/is-not-empty-number.decorator";
 
 export class DeleteBoardDto {
-	@IsNumber()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'id',
-		description: 'id',
-	})
+	@IsNotEmptyNumber(1, 'id')
 	public id: number;
 }

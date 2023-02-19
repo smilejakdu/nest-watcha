@@ -1,29 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
 
 export class CreateBoardDto {
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'title',
-		description: 'title',
-	})
+	@IsNotEmptyString(1, 1000,
+		'title', 'title')
 	public title: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'content',
-		description: 'content',
-	})
+	@IsNotEmptyString(1, 1000,
+		'content', 'content')
 	public content: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'hashtag',
-		description: 'hashtag',
-	})
+	@IsNotEmptyString(1, 1000,
+		'hashtag', 'hashtag')
 	public hashtag: string;
 
 	@ApiProperty({

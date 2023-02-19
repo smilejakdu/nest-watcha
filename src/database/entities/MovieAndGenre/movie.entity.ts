@@ -1,5 +1,4 @@
 import { CoreEntity } from '../core.entity';
-import { IsNotEmpty, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AgeLimitStatus } from './genre.entity';
 import { GenreMovieEntity } from './genreMovie.entity';

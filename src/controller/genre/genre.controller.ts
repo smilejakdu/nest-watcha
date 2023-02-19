@@ -8,8 +8,6 @@ import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 import { Pagination } from "../../shared/common/dto/core.request.dto";
 import { CreateGenreRequestDto } from "./genre.controller.dto/createGenre.dto";
-import {Cache} from "cache-manager";
-import {SuccessFulResponse} from "../../shared/CoreResponse";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')

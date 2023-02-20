@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {HttpModule, Module} from '@nestjs/common';
 import { CommentsController } from '../controller/comments/comments.controller';
 import { CommentsService } from '../service/comments.service';
 import { CommentsRepository } from '../database/repository/comments.repository';
@@ -8,6 +8,7 @@ import {TypeOrmExModule} from "../shared/typeorm-ex.module";
 
 @Module({
 	imports: [
+		HttpModule,
 		TypeOrmExModule.forCustomRepository([
 			UserRepository,
 			BoardsRepository,

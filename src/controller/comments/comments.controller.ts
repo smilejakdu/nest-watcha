@@ -1,5 +1,5 @@
 import { UpdateCommentDto } from './comments.controller.dto/update-comment.dto';
-import { CreateCommentDto } from './comments.controller.dto/create-comment.dto';
+import {CreateCommentDto, CreateCommentWithOpenAIDto} from './comments.controller.dto/create-comment.dto';
 import {Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentsService } from '../../service/comments.service';
@@ -25,6 +25,19 @@ export class CommentsController {
 	@Get(':id')
 	async getComments(@Param('id', ParseIntPipe) id: number) {
 		return this.commentsService.findBoardAndComments(id);
+	}
+
+	@ApiOperation({ summary: '챗 GPT 에 질문을 하고 답변을 받는다.' })
+	@ApiOkResponse({
+		description: '성공',
+	})
+	@Post('openai')
+	async openAipostComments(
+		@Req() request: Request,
+		@Body() body: CreateCommentWithOpenAIDto,
+	) {
+		const {content} = body
+		return this.commentsService.createCommentWithOpenAI(content);
 	}
 
 	@ApiOperation({ summary: '댓글 쓰기' })
@@ -68,20 +81,5 @@ export class CommentsController {
 		@Param('id', ParseIntPipe) id: number,
 	) {
 		return this.commentsService.deleteComment(id);
-	}
-
-	@ApiOperation({ summary: '챗 GPT 에 질문을 하고 답변을 받는다.' })
-	@ApiOkResponse({
-		description: '성공',
-		type: CreateCommentDto,
-	})
-	@UseGuards(UserAuthGuard)
-	@Post('openai')
-	async openAipostComments(
-		@Body('content') content: string,
-		@Req() request: Request,
-	) {
-		const foundUser = request?.user as UsersEntity;
-		return this.commentsService.createCommentWithOpenAI(content, foundUser.id);
 	}
 }

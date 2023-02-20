@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {HttpService, Injectable, NotFoundException} from '@nestjs/common';
 // Entity
 import { CommentsRepository } from '../database/repository/comments.repository';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
@@ -8,15 +8,26 @@ import { DataSource } from 'typeorm';
 import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
 import {CommentsEntity} from "../database/entities/comments.entity";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
+import {Configuration, CreateCompletionRequest, OpenAIApi} from "openai";
+
 
 @Injectable()
 export class CommentsService {
+	private readonly openAiApi: OpenAIApi
+
 	constructor(
 		private readonly userRepository: UserRepository,
 		private readonly boardsRepository: BoardsRepository,
 		private readonly commentsRepository: CommentsRepository,
 		private readonly dataSource: DataSource,
-	) {}
+		private readonly httpService: HttpService,
+	) {
+		const configuration = new Configuration({
+			organization: process.env.ORGANIZATION,
+			apiKey: process.env.OPENAI_API_KEY,
+		});
+		this.openAiApi = new OpenAIApi(configuration);
+	}
 
 	async findBoardAndComments(boardId: number) {
 		const boardWithComments = await this.boardsRepository.findBoardAndComments(boardId);
@@ -39,20 +50,24 @@ export class CommentsService {
 		return SuccessFulResponse(createdComment);
 	}
 
-	async createCommentWithOpenAI(content: string, userId: number) {
-		console.log(content);
-		console.log(userId);
-		// const { Configuration, OpenAIApi } = require("openai");
-		// const configuration = new Configuration({
-		// 	apiKey: process.env.OPENAI_API_KEY,
-		// });
-		// const openai = new OpenAIApi(configuration);
-		// const response = await openai.createCompletion({
-		// 	model: "text-davinci-003",
-		// 	prompt: "Say this is a test",
-		// 	temperature: 0,
-		// 	max_tokens: 7,
-		// });
+	async createCommentWithOpenAI(content: string) {
+		const DEFALUT_MODEL_ID = 'text-davinci-003'
+		const DEFAULT_TEMPERATURE = 0.9
+
+		try {
+			const param: CreateCompletionRequest = {
+				prompt:content,
+				model: DEFALUT_MODEL_ID,
+				temperature: DEFAULT_TEMPERATURE,
+				max_tokens: 1000,
+			}
+
+			const response = await this.openAiApi.createCompletion(param);
+			console.log(response.data)
+			return SuccessFulResponse(response.data['choices'])
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async updateComment(query: UpdateCommentDto, content: string) {

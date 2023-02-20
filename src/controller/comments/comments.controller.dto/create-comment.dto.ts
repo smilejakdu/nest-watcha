@@ -1,12 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
+import {IsNotEmptyNumber} from "../../../decorators/is-not-empty-number.decorator";
 
 export class CreateCommentDto {
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'content',
-		description: 'content',
-	})
+	@IsNotEmptyString(0,1000,
+		'content','content')
+	public content: string;
+}
+
+export class CreateCommentWithOpenAIDto {
+	@IsNotEmptyString(0,1000,
+		'content','content')
 	public content: string;
 }

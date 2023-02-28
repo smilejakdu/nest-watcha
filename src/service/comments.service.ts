@@ -6,7 +6,7 @@ import { UserRepository } from '../database/repository/user.repository';
 import {SuccessFulResponse} from "../shared/CoreResponse";
 import { DataSource } from 'typeorm';
 import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
-import {CommentsEntity} from "../database/entities/comments.entity";
+import {CommentsEntity} from "../database/entities/comments/comments.entity";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {Configuration, CreateCompletionRequest, OpenAIApi} from "openai";
 

@@ -3,7 +3,7 @@ import {HttpService, Injectable, NotFoundException} from '@nestjs/common';
 import { CommentsRepository } from '../database/repository/comments.repository';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { UserRepository } from '../database/repository/user.repository';
-import {SuccessFulResponse} from "../shared/CoreResponse";
+import { CoreResponse, SuccessFulResponse } from "../shared/CoreResponse";
 import { DataSource } from 'typeorm';
 import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
 import {CommentsEntity} from "../database/entities/comments/comments.entity";
@@ -87,16 +87,60 @@ export class CommentsService {
 	}
 
 	async deleteComment(commentId: number) {
-		const deletedComment = await this.commentsRepository.deleteComment(commentId);
-		return deletedComment.raw.insertId;
+		const foundComment = await this.commentsRepository.findOneBy({id: commentId});
+
+		if (!foundComment) {
+			throw new NotFoundException('해당 댓글이 존재하지 않습니다.', String(commentId));
+		}
+
+		const deletedReplyComment = await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.softDelete(CommentsEntity, foundComment);
+		});
+
+		return SuccessFulResponse(deletedReplyComment);
 	}
 
-	async createReplyComment(reply: string, commentId: number, userId: number) {
+	async createReplyComment(reply: string, commentId: number, userId: number): Promise<CoreResponse> {
 		const newReplyComment = new ReplyEntitiy();
 		Object.assign(newReplyComment, {content: reply, comment_id: commentId, user_id: userId});
 		const createdReplyComment = await transactionRunner(async (queryRunner) => {
 			return await queryRunner.manager.save(ReplyEntitiy, newReplyComment);
 		});
 		return SuccessFulResponse(createdReplyComment);
+	}
+
+	async updateReplyComment(reply_id: number, user_id:number, reply_content:string) {
+		const foundReplyComment = await this.commentsRepository.findOneBy({
+			id: reply_id,
+			userId: user_id,
+		});
+
+		if (!foundReplyComment) {
+			throw new NotFoundException('해당 댓글이 존재하지 않습니다.', String(reply_id));
+		}
+
+		const updatedReplyComment = await transactionRunner(async (queryRunner) => {
+			foundReplyComment.content = reply_content;
+			return await queryRunner.manager.save(ReplyEntitiy, foundReplyComment);
+		});
+
+		return SuccessFulResponse(updatedReplyComment);
+	}
+
+	async deleteReplyComment(reply_id: number, user_id: number) {
+		const foundReplyComment = await this.commentsRepository.findOneBy({
+			id: reply_id,
+			userId: user_id,
+		});
+
+		if (!foundReplyComment) {
+			throw new NotFoundException('해당 댓글이 존재하지 않습니다.', String(reply_id));
+		}
+
+		const deletedReplyComment = await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.softDelete(ReplyEntitiy, foundReplyComment.id);
+		});
+
+		return SuccessFulResponse(deletedReplyComment);
 	}
 }

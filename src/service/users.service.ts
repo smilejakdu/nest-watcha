@@ -134,6 +134,18 @@ export class UsersService {
 		});
 	}
 
+	// async logOut(request: Request) {
+	// 	const foundUser = request.user as UsersEntity;
+	// 	await this.tokenService.deleteRefreshToken(foundUser.id);
+	// 	return {
+	// 		token: '',
+	// 		domain: 'localhost',
+	// 		path: '/',
+	// 		httpOnly: true,
+	// 		maxAge: 0,
+	// 	};
+	// }
+
 	async updateUser(userData: UsersEntity) {
 		const updatedUser = await transactionRunner(async (queryRunner:QueryRunner)=>{
 			return await queryRunner.manager.save(UsersEntity, userData);

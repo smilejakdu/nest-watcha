@@ -71,6 +71,20 @@ export class UsersController {
 		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
+	// @ApiOperation({ summary: '로그아웃' })
+	// @ApiOkResponse({ description: '성공', type: LogoutResponseDto })
+	// @UseGuards(UserAuthGuard)
+	// @Post('logout')
+	// async logout(@Req() request: Request, @Res({ passthrough: true }) res: Response) {
+	// 	const responseLogout = await this.usersService.logOut(request);
+	// 	const { token, ...option } = responseLogout;
+	// 	res.cookie('accessToken', token, option);
+	// 	return {
+	// 		ok: true,
+	// 		statusCode: 200,
+	// 		message: 'LOGOUT SUCCESS',
+	// 	};
+	// }
 
 	@ApiOperation({ summary: 'my_profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })

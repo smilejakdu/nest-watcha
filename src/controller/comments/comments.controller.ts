@@ -1,14 +1,27 @@
-import { UpdateCommentDto } from './comments.controller.dto/update-comment.dto';
+import { UpdateCommentDto, UpdateReplyDto } from "./comments.controller.dto/update-comment.dto";
 import {
 	CreateCommentDto,
 	CreateCommentWithOpenAIDto,
 	CreateReplyDto
 } from "./comments.controller.dto/create-comment.dto";
-import {Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	ParseIntPipe,
+	Patch,
+	Post,
+	Put,
+	Query,
+	Req,
+	UseGuards
+} from "@nestjs/common";
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentsService } from '../../service/comments.service';
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
-import { DeleteCommentDto } from './comments.controller.dto/delete-comment.dto';
+import { DeleteCommentDto } from "./comments.controller.dto/delete-comment.dto";
 import { UserAuthGuard } from 'src/shared/auth/guard/user-auth.guard';
 import {Request} from "express";
 
@@ -87,12 +100,9 @@ export class CommentsController {
 	}
 
 	@ApiOperation({ summary: '대댓글 작성' })
-	@ApiOkResponse({
-		description: '성공',
-		type: DeleteCommentDto,
-	})
+	@ApiOkResponse({ description: '성공' })
 	@UseGuards(UserAuthGuard)
-	@Post()
+	@Post('reply')
 	async createReplyComment(
 		@Body() body: CreateReplyDto,
 		@Req() request: Request,
@@ -100,5 +110,31 @@ export class CommentsController {
 		const foundUser = request?.user as UsersEntity;
 		const { comment_id, reply } = body;
 		return this.commentsService.createReplyComment(reply,comment_id, foundUser.id)
+	}
+
+	@ApiOperation({ summary: '대댓글 수정' })
+	@ApiOkResponse({ description: '성공'})
+	@UseGuards(UserAuthGuard)
+	@Put(':id/reply')
+	async updateReplyComment(
+		@Body() body: UpdateReplyDto,
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request,
+	) {
+		const foundUser = request?.user as UsersEntity;
+		const { reply_content } = body;
+		return this.commentsService.updateReplyComment(id, foundUser.id, reply_content)
+	}
+
+	@ApiOperation({ summary: '대댓글 삭제' })
+	@ApiOkResponse({ description: '성공'})
+	@UseGuards(UserAuthGuard)
+	@Delete(':id/reply')
+	async deleteReplyComment(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request,
+	) {
+		const foundUser = request?.user as UsersEntity;
+		return this.commentsService.deleteReplyComment(id, foundUser.id);
 	}
 }

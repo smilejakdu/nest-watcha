@@ -20,5 +20,5 @@ export class CreateReplyDto {
 
 	@IsNotEmptyNumber(1,'commentId')
 	public comment_id: number;
-
 }
+

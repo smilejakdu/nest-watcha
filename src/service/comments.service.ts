@@ -20,7 +20,6 @@ export class CommentsService {
 		private readonly boardsRepository: BoardsRepository,
 		private readonly commentsRepository: CommentsRepository,
 		private readonly dataSource: DataSource,
-		private readonly httpService: HttpService,
 	) {
 		const configuration = new Configuration({
 			organization: process.env.ORGANIZATION,

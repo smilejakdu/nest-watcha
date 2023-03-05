@@ -61,9 +61,9 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.naver_auth_id=:id OR users.kakao_auth_id=:id OR users.google_auth_id=:id', {id: id});
   }
 
-  getToken(user_auth: any) {
-    const payload = {sub: user_auth};
-    return Jwt.sign(payload, process.env.JWT, { expiresIn: '30d' });
+  getToken(email: string) {
+    const payload = {sub: email};
+    return Jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
   }
 
   async findAuthId(id:string, type:LoginType) {
@@ -99,22 +99,29 @@ export class UserRepository extends Repository<UsersEntity> {
       .from(UsersEntity);
   }
 
-  async kakaoCallback(tokenString:string): Promise<any> {
+  async kakaoCallback(tokenString: string): Promise<any> {
     const get_profile_url = 'https://kapi.kakao.com/v2/user/me';
-
+    console.log('tokenString',tokenString);
     const getProfileHeaders = {
       Authorization: `Bearer ${tokenString}`,
     };
 
     let profileResponse;
 
-    await axios.post(get_profile_url, null , {
+    await axios.post(get_profile_url, {
+      property_keys: [
+        'properties.nickname',
+        'kakao_account.email',
+      ],
+    } , {
       headers: getProfileHeaders,
-    }).then(res=>{
-      profileResponse = {res:res};
-        console.log(res);
+    })
+      .then(res=>{
+      profileResponse = {res: res};
+      console.log('profileResponse', profileResponse.res.data);
       }).catch(error=>{
-        console.log(error);
+      console.log('error', error.message);
+        throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
       });
     if (!profileResponse.res.data.id) {
       throw new HttpException('Kakao login error',

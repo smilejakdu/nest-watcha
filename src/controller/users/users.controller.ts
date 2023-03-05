@@ -115,15 +115,14 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakao/callback')
 	async kakaoCallback(@Req() req: any, @Res() res: Response) {
-		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers.access_token);
-		let userId = data.foundUser?.id;
-		if (!data.foundUser) {
-			const result = await this.usersService.socialSignUp(data.kakaoUserData, LoginType.KAKAO);
-			userId = result.data;
+		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
+		console.log('data:',data);
+		let userData = data.foundUser;
+		if (!userData) {
+			const result = await this.usersService.socialSignUp(data.kakaoUserData);
+			userData = result.data;
 		}
-
-		const foundUser = await this.usersRepository.findOneBy({ id: userId });
-		const accessToken = await this.usersService.createToken(foundUser.email);
+		const accessToken = await this.usersService.createToken(userData.email);
 
 		res.cookie('accessToken', accessToken, {
 			domain: 'localhost',
@@ -131,6 +130,12 @@ export class UsersController {
 			httpOnly: true,
 			secure: true,
 		});
-		return res.status(HttpStatus.OK).json(foundUser);
+
+		return res.status(HttpStatus.OK).json({
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: userData,
+		});
 	}
 }

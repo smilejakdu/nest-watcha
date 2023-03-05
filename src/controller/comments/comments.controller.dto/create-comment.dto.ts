@@ -1,5 +1,4 @@
 import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
-import {IsNotEmptyNumber} from "../../../decorators/is-not-empty-number.decorator";
 
 export class CreateCommentDto {
 	@IsNotEmptyString(0,1000,

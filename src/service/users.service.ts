@@ -66,9 +66,17 @@ export class UsersService {
 		return SuccessFulResponse(responseSignUpUser ,HttpStatus.CREATED);
 	}
 
-	async socialSignUp(data:any, loginType : LoginType) {
-		const responseCreateUser = await this.userRepository.createKakaoUser(data);
-		return SuccessFulResponse(responseCreateUser.raw.insertId,HttpStatus.CREATED);
+	async socialSignUp(data: any) {
+		const newUser = new UsersEntity();
+		newUser.username = data.properties.nickname;
+		newUser.email = data.kakao_account.email;
+		newUser.kakao_auth_id = data.id;
+
+		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+			return await queryRunner.manager.save(UsersEntity, newUser);
+		},this.dataSource);
+
+		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
 	}
 
 	async findAuthId(authId:string , type) {
@@ -94,8 +102,11 @@ export class UsersService {
 		let kakaoUserData;
 
 		if (loginType === LoginType.KAKAO) {
+			console.log('kakao login')
 			kakaoUserData = await this.userRepository.kakaoCallback(tokenString);
-			foundUser = await this.findAuthId(kakaoUserData.id,LoginType.KAKAO);
+			foundUser = await this.findAuthId(kakaoUserData.id, LoginType.KAKAO);
+		} else if (loginType === LoginType.GOOGLE) {
+			console.log('google login')
 		}
 
 		return {
@@ -142,6 +153,6 @@ export class UsersService {
 	}
 
 	async createToken(email: string) {
-		return await this.userRepository.getToken({ email });
+		return await this.userRepository.getToken(email);
 	}
 }

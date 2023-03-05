@@ -108,7 +108,7 @@ export class UserRepository extends Repository<UsersEntity> {
 
     let profileResponse;
 
-    await axios.post(get_profile_url, {
+    const response = await axios.post(get_profile_url, {
       property_keys: [
         'properties.nickname',
         'kakao_account.email',
@@ -116,17 +116,53 @@ export class UserRepository extends Repository<UsersEntity> {
     } , {
       headers: getProfileHeaders,
     })
-      .then(res=>{
-      profileResponse = {res: res};
-      console.log('profileResponse', profileResponse.res.data);
-      }).catch(error=>{
-      console.log('error', error.message);
-        throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+      // .then(res=>{
+      // profileResponse = {res: res};
+      // console.log('profileResponse', profileResponse.res.data);
+      // }).catch(error=>{
+      // console.log('error', error.message);
+      //   throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
+      // });
+    console.log(response.data);
     if (!profileResponse.res.data.id) {
       throw new HttpException('Kakao login error',
                                         HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return profileResponse.res.data;
   }
+
+  // 이 방식은 google 에서 token 을 받아오고 그 받은 token 으로 구현하게 될때
+  async googleCallback(tokenString: string): Promise<any> {
+    const get_profile_url = 'https://www.googleapis.com/oauth2/v2/userinfo';
+
+    const response = await axios.get(get_profile_url, {
+      headers: {
+        Authorization: `Bearer ${tokenString}`,
+      }
+    });
+
+    if (!response.data.id) {
+      throw new HttpException('Google login error',
+        HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return response.data;
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

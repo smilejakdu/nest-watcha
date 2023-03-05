@@ -3,7 +3,6 @@ import {
 	Body,
 	Controller,
 	Get, HttpStatus, NotFoundException,
-	Param,
 	Post,
 	Put,
 	Req,
@@ -22,7 +21,7 @@ import { LoginType, UsersEntity } from '../../database/entities/User/Users.entit
 import { Response, Request } from 'express';
 import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
-import {UserFindResponseDto} from "./users.controller.dto/userFindDto/userFind.response.dto";
+import { GoogleGuard } from 'src/guards/google.guard';
 
 
 export const BAD_REQUEST = 'bad request';
@@ -99,27 +98,15 @@ export class UsersController {
 		return this.usersService.findMyBoardsByEmail(foundUser.email);
 	}
 
-	@ApiOperation({ summary: 'find one user by email' })
-	@ApiOkResponse({
-		description: 'success',
-		type: UserFindResponseDto,
-	})
-	@Get(':email')
-	async findOneUserByEmail(
-		@Param('email') email: string,
-	) {
-		return this.usersService.findUserByEmail(email);
-	}
-
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakao/callback')
-	async kakaoCallback(@Req() req: any, @Res() res: Response) {
-		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
+	async kakaoCallback(@Req() req, @Res() res: Response) {
+		const data: { foundUser: any; userData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
 		console.log('data:',data);
 		let userData = data.foundUser;
 		if (!userData) {
-			const result = await this.usersService.socialSignUp(data.kakaoUserData);
+			const result = await this.usersService.socialSignUp(data.userData);
 			userData = result.data;
 		}
 		const accessToken = await this.usersService.createToken(userData.email);
@@ -137,5 +124,23 @@ export class UsersController {
 			message: 'SUCCESS',
 			data: userData,
 		});
+	}
+
+	@ApiOperation({ summary: 'google_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(GoogleGuard)
+	@Get('google')
+	async googleLogin(@Req() req, @Res() res: Response) {
+		// console.log('req:',req);
+	}
+
+
+	@ApiOperation({ summary: 'google_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(GoogleGuard)
+	@Get('/google/callback')
+	async googleCallback(@Req() req, @Res() res: Response) {
+		const responseGoogleUser =  await this.usersService.googleLogin(req.user);
+		return res.status(responseGoogleUser.statusCode).json(responseGoogleUser);
 	}
 }

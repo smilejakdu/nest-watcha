@@ -12,7 +12,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import {Response} from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import {FoundUserType} from "../types";
+import {FoundUserType, GoogleUserData} from "../types";
 
 @Injectable()
 export class UsersService {
@@ -97,27 +97,41 @@ export class UsersService {
 		return SuccessFulResponse(foundUser);
 	}
 
-	async checkRegister(loginType:string, tokenString:string) {
+	async checkRegister(loginType: string, tokenString: string) {
 		let foundUser;
-		let kakaoUserData;
+		let userData;
 
 		if (loginType === LoginType.KAKAO) {
 			console.log('kakao login')
-			kakaoUserData = await this.userRepository.kakaoCallback(tokenString);
-			foundUser = await this.findAuthId(kakaoUserData.id, LoginType.KAKAO);
-		} else if (loginType === LoginType.GOOGLE) {
-			console.log('google login')
+			userData = await this.userRepository.kakaoCallback(tokenString);
+			foundUser = await this.findAuthId(userData.id, LoginType.KAKAO);
 		}
 
 		return {
 			foundUser: foundUser.data,
-			kakaoUserData: kakaoUserData
+			userData: userData
 		};
+	}
+
+	async googleLogin(googleUserData: GoogleUserData) {
+		const { id, email, firstName, lastName } = googleUserData;
+		const foundUser = await this.userRepository.findOneBy({ email });
+		if (!foundUser) {
+			const newUser = new UsersEntity();
+			newUser.username = `${firstName} ${lastName}`;
+			newUser.email = email;
+			newUser.google_auth_id = id;
+			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.save(UsersEntity, newUser);
+			},this.dataSource);
+			return SuccessFulResponse(responseSignUpUser);
+		}
+		return SuccessFulResponse(foundUser);
 	}
 
 	async logIn(logInDto:LoginRequestDto, @Res() res: Response) {
 		const { email, password }= logInDto;
-		const foundUser = await this.userRepository.findOneBy({ email });
+		const [foundUser] = await Promise.all([this.userRepository.findOneBy({email})]);
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user ${email}`);
 		}
@@ -128,7 +142,7 @@ export class UsersService {
 
 		const payload = {email: foundUser.email};
 		const options = {expiresIn: '1d', issuer: 'ash-admin', algorithm: 'HS256'};
-		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET, options);
+		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET);
 		delete foundUser.password;
 
 		res.cookie('access-token', accessToken, {

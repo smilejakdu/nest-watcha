@@ -34,6 +34,7 @@ import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
 import * as redisStore from 'cache-manager-redis-store';
 import process from "process";
+import {ReplyEntitiy} from "./database/entities/comments/reply.entitiy";
 
 @Module({
 	imports: [
@@ -85,6 +86,7 @@ import process from "process";
 				CommentsEntity,
 				HashTagEntity,
 				SchedulesEntity,
+				ReplyEntitiy,
 			],
 			autoLoadEntities: true,
 			charset: "utf8mb4",

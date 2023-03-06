@@ -3,9 +3,10 @@ import { UsersService } from '../service/users.service';
 import { UsersController } from '../controller/users/users.controller';
 import { UserRepository } from '../database/repository/user.repository';
 import { TypeOrmExModule } from 'src/shared/typeorm-ex.module';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {PermissionEntity} from "../database/entities/User/Permission.entity";
-import {GoogleStrategy} from "../strategies/google.strategy";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { PermissionEntity } from "../database/entities/User/Permission.entity";
+import { GoogleStrategy } from "../strategies/google.strategy";
+import { KakaoStrategy } from "../strategies/kakao.strategy";
 
 @Module({
 	imports: [
@@ -14,7 +15,7 @@ import {GoogleStrategy} from "../strategies/google.strategy";
 		]),
 		TypeOrmModule.forFeature([PermissionEntity]),
 	],
-	providers: [UsersService, GoogleStrategy],
+	providers: [UsersService, GoogleStrategy, KakaoStrategy],
 	controllers: [UsersController],
 	exports: [UsersService],
 })

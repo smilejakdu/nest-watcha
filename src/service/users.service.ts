@@ -12,7 +12,8 @@ import { DataSource, QueryRunner } from 'typeorm';
 import {Response} from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import {FoundUserType, GoogleUserData} from "../types";
+import {FoundUserType, GoogleUserData, KakaoUserData} from "../types";
+import {retry} from "rxjs";
 
 @Injectable()
 export class UsersService {
@@ -111,6 +112,22 @@ export class UsersService {
 			foundUser: foundUser.data,
 			userData: userData
 		};
+	}
+
+	async kakaoLogin(userData: KakaoUserData) {
+		const { id, email , nickname } = userData;
+		const foundUser = await this.userRepository.findOneBy({ email });
+		if (!foundUser) {
+			const newUser = new UsersEntity();
+			newUser.username = nickname;
+			newUser.email = email;
+			newUser.kakao_auth_id = id;
+			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.save(UsersEntity, newUser);
+			},this.dataSource);
+			return SuccessFulResponse(responseSignUpUser);
+		}
+		return SuccessFulResponse(foundUser);
 	}
 
 	async googleLogin(googleUserData: GoogleUserData) {

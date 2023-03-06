@@ -1,3 +1,4 @@
+import { IsNotEmptyNumber } from "src/decorators/is-not-empty-number.decorator";
 import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
 
 export class CreateCommentDto {
@@ -19,5 +20,4 @@ export class CreateReplyDto {
 
 	@IsNotEmptyNumber(1,'commentId')
 	public comment_id: number;
-
 }

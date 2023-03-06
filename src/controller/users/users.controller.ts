@@ -22,6 +22,7 @@ import { Response, Request } from 'express';
 import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
+import { KaKaoGuard } from 'src/guards/kakao.guard';
 
 
 export const BAD_REQUEST = 'bad request';
@@ -98,32 +99,49 @@ export class UsersController {
 		return this.usersService.findMyBoardsByEmail(foundUser.email);
 	}
 
+	// @ApiOperation({ summary: 'kakao_login' })
+	// @ApiOkResponse({ description: '성공', type: 'application/json' })
+	// @Get('/kakao/callback')
+	// async kakaoCallback(@Req() req, @Res() res: Response) {
+	// 	const data: { foundUser: any; userData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
+	// 	console.log('data:',data);
+	// 	let userData = data.foundUser;
+	// 	if (!userData) {
+	// 		const result = await this.usersService.socialSignUp(data.userData);
+	// 		userData = result.data;
+	// 	}
+	// 	const accessToken = await this.usersService.createToken(userData.email);
+	//
+	// 	res.cookie('accessToken', accessToken, {
+	// 		domain: 'localhost',
+	// 		expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+	// 		httpOnly: true,
+	// 		secure: true,
+	// 	});
+	//
+	// 	return res.status(HttpStatus.OK).json({
+	// 		ok: true,
+	// 		statusCode: HttpStatus.OK,
+	// 		message: 'SUCCESS',
+	// 		data: userData,
+	// 	});
+	// }
+
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
-	@Get('/kakao/callback')
-	async kakaoCallback(@Req() req, @Res() res: Response) {
-		const data: { foundUser: any; userData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
-		console.log('data:',data);
-		let userData = data.foundUser;
-		if (!userData) {
-			const result = await this.usersService.socialSignUp(data.userData);
-			userData = result.data;
-		}
-		const accessToken = await this.usersService.createToken(userData.email);
+	@UseGuards(KaKaoGuard)
+	@Get('kakao')
+	async kakaoLogin(@Req() req, @Res() res: Response) {
+		// console.log('req:',req);
+	}
 
-		res.cookie('accessToken', accessToken, {
-			domain: 'localhost',
-			expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
-			httpOnly: true,
-			secure: true,
-		});
-
-		return res.status(HttpStatus.OK).json({
-			ok: true,
-			statusCode: HttpStatus.OK,
-			message: 'SUCCESS',
-			data: userData,
-		});
+	@ApiOperation({ summary: 'kakao_login_call_back' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(KaKaoGuard)
+	@Get('kakao/callback')
+	async kakaoLoginCallback(@Req() req: any, @Res() res: Response) {
+		const responseKakaoUser =  await this.usersService.kakaoLogin(req.user);
+		return res.status(responseKakaoUser.statusCode).json(responseKakaoUser);
 	}
 
 	@ApiOperation({ summary: 'google_login' })
@@ -134,8 +152,7 @@ export class UsersController {
 		// console.log('req:',req);
 	}
 
-
-	@ApiOperation({ summary: 'google_login' })
+	@ApiOperation({ summary: 'google_login_call_back' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(GoogleGuard)
 	@Get('/google/callback')

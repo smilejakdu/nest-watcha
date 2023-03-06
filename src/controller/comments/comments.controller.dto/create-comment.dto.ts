@@ -11,3 +11,13 @@ export class CreateCommentWithOpenAIDto {
 		'content','content')
 	public content: string;
 }
+
+export class CreateReplyDto {
+	@IsNotEmptyString(0,1000,
+		'reply','reply')
+	public reply: string;
+
+	@IsNotEmptyNumber(1,'commentId')
+	public comment_id: number;
+
+}

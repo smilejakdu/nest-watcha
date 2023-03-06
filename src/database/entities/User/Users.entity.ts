@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner } from 'typeorm';
 // Entity
 import { BoardsEntity } from '../Board/Boards.entity';
-import { CommentsEntity } from '../comments.entity';
+import { CommentsEntity } from '../comments/comments.entity';
 import { CoreEntity } from '../core.entity';
 import { OrderEntity } from '../Order/order.entity';
 import { SchedulesEntity } from '../schedules.entity';

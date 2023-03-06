@@ -6,9 +6,10 @@ import { UserRepository } from '../database/repository/user.repository';
 import {SuccessFulResponse} from "../shared/CoreResponse";
 import { DataSource } from 'typeorm';
 import {UpdateCommentDto} from "../controller/comments/comments.controller.dto/update-comment.dto";
-import {CommentsEntity} from "../database/entities/comments.entity";
+import {CommentsEntity} from "../database/entities/comments/comments.entity";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {Configuration, CreateCompletionRequest, OpenAIApi} from "openai";
+import { ReplyEntitiy } from "../database/entities/comments/reply.entitiy";
 
 
 @Injectable()
@@ -87,5 +88,14 @@ export class CommentsService {
 	async deleteComment(commentId: number) {
 		const deletedComment = await this.commentsRepository.deleteComment(commentId);
 		return deletedComment.raw.insertId;
+	}
+
+	async createReplyComment(reply: string, commentId: number, userId: number) {
+		const newReplyComment = new ReplyEntitiy();
+		Object.assign(newReplyComment, {content: reply, comment_id: commentId, user_id: userId});
+		const createdReplyComment = await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.save(ReplyEntitiy, newReplyComment);
+		});
+		return SuccessFulResponse(createdReplyComment);
 	}
 }

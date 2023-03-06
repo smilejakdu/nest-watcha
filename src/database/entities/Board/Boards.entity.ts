@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { CommentsEntity } from '../comments.entity';
+import { CommentsEntity } from '../comments/comments.entity';
 import { CoreEntity } from '../core.entity';
 import { UsersEntity } from '../User/Users.entity';
 import { BoardImageEntity } from './BoardImage.entity';

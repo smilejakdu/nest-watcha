@@ -14,7 +14,7 @@ import {PurchaseVbankEntity} from "./entities/Purchase/purchase_vbank.entity";
 import {PermissionEntity} from "./entities/User/Permission.entity";
 import {UsersEntity} from "./entities/User/Users.entity";
 import {CoreEntity} from "./entities/core.entity";
-import {CommentsEntity} from "./entities/comments.entity";
+import {CommentsEntity} from "./entities/comments/comments.entity";
 import {HashTagEntity} from "./entities/hashTag.entity";
 import {SchedulesEntity} from "./entities/schedules.entity";
 import * as process from "process";

@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 
-import { CoreEntity } from './core.entity';
-import { BoardsEntity } from './Board/Boards.entity';
-import { UsersEntity } from './User/Users.entity';
+import { CoreEntity } from '../core.entity';
+import { BoardsEntity } from '../Board/Boards.entity';
+import { UsersEntity } from '../User/Users.entity';
+import { ReplyEntitiy } from "./reply.entitiy";
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class CommentsEntity extends CoreEntity {
@@ -28,4 +29,7 @@ export class CommentsEntity extends CoreEntity {
 	})
 	@JoinColumn([{ name: 'boardId', referencedColumnName: 'id' }])
 	Board: BoardsEntity;
+
+	@OneToMany(() => ReplyEntitiy, reply => reply.comments)
+	Reply: ReplyEntitiy[];
 }

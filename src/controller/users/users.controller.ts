@@ -22,6 +22,7 @@ import { Response, Request } from 'express';
 import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
+import { NaverGuard } from 'src/guards/naver.guard';
 
 
 export const BAD_REQUEST = 'bad request';
@@ -135,12 +136,26 @@ export class UsersController {
 	}
 
 
-	@ApiOperation({ summary: 'google_login' })
+	@ApiOperation({ summary: 'google_login_callback' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(GoogleGuard)
 	@Get('/google/callback')
 	async googleCallback(@Req() req, @Res() res: Response) {
 		const responseGoogleUser =  await this.usersService.googleLogin(req.user);
 		return res.status(responseGoogleUser.statusCode).json(responseGoogleUser);
+	}
+
+	@ApiOperation({ summary: 'naver_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(NaverGuard)
+	@Get('google')
+	async naverLogin(@Req() req, @Res() res: Response) {}
+
+	@ApiOperation({ summary: 'naver_login_callback' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(GoogleGuard)
+	@Get('/naver/callback')
+	async naverCallback(@Req() req, @Res() res: Response) {
+
 	}
 }

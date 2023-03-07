@@ -7,6 +7,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { PermissionEntity } from "../database/entities/User/Permission.entity";
 import { GoogleStrategy } from "../strategies/google.strategy";
 import { KakaoStrategy } from "../strategies/kakao.strategy";
+import {NaverStrategy} from "../strategies/naver.strategy";
 
 @Module({
 	imports: [
@@ -15,7 +16,7 @@ import { KakaoStrategy } from "../strategies/kakao.strategy";
 		]),
 		TypeOrmModule.forFeature([PermissionEntity]),
 	],
-	providers: [UsersService, GoogleStrategy, KakaoStrategy],
+	providers: [UsersService, GoogleStrategy, KakaoStrategy, NaverStrategy],
 	controllers: [UsersController],
 	exports: [UsersService],
 })

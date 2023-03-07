@@ -146,6 +146,22 @@ export class UsersService {
 		return SuccessFulResponse(foundUser);
 	}
 
+	async naverLogin(naverUserData) {
+		const { id, email, name, profile_image }	= naverUserData;
+		const foundUser = await this.userRepository.findOneBy({ email });
+		if (!foundUser) {
+			const newUser = new UsersEntity();
+			newUser.username = name;
+			newUser.email = email;
+			newUser.naver_auth_id = id;
+			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.save(UsersEntity, newUser);
+			},this.dataSource);
+			return SuccessFulResponse(responseSignUpUser);
+		}
+		return SuccessFulResponse(foundUser);
+	}
+
 	async logIn(logInDto:LoginRequestDto, @Res() res: Response) {
 		const { email, password }= logInDto;
 		const [foundUser] = await Promise.all([this.userRepository.findOneBy({email})]);

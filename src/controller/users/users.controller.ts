@@ -17,11 +17,12 @@ import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import { LoginType, UsersEntity } from '../../database/entities/User/Users.entity';
+import { UsersEntity } from '../../database/entities/User/Users.entity';
 import { Response, Request } from 'express';
 import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
+import { NaverGuard } from 'src/guards/naver.guard';
 import { KaKaoGuard } from 'src/guards/kakao.guard';
 
 
@@ -159,5 +160,22 @@ export class UsersController {
 	async googleCallback(@Req() req, @Res() res: Response) {
 		const responseGoogleUser =  await this.usersService.googleLogin(req.user);
 		return res.status(responseGoogleUser.statusCode).json(responseGoogleUser);
+	}
+
+	@ApiOperation({ summary: 'naver_login' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(NaverGuard)
+	@Get('naver')
+	async naverLogin(@Req() req, @Res() res: Response) {
+	// console.log('req:',req);
+	}
+
+	@ApiOperation({ summary: 'naver_login_callback' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(NaverGuard)
+	@Get('/naver/callback')
+	async naverCallback(@Req() req, @Res() res: Response) {
+		const responseNaverUser = await this.usersService.naverLogin(req.user);
+		return res.status(responseNaverUser.statusCode).json(responseNaverUser);
 	}
 }

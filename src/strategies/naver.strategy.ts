@@ -17,13 +17,14 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) {
-    const { id, displayName, emails, photos } = profile;
+    const { id, _json } = profile;
+    console.log('profile', profile);
     const user = {
       id,
-      name: displayName,
-      email: emails[0].value,
-      photo: photos[0].value,
-      accessToken,
+      name: _json.nickname,
+      email: _json.email,
+      profile_image: _json.profile_image,
+      // accessToken,
     };
     done(null, user);
   }

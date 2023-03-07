@@ -13,18 +13,13 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   ) {
     super({
       clientID: configService.get('KAKAO_REST_API_KEY'),
-      clientSecret: configService.get('KAKAO_CLIENT_SECRET'), // 이거 없어도 될것 같은데 없앨까요??
-      callbackURL: 'http://127.0.0.1:3000/api/v1/auth/kakao/callback',
+      clientSecret: configService.get('KAKAO_CLIENT_SECRET'),
+      callbackURL: configService.get('KAKAO_CALLBACK_URL'),
     });
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile, done: any) {
-    /**
-     * If you don't know method ?. operator,
-     * just read below link.
-     *
-     * @link {https://stackoverflow.com/questions/56913963/cannot-invoke-an-object-which-is-possibly-undefined-ts2722}
-     */
+    console.log('kakao profile', profile);
     const kakaoAccount = profile._json.kakao_account;
 
     const email = kakaoAccount.email || null;
@@ -32,9 +27,9 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     const kakaoId = profile._json.id;
 
     const payload = {
+      'id': kakaoId,
       nickname,
       email,
-      kakaoId,
     };
 
     done(null, payload);

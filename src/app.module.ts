@@ -28,12 +28,13 @@ import {PurchaseVbankEntity} from "./database/entities/Purchase/purchase_vbank.e
 import {PermissionEntity} from "./database/entities/User/Permission.entity";
 import {UsersEntity} from "./database/entities/User/Users.entity";
 import {CoreEntity} from "./database/entities/core.entity";
-import {CommentsEntity} from "./database/entities/comments.entity";
+import {CommentsEntity} from "./database/entities/comments/comments.entity";
 import {HashTagEntity} from "./database/entities/hashTag.entity";
 import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
 import * as redisStore from 'cache-manager-redis-store';
 import process from "process";
+import {ReplyEntitiy} from "./database/entities/comments/reply.entitiy";
 
 @Module({
 	imports: [
@@ -85,6 +86,7 @@ import process from "process";
 				CommentsEntity,
 				HashTagEntity,
 				SchedulesEntity,
+				ReplyEntitiy,
 			],
 			autoLoadEntities: true,
 			charset: "utf8mb4",

@@ -1,5 +1,5 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { CommentsEntity } from '../entities/comments.entity';
+import { CommentsEntity } from '../entities/comments/comments.entity';
 import { CustomRepository } from "../../shared/typeorm-ex.decorator";
 
 @CustomRepository(CommentsEntity)

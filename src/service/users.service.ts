@@ -12,7 +12,8 @@ import { DataSource, QueryRunner } from 'typeorm';
 import {Response} from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import {FoundUserType, GoogleUserData} from "../types";
+import {FoundUserType, GoogleUserData, KakaoUserData} from "../types";
+import {retry} from "rxjs";
 
 @Injectable()
 export class UsersService {
@@ -113,6 +114,22 @@ export class UsersService {
 		};
 	}
 
+	async kakaoLogin(userData: KakaoUserData) {
+		const { id, email , nickname } = userData;
+		const foundUser = await this.userRepository.findOneBy({ email });
+		if (!foundUser) {
+			const newUser = new UsersEntity();
+			newUser.username = nickname;
+			newUser.email = email;
+			newUser.kakao_auth_id = id;
+			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.save(UsersEntity, newUser);
+			},this.dataSource);
+			return SuccessFulResponse(responseSignUpUser);
+		}
+		return SuccessFulResponse(foundUser);
+	}
+
 	async googleLogin(googleUserData: GoogleUserData) {
 		const { id, email, firstName, lastName } = googleUserData;
 		const foundUser = await this.userRepository.findOneBy({ email });
@@ -121,6 +138,22 @@ export class UsersService {
 			newUser.username = `${firstName} ${lastName}`;
 			newUser.email = email;
 			newUser.google_auth_id = id;
+			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.save(UsersEntity, newUser);
+			},this.dataSource);
+			return SuccessFulResponse(responseSignUpUser);
+		}
+		return SuccessFulResponse(foundUser);
+	}
+
+	async naverLogin(naverUserData) {
+		const { id, email, name, profile_image }	= naverUserData;
+		const foundUser = await this.userRepository.findOneBy({ email });
+		if (!foundUser) {
+			const newUser = new UsersEntity();
+			newUser.username = name;
+			newUser.email = email;
+			newUser.naver_auth_id = id;
 			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
 				return await queryRunner.manager.save(UsersEntity, newUser);
 			},this.dataSource);

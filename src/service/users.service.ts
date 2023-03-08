@@ -13,7 +13,6 @@ import {Response} from "express";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
 import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
 import {FoundUserType, GoogleUserData, KakaoUserData} from "../types";
-import {retry} from "rxjs";
 
 @Injectable()
 export class UsersService {
@@ -115,11 +114,11 @@ export class UsersService {
 	}
 
 	async kakaoLogin(userData: KakaoUserData) {
-		const { id, email , nickname } = userData;
+		const { id, email , username } = userData;
 		const foundUser = await this.userRepository.findOneBy({ email });
 		if (!foundUser) {
 			const newUser = new UsersEntity();
-			newUser.username = nickname;
+			newUser.username = username;
 			newUser.email = email;
 			newUser.kakao_auth_id = id;
 			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
@@ -147,11 +146,11 @@ export class UsersService {
 	}
 
 	async naverLogin(naverUserData) {
-		const { id, email, name, profile_image }	= naverUserData;
+		const { id, email, username }	= naverUserData;
 		const foundUser = await this.userRepository.findOneBy({ email });
 		if (!foundUser) {
 			const newUser = new UsersEntity();
-			newUser.username = name;
+			newUser.username = username;
 			newUser.email = email;
 			newUser.naver_auth_id = id;
 			const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {

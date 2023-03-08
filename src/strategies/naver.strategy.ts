@@ -21,7 +21,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     console.log('profile', profile);
     const user = {
       id,
-      name: _json.nickname,
+      username: _json.nickname,
       email: _json.email,
       profile_image: _json.profile_image,
       // accessToken,

@@ -23,12 +23,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     const kakaoAccount = profile._json.kakao_account;
 
     const email = kakaoAccount.email || null;
-    const nickname = kakaoAccount.profile.nickname;
+    const username = kakaoAccount.profile.nickname;
     const kakaoId = profile._json.id;
 
     const payload = {
       'id': kakaoId,
-      nickname,
+      username,
       email,
     };
 

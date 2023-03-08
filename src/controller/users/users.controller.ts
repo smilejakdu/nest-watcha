@@ -167,7 +167,6 @@ export class UsersController {
 	@UseGuards(NaverGuard)
 	@Get('naver')
 	async naverLogin(@Req() req, @Res() res: Response) {
-	// console.log('req:',req);
 	}
 
 	@ApiOperation({ summary: 'naver_login_callback' })

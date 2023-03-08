@@ -34,7 +34,7 @@ export class HashtagService {
 	}
 
 	async createHashTag(boardId: number, hashtag: string) {
-		const BoardIdhashId: any[] = [];
+		const BoardIdhashId: { board_id: number, hash_id: number }[] = [];
 
 		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
 		if (!isEmpty(hashtags)) {
@@ -53,7 +53,7 @@ export class HashtagService {
 				const hashtagInsertedList = await this.insertHashtagList(hashList);
 
 				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
+					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
 				}
 			} else {
 				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
@@ -63,11 +63,11 @@ export class HashtagService {
 				const hashtagInsertedList = await this.insertHashtagList(differencehashList);
 
 				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
+					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
 				}
 
 				for (const hashTag of hashEntityList) {
-					BoardIdhashId.push({ boardId: boardId, hashId: hashTag.id });
+					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
 				}
 
 				await BoardHashTagEntity

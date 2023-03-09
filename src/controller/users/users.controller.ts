@@ -141,7 +141,7 @@ export class UsersController {
 	@UseGuards(KaKaoGuard)
 	@Get('kakao/callback')
 	async kakaoLoginCallback(@Req() req: any, @Res() res: Response) {
-		const responseKakaoUser =  await this.usersService.kakaoLogin(req.user);
+		const responseKakaoUser = await this.usersService.kakaoLogin(req.user);
 		return res.status(responseKakaoUser.statusCode).json(responseKakaoUser);
 	}
 

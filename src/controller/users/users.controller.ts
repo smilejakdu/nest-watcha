@@ -141,7 +141,7 @@ export class UsersController {
 	@UseGuards(KaKaoGuard)
 	@Get('kakao/callback')
 	async kakaoLoginCallback(@Req() req: any, @Res() res: Response) {
-		const responseKakaoUser =  await this.usersService.kakaoLogin(req.user);
+		const responseKakaoUser = await this.usersService.kakaoLogin(req.user);
 		return res.status(responseKakaoUser.statusCode).json(responseKakaoUser);
 	}
 
@@ -167,7 +167,6 @@ export class UsersController {
 	@UseGuards(NaverGuard)
 	@Get('naver')
 	async naverLogin(@Req() req, @Res() res: Response) {
-	// console.log('req:',req);
 	}
 
 	@ApiOperation({ summary: 'naver_login_callback' })

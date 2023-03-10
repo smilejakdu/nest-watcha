@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 import { transactionRunner } from '../../../shared/common/transaction/transaction';
 import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
-import {take} from "rxjs";
+import {CreateBoardDto} from "../../../controller/board/board.controller.dto/create-board.dto";
 
 @CustomRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{
@@ -14,15 +14,14 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return this.createQueryBuilder('boards', queryRunner);
   }
 
-  async createBoard(data) {
+  async createBoard(data: CreateBoardDto, user_id: number) {
     const newBoard = new BoardsEntity();
-    console.log('before new Board', newBoard);
     Object.assign(newBoard ,data);
-    console.log('after new Board', newBoard);
+    newBoard.user_id = user_id;
     const createdBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
       return await queryRunner.manager.save(BoardsEntity,newBoard);
     });
-    console.log('createdBoard :', createdBoard);
+
     return createdBoard.id;
   }
 

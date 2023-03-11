@@ -5,6 +5,7 @@ import { HashTagEntity } from '../database/entities/hashTag.entity';
 import { BoardHashTagEntity } from '../database/entities/Board/BoardHashTag.entity';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { HashtagRepository } from '../database/repository/hashtag.repository';
+import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
 
 @Injectable()
 export class HashtagService {
@@ -13,19 +14,21 @@ export class HashtagService {
 		private readonly hashTagRepository: HashtagRepository,
 	) {}
 
-	async getMyHashTag(hashtag: string[]): Promise<any> {
-		return this.boardsRepository
+	async getMyHashTag(hashtag: string[]) {
+		const responseBoard = await this.boardsRepository
 			.createQueryBuilder('Boards')
 			.select('Boards.*')
 			.addSelect([
 				'HashTag.id',
-				'HashTag.hash',
+				'HashTag.name',
 			])
 			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
 			.innerJoin(HashTagEntity, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
-			.where('HashTag.hash IN (:...hashtag)', { hashtag })
+			.where('HashTag.name IN (:...hashtag)', { hashtag })
 			.groupBy('Boards.id')
 			.getRawMany();
+
+		return SuccessFulResponse(responseBoard);
 	}
 
 	async insertHashtagList(hashTagList) {
@@ -43,7 +46,7 @@ export class HashtagService {
 				.findHashTagList(HashSliceLowcase);
 
 			const hashTagResultList = hashEntityList.map(hashtag => {
-				return hashtag.hash;
+				return hashtag.name
 			});
 
 			if (isEmpty(hashEntityList)) {

@@ -1,27 +1,84 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
 import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
-import { Pagination } from '../shared/pagination';
 import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-board.dto';
-import {CreateBoardDto} from "../controller/board/board.controller.dto/create-board.dto";
-import {BoardsEntity} from "../database/entities/Board/Boards.entity";
-import {QueryRunner} from "typeorm";
+import { CreateBoardDto} from "../controller/board/board.controller.dto/create-board.dto";
+import { BoardsEntity} from "../database/entities/Board/Boards.entity";
+import { DataSource, QueryRunner} from "typeorm";
 import { transactionRunner } from 'src/shared/common/transaction/transaction';
+import { HashtagRepository} from "../database/repository/hashtag.repository";
+import { BoardHashTagEntity} from "../database/entities/Board/BoardHashTag.entity";
+import { BoardImageEntity } from 'src/database/entities/Board/BoardImage.entity';
+import {HashTagEntity} from "../database/entities/hashTag.entity";
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
+		private readonly hashTagRepository: HashtagRepository,
+		private readonly dataSource: DataSource,
 	) { }
 
 	async createBoard(data: CreateBoardDto, userId: number):Promise<CoreResponse> {
-		const createdBoard = await this.boardsRepository.createBoard(data, userId);
+		const {boardHashTag, boardImages , ...boardData} = data;
 
-		if(!createdBoard) {
-			throw new BadRequestException('BAD REQUEST');
+		const newBoard = new BoardsEntity();
+		Object.assign(newBoard, boardData);
+		newBoard.user_id = userId;
+		const createdBoard = await transactionRunner(async (queryRunner:QueryRunner) => {
+			return await queryRunner.manager.save(BoardsEntity, newBoard);
+		}, this.dataSource);
+
+		let createdBoardHashTag;
+		if (boardHashTag?.length > 0) {
+			const foundHashTagList = await this.hashTagRepository.findHashTagList(boardHashTag);
+			if (foundHashTagList.length > 0) {
+				createdBoardHashTag = await foundHashTagList.map(async (hashTag) => {
+					const newBoardHashTag = new BoardHashTagEntity();
+					newBoardHashTag.board_id = createdBoard.id;
+					newBoardHashTag.hash_id = hashTag.id;
+					return await transactionRunner(async (queryRunner) => {
+						return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
+						},this.dataSource);
+				});
+			} else {
+				const newHashTagList = boardHashTag.map(async (hashTag) => {
+					const newHashTag = new HashTagEntity();
+					newHashTag.name = hashTag;
+					return transactionRunner(async (queryRunner) => {
+						return queryRunner.manager.save(HashTagEntity, newHashTag);
+					},this.dataSource);
+				});
+				createdBoardHashTag = await Promise.all(newHashTagList);
+				createdBoardHashTag = await createdBoardHashTag.map(async (hashTag) => {
+					const newBoardHashTag = new BoardHashTagEntity();
+					newBoardHashTag.board_id = createdBoard.id;
+					newBoardHashTag.hash_id = hashTag.id;
+					return await transactionRunner(async (queryRunner) => {
+						return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
+					},this.dataSource);
+				});
+			}
 		}
 
-		return SuccessFulResponse(createdBoard, HttpStatus.CREATED);
+
+		let createdImagePath;
+		if (boardImages?.length > 0) {
+			createdImagePath = await boardImages.map(async (image) => {
+				const newBoardImage = new BoardImageEntity();
+				newBoardImage.board_id = createdBoard.id;
+				newBoardImage.imagePath = image;
+				return await transactionRunner(async (queryRunner) => {
+					return await queryRunner.manager.save(BoardImageEntity, newBoardImage);
+				},this.dataSource);
+			});
+		}
+
+		return SuccessFulResponse({
+			board : createdBoard,
+			hashTag: createdBoardHashTag,
+			boardImages : createdImagePath,
+		}, HttpStatus.CREATED);
 	}
 
 	async findAllBoards(pageNumber: number):Promise<CoreResponse> {
@@ -37,7 +94,7 @@ export class BoardsService {
 		}
 
 		Object.assign(foundBoard, data);
-		const updatedBoard = await this.boardsRepository.update(foundBoard.id, data);
+		const updatedBoard = await this.boardsRepository.update(foundBoard.id, foundBoard);
 
 		return SuccessFulResponse(updatedBoard);
 	}

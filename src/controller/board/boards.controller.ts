@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -68,7 +67,6 @@ export class BoardsController {
 	@ApiOperation({ summary: '게시판 모두 가져오기' })
 	@Get('')
 	async getAllBoards(@Query() pagination: Pagination) {
-
 		return this.boardsService.findAllBoards(pagination.pageNumber);
 	}
 
@@ -82,25 +80,10 @@ export class BoardsController {
 	async createBoard(
 		@Req() request: Request,
 		@Body() data: CreateBoardDto,
-		@Res() res: Response,
 	) {
 		const foundUser = request?.user as UsersEntity;
 
-		const responseBoard = await this.boardsService.createBoard(data, foundUser.id);
-
-		if(!responseBoard.ok) {
-			throw new BadRequestException('게시판만들기 실패하였습니다.');
-		}
-
-		const responseImage = await this.boardImageService.insertImages(responseBoard.data, data.imagePath);
-
-		if(!responseImage.ok) {
-			throw new BadRequestException('이미지만들기 실패하였습니다.');
-		}
-
-		await this.hashtagService.createHashTag(responseBoard.data.id, data.hashtag);
-
-		return SuccessFulResponse(responseBoard,HttpStatus.CREATED);
+		return await this.boardsService.createBoard(data, foundUser.id);
 	}
 
 	@ApiOkResponse({

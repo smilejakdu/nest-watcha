@@ -18,7 +18,7 @@ export function decryptPhoneNumber(encrypted: string, iv: string, password: Buff
   return decrypted;
 }
 
-const responseEncryptPhone = encryptPhoneNumber('01056713767');
+const responseEncryptPhone = encryptPhoneNumber('112');
 console.log(responseEncryptPhone);
 const getPhoneNumber = decryptPhoneNumber(
   responseEncryptPhone['encrypted'],

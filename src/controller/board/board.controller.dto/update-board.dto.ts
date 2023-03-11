@@ -4,5 +4,6 @@ import { CreateBoardDto } from './create-board.dto';
 export class UpdateBoardDto extends PickType(CreateBoardDto, [
 	'title',
 	'content',
-	'imagePath',
+	'boardHashTag',
+	'boardImages',
 ] as const) {}

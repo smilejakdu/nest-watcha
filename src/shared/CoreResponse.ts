@@ -7,6 +7,13 @@ export interface CoreResponse {
   data?: any;
 }
 
+export class CoreResponseDto implements CoreResponse {
+  ok: boolean;
+  statusCode: number;
+  message: string;
+  data?: any;
+}
+
 export function SuccessFulResponse(data,status = HttpStatus.OK){
   if(status == HttpStatus.CREATED){
     return {

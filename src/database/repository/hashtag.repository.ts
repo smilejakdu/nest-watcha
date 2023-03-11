@@ -5,7 +5,7 @@ import {CustomRepository} from "../../shared/typeorm-ex.decorator";
 @CustomRepository(HashTagEntity)
 export class HashtagRepository extends Repository<HashTagEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<HashTagEntity> {
-    return this.createQueryBuilder('hash_tag', queryRunner);
+    return this.createQueryBuilder('hashtag', queryRunner);
   }
 
   async findAllImages(): Promise<any> {
@@ -15,16 +15,19 @@ export class HashtagRepository extends Repository<HashTagEntity>{
   }
 
   async insertHashtagList(hashTagList) {
-    const createdHashtagList =  await this.makeQueryBuilder()
+    const createdHashtagList = await this.makeQueryBuilder()
       .insert()
       .values(hashTagList)
       .execute();
     return createdHashtagList;
   }
 
-  async findHashTagList(HashSliceLowcase){
+  async findHashTagList(hashTagList: string[]) {
      return this.makeQueryBuilder()
-      .select(['hashtag.id', 'hashtag.hash'])
-      .where('hashtag.hash IN (:...HashSliceLowcase)', { HashSliceLowcase }).getMany();
+      .select([
+        'hashtag.id',
+        'hashtag.name',
+      ])
+      .where('hashtag.name IN (:...hashTagList)', { hashTagList:hashTagList }).getMany();
   }
 }

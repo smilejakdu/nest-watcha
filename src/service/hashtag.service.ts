@@ -1,11 +1,11 @@
-import { isEmpty } from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { isEmpty } from "lodash";
+import { Injectable } from "@nestjs/common";
 // Entity
-import { HashTagEntity } from '../database/entities/hashTag.entity';
-import { BoardHashTagEntity } from '../database/entities/Board/BoardHashTag.entity';
-import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
-import { HashtagRepository } from '../database/repository/hashtag.repository';
-import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
+import { HashTagEntity } from "../database/entities/hashTag.entity";
+import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.entity";
+import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
+import { HashtagRepository } from "../database/repository/hashtag.repository";
+import { SuccessFulResponse } from "../shared/CoreResponse";
 
 @Injectable()
 export class HashtagService {
@@ -32,8 +32,7 @@ export class HashtagService {
 	}
 
 	async insertHashtagList(hashTagList) {
-		const hashtagInsertedList = await this.hashTagRepository.insertHashtagList(hashTagList);
-		return hashtagInsertedList;
+		return await this.hashTagRepository.insertHashtagList(hashTagList);
 	}
 
 	async createHashTag(boardId: number, hashtag: string) {

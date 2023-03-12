@@ -30,8 +30,9 @@ import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
 import { Response, Request } from 'express';
-import { SuccessFulResponse } from '../../shared/CoreResponse';
+import { CoreResponseDto, SuccessFulResponse } from "../../shared/CoreResponse";
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
+import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -61,11 +62,7 @@ export class BoardsController {
 		return this.boardImageService.findAllImages();
 	}
 
-	@ApiOkResponse({
-		description: '성공',
-	})
-	@ApiOperation({ summary: '게시판 모두 가져오기' })
-	@Get('')
+	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
 	async getAllBoards(@Query() pagination: Pagination) {
 		return this.boardsService.findAllBoards(pagination.pageNumber);
 	}

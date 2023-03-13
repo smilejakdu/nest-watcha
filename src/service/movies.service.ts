@@ -61,10 +61,12 @@ export class MoviesService {
     if (!foundMovie) {
       throw new BadRequestException('Movie not found');
     }
+
     Object.assign(foundMovie, set);
     const updatedMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
       return await queryRunner.manager.save(MovieEntity, foundMovie);
     });
+
     const responseMovie = this.movieMapper.toDto(updatedMovie);
     return SuccessFulResponse(responseMovie);
   }

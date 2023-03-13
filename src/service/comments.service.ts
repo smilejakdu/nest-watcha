@@ -1,4 +1,4 @@
-import {HttpService, Injectable, NotFoundException} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 // Entity
 import { CommentsRepository } from '../database/repository/comments.repository';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
@@ -81,21 +81,32 @@ export class CommentsService {
 			foundComment.content = content;
 			return await queryRunner.manager.save(CommentsEntity, foundComment);
 		});
-		console.log(updatedComment);
+		
 		return SuccessFulResponse(updatedComment);
 	}
 
 	async deleteComment(commentId: number) {
-		const deletedComment = await this.commentsRepository.deleteComment(commentId);
-		return deletedComment.raw.insertId;
+		const foundComment = await this.commentsRepository.findOneBy({id: commentId});
+
+		if (!foundComment) {
+			throw new NotFoundException('해당 댓글이 존재하지 않습니다.', String(commentId));
+		}
+
+		const deletedComment = await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.softDelete(CommentsEntity, {id:foundComment.id});
+		});
+
+		return SuccessFulResponse(deletedComment);
 	}
 
 	async createReplyComment(reply: string, commentId: number, userId: number) {
 		const newReplyComment = new ReplyEntitiy();
 		Object.assign(newReplyComment, {content: reply, comment_id: commentId, user_id: userId});
+
 		const createdReplyComment = await transactionRunner(async (queryRunner) => {
 			return await queryRunner.manager.save(ReplyEntitiy, newReplyComment);
 		});
+
 		return SuccessFulResponse(createdReplyComment);
 	}
 }

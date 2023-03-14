@@ -79,7 +79,6 @@ export class BoardsController {
 		@Body() data: CreateBoardDto,
 	) {
 		const foundUser = request?.user as UsersEntity;
-
 		return await this.boardsService.createBoard(data, foundUser.id);
 	}
 
@@ -93,8 +92,10 @@ export class BoardsController {
 	async updateBoard(
 		@Req() req: Request,
 		@Param('id', ParseIntPipe) id: number,
-		@Body() data: UpdateBoardDto) {
-		return this.boardsService.updateBoard(id, data);
+		@Body() data: UpdateBoardDto,
+	) {
+		const foundUser = req?.user as UsersEntity;
+		return this.boardsService.updateBoard(id, data, foundUser);
 	}
 
 	@ApiOkResponse({

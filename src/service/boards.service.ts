@@ -10,16 +10,19 @@ import { HashtagRepository} from "../database/repository/hashtag.repository";
 import { BoardHashTagEntity} from "../database/entities/Board/BoardHashTag.entity";
 import { BoardImageEntity } from 'src/database/entities/Board/BoardImage.entity';
 import {HashTagEntity} from "../database/entities/hashTag.entity";
+import {UsersEntity} from "../database/entities/User/Users.entity";
+import {BoardImageRepository} from "../database/repository/BoardRepository/boardImage.repository";
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
+		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
 		private readonly dataSource: DataSource,
 	) { }
 
-	async createBoard(data: CreateBoardDto, userId: number):Promise<CoreResponse> {
+	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponse> {
 		const {boardHashTag, boardImages , ...boardData} = data;
 
 		const newBoard = new BoardsEntity();
@@ -85,15 +88,31 @@ export class BoardsService {
 		return SuccessFulResponse(foundAllBoards);
 	}
 
-	async updateBoard(boardId: number, data: UpdateBoardDto) {
-		const foundBoard = await this.boardsRepository.findOneBy({id:boardId});
+	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {
+		const { boardHashTag, boardImages, ...boardData } = data;
+		const foundBoard = await this.boardsRepository.findOneBy({
+			id:boardId,
+			user_id: user_entitiy.id,
+		});
 
-		if(!foundBoard){
+		if(!foundBoard) {
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
 
-		Object.assign(foundBoard, data);
-		const updatedBoard = await this.boardsRepository.update(foundBoard.id, foundBoard);
+		Object.assign(foundBoard, boardData);
+		const updatedBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
+			return await queryRunner.manager.save(BoardsEntity,foundBoard);
+		}, this.dataSource);
+
+		if (boardImages.length > 0) {
+			await transactionRunner(async (queryRunner:QueryRunner) => {
+				return await queryRunner.manager.softDelete(BoardImageEntity,{board_id:foundBoard.id});
+			}, this.dataSource);
+
+			for (const boardImage of boardImages) {
+				console.log(boardImage);
+			}
+		}
 
 		return SuccessFulResponse(updatedBoard);
 	}
@@ -107,7 +126,7 @@ export class BoardsService {
 
 		const deletedBoard = await transactionRunner(async (queryRunner:QueryRunner) => {
 			return await queryRunner.manager.softDelete(BoardsEntity,{id:foundBoard});
-		});
+		}, this.dataSource);
 
 		return SuccessFulResponse(deletedBoard);
 	}

@@ -1,4 +1,4 @@
-import {ApiProperty, ApiPropertyOptional} from '@nestjs/swagger';
+import {ApiPropertyOptional} from '@nestjs/swagger';
 import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
 import {IsOptional} from "class-validator";
 

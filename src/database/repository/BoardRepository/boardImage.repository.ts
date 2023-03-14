@@ -23,6 +23,13 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
       .select('board_images.imagePath').getMany();
 	}
 
+	deleteImage(board_id: number) {
+		return this.makeQueryBuilder()
+			.delete()
+			.where('board_id = :board_id', { board_id: board_id })
+			.execute();
+	}
+
 	findBoardImage() {
 		return this.makeQueryBuilder()
 			.select('board_images.imagePath')

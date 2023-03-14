@@ -13,11 +13,13 @@ import {HashTagEntity} from "../database/entities/hashTag.entity";
 import {UsersEntity} from "../database/entities/User/Users.entity";
 import {BoardImageRepository} from "../database/repository/BoardRepository/boardImage.repository";
 import solr from 'solr-node';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
 export class BoardsService {
 	private solrNodeclient;
 	constructor(
+		private readonly elasticsearchService: ElasticsearchService,
 		private readonly boardsRepository: BoardsRepository,
 		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
@@ -92,13 +94,47 @@ export class BoardsService {
 		}, HttpStatus.CREATED);
 	}
 
-	async findAllBoards(pageNumber: number):Promise<CoreResponse> {
-		const foundAllBoards = await this.boardsRepository.findAllBoards(pageNumber);
-		return SuccessFulResponse(foundAllBoards);
+	async getBoardList(
+		pageNumber = 1,
+		pageSize = 5,
+	) {
+		const skip = (pageNumber - 1) * pageSize;
+		const take = pageSize;
+
+		const totalCount = await this.boardsRepository.count();
+
+		const boards = await this.boardsRepository.find({
+			select: {
+				id: true,
+				title: true,
+				content: true,
+				createdAt: true,
+				User: {
+					id: true,
+					email: true,
+					username: true,
+				},
+			},
+			relations: ['User'],
+			order: { createdAt: 'DESC' },
+			skip,
+			take,
+		});
+
+		const totalPages = Math.ceil(totalCount / pageSize);
+
+		return SuccessFulResponse({
+			boards,
+			pagination: {
+				currentPage: pageNumber,
+				pageSize,
+				totalCount,
+				totalPages,
+			}
+		});
 	}
 
-	async searchBoard(query: string) {
-		console.log('query', query);
+	async searchBoardBySorl(query: string) {
 		try {
 			const result = await this.solrNodeclient.query().q(query);
 			const responseSearch = await this.solrNodeclient.search(result);
@@ -106,6 +142,21 @@ export class BoardsService {
 		} catch (err) {
 			throw err;
 		}
+	}
+
+	async searchBoardByElastic(query: string) {
+		const responseSearch = await this.elasticsearchService.search({
+			index: 'board',
+			body: {
+				query: {
+					query_string: {
+						query: query,
+						// 	필요한 경우 다른 질의 문자열 쿼리 옵션 추가
+					}
+				}
+			}
+		});
+		return responseSearch;
 	}
 
 	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {

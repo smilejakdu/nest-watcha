@@ -58,17 +58,25 @@ export class BoardsController {
 		return this.boardImageService.findAllImages();
 	}
 
-	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'search')
-	async searchBoard(
+	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'solrSearch')
+	async searchBoardBySolr(
 		@Query('search') search: string,
 	) {
 		console.log('search:',search);
-		return this.boardsService.searchBoard(search);
+		return this.boardsService.searchBoardBySorl(search);
+	}
+
+	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'elasticSearch')
+	async searchBoardByElastic(
+		@Query('search') search: string,
+	) {
+		console.log('search:',search);
+		return this.boardsService.searchBoardByElastic(search);
 	}
 
 	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
 	async getAllBoards(@Query() pagination: Pagination) {
-		return this.boardsService.findAllBoards(pagination.pageNumber);
+		return this.boardsService.getBoardList(pagination.pageNumber);
 	}
 
 	@UseGuards(UserAuthGuard)

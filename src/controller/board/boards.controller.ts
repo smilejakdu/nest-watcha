@@ -33,6 +33,7 @@ import { Response, Request } from 'express';
 import { CoreResponseDto, SuccessFulResponse } from "../../shared/CoreResponse";
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
 import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
+import {endPointPostDecorator} from "../../decorators/end-point-post.decorator";
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);
@@ -52,14 +53,17 @@ export class BoardsController {
 		private readonly hashtagService : HashtagService,
 	) {}
 
-	@ApiOperation({ summary: '게시판 이미지 모두 가져오기' })
-	@ApiOkResponse({
-		description: '성공',
-		type: CreateBoardDto,
-	})
-	@Get('image')
+	@endPointGetDecorator('게시판 이미지 모두 가져오기', '성공', CoreResponseDto, 'image')
 	async getBoardImage() {
 		return this.boardImageService.findAllImages();
+	}
+
+	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'search')
+	async searchBoard(
+		@Query('search') search: string,
+	) {
+		console.log('search:',search);
+		return this.boardsService.searchBoard(search);
 	}
 
 	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
@@ -67,13 +71,8 @@ export class BoardsController {
 		return this.boardsService.findAllBoards(pagination.pageNumber);
 	}
 
-	@ApiCreatedResponse({
-		description: '성공',
-		type: CreateBoardDto,
-	})
 	@UseGuards(UserAuthGuard)
-	@ApiOperation({ summary: '게시판작성하기' })
-	@Post()
+	@endPointPostDecorator('게시판 작성하기', '성공', CoreResponseDto, '')
 	async createBoard(
 		@Req() request: Request,
 		@Body() data: CreateBoardDto,

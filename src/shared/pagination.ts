@@ -6,7 +6,12 @@ export class Pagination {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumberString()
-  pageNumber: number;
+  pageNumber?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumberString()
+  size?: number;
 }
 
 export class PaginationResult {

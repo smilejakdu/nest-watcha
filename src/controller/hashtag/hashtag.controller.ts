@@ -15,7 +15,7 @@ import {CoreResponse, CoreResponseDto} from "../../shared/CoreResponse";
 export class HashtagController {
 	constructor(private hashTagService: HashtagService) {}
 
-	@endPointGetDecorator('해시태그 불러오기', '성공', CoreResponseDto)
+	@endPointGetDecorator('해시태그 불러오기', '성공', CoreResponseDto,'')
 	async getMyHashTag(@Query() data: SelectHashtagDto) {
 		return this.hashTagService.getMyHashTag(data.hashtag);
 	}

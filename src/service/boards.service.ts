@@ -12,15 +12,24 @@ import { BoardImageEntity } from 'src/database/entities/Board/BoardImage.entity'
 import {HashTagEntity} from "../database/entities/hashTag.entity";
 import {UsersEntity} from "../database/entities/User/Users.entity";
 import {BoardImageRepository} from "../database/repository/BoardRepository/boardImage.repository";
+import solr from 'solr-node';
 
 @Injectable()
 export class BoardsService {
+	private solrNodeclient;
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
 		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
 		private readonly dataSource: DataSource,
-	) { }
+	) {
+		this.solrNodeclient = new solr({
+			host: 'localhost',
+			port: '8983',
+			core: 'board',
+			protocol: 'http',
+		});
+	}
 
 	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponse> {
 		const {boardHashTag, boardImages , ...boardData} = data;
@@ -86,6 +95,17 @@ export class BoardsService {
 	async findAllBoards(pageNumber: number):Promise<CoreResponse> {
 		const foundAllBoards = await this.boardsRepository.findAllBoards(pageNumber);
 		return SuccessFulResponse(foundAllBoards);
+	}
+
+	async searchBoard(query: string) {
+		console.log('query', query);
+		try {
+			const result = await this.solrNodeclient.query().q(query);
+			const responseSearch = await this.solrNodeclient.search(result);
+			return JSON.stringify(responseSearch);
+		} catch (err) {
+			throw err;
+		}
 	}
 
 	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {

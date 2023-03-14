@@ -114,8 +114,15 @@ export class BoardsService {
 					email: true,
 					username: true,
 				},
+				boardHashTag: {
+					id: true,
+					hashtag:{
+						id: true,
+						name: true,
+					}
+				}
 			},
-			relations: ['User'],
+			relations: ['User', 'boardHashTag','boardHashTag.hashtag'],
 			order: { createdAt: 'DESC' },
 			skip,
 			take,

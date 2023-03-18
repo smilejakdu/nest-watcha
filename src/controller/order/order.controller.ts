@@ -7,11 +7,13 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { OrdersService } from '../../service/orders.service';
+import { IamPortOrdersService } from '../../service/IamPortOrders.service';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { CompletePaymentDto } from './order.controller.dto/createCompletePayment.dto';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 import {Request} from 'express';
+import { TossPayQueryDto } from './order.controller.dto/tossPaymentsRequest.dto';
+import {TossPayService} from "../../service/tossPaymentOrders.service";
 
 @ApiInternalServerErrorResponse({
   description: '서버 에러',
@@ -21,7 +23,8 @@ import {Request} from 'express';
 @Controller('orders')
 export class OrderController {
   constructor(
-    private readonly ordersService : OrdersService,
+    private readonly iamPortOrdersService: IamPortOrdersService,
+    private readonly TossPayService: TossPayService,
   ) {}
 
   @ApiCreatedResponse({
@@ -40,6 +43,12 @@ export class OrderController {
   @Post('/payment')
   async orderComplete(@Body() body: CompletePaymentDto): Promise<any> {
     console.log(body);
-    return await this.ordersService.orderPaymentComplete(body);
+    return await this.iamPortOrdersService.orderPaymentComplete(body);
+  }
+  /**토스 페이먼츠 api에 결제 요청하는 함수 */
+  @Post('/success')
+  async successPay(@Body() tossPayQueryDto: TossPayQueryDto) {
+    console.log(tossPayQueryDto);
+    return await this.TossPayService.orderPaymentComplete(tossPayQueryDto);
   }
 }

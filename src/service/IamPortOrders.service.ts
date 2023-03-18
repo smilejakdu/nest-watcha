@@ -14,12 +14,10 @@ import { UserRepository } from '../database/repository/user.repository';
 import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
 import {transactionRunner} from "../shared/common/transaction/transaction";
 import {QueryRunner} from "typeorm";
-import {GenreEntity} from "../database/entities/MovieAndGenre/genre.entity";
 import dayjs from "dayjs";
-import {OrderControllerResponseDto} from "../controller/order/order.controller.dto/orderControllerResponse.dto";
 
 @Injectable()
-export class OrdersService {
+export class IamPortOrdersService {
   constructor(
     private readonly ordersRepository : OrderRepository,
     private readonly usersRepository: UserRepository,

@@ -6,8 +6,7 @@ export function endPointPostDecorator<T>(summary: string,
                                         description:string,
                                         responseDtoClass: new () => T,
                                         endPoint: string,
-) {
-
+                                         ) {
   return applyDecorators(
     ApiOperation({
       summary: summary,

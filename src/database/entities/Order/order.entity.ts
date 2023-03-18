@@ -31,8 +31,11 @@ export enum IamportValidateStatus {
 
 @Entity({ schema: 'nest_watcha', name: 'orders' })
 export class OrderEntity extends CoreEntity {
-	@Column('varchar', { name: 'order_number', length: 250 })
+	@Column('varchar', { name: 'order_number', length: 250, nullable: true })
 	order_number: string;
+
+	@Column('varchar', { name: 'toss_order_number', length: 250, nullable: true })
+	toss_order_number: string;
 
 	@Column({
 		type: 'enum',

@@ -1,18 +1,18 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } from "@nestjs/common";
 // Entity
-import { SignUpRequestDto } from '../controller/users/users.controller.dto/signUpDto/signUp.request.dto';
-import { UserRepository } from '../database/repository/user.repository';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
-import { LoginRequestDto } from '../controller/users/users.controller.dto/logInDto/logIn.request.dto';
-import bcrypt from 'bcryptjs';
-import * as Jwt from 'jsonwebtoken';
-import * as crypto from 'crypto';
-import { LoginType, UsersEntity } from '../database/entities/User/Users.entity';
-import { DataSource, QueryRunner } from 'typeorm';
-import {Response} from "express";
-import { transactionRunner } from 'src/shared/common/transaction/transaction';
-import {UserFindResponseDto} from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import {FoundUserType, GoogleUserData, KakaoUserData} from "../types";
+import { SignUpRequestDto } from "../controller/users/users.controller.dto/signUpDto/signUp.request.dto";
+import { UserRepository } from "../database/repository/user.repository";
+import { CoreResponse, SuccessFulResponse } from "../shared/CoreResponse";
+import { LoginRequestDto } from "../controller/users/users.controller.dto/logInDto/logIn.request.dto";
+import bcrypt from "bcryptjs";
+import * as Jwt from "jsonwebtoken";
+import * as crypto from "crypto";
+import { LoginType, UsersEntity } from "../database/entities/User/Users.entity";
+import { DataSource, QueryRunner } from "typeorm";
+import { Response } from "express";
+import { transactionRunner } from "src/shared/common/transaction/transaction";
+import { UserFindResponseDto } from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
+import { FoundUserType, GoogleUserData, KakaoUserData } from "../types";
 
 @Injectable()
 export class UsersService {
@@ -52,18 +52,18 @@ export class UsersService {
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
 		const { password, email } = signUpDto;
 		const foundUser = await this.userRepository.findOneBy({ email });
+
 		if (foundUser) {
 			throw new BadRequestException('이미 존재하는 이메일 입니다.');
 		}
 
 		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
-			const hashedPassword = await bcrypt.hash(password, 12);
-			signUpDto.password = hashedPassword;
+			signUpDto.password = await bcrypt.hash(password, 12);
 			return await queryRunner.manager.save(UsersEntity, signUpDto);
 		},this.dataSource);
 
 		delete responseSignUpUser.password;
-		return SuccessFulResponse(responseSignUpUser ,HttpStatus.CREATED);
+		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
 	}
 
 	async socialSignUp(data: any) {
@@ -173,8 +173,8 @@ export class UsersService {
 		}
 
 		const payload = {email: foundUser.email};
-		const options = {expiresIn: '1d', issuer: 'ash-admin', algorithm: 'HS256'};
-		const accessToken = await Jwt.sign(payload, process.env.JWT_SECRET);
+		const options: Jwt.SignOptions = {expiresIn: '1d', issuer: 'robert', algorithm: 'HS256'};
+		const accessToken = Jwt.sign(payload, process.env.JWT_SECRET, options);
 		delete foundUser.password;
 
 		res.cookie('access-token', accessToken, {
@@ -185,10 +185,7 @@ export class UsersService {
 			maxAge: 14 * 24 * 60 * 60 * 1000,
 		});
 
-		return SuccessFulResponse({
-			user : foundUser,
-			access_token : accessToken,
-		});
+		return SuccessFulResponse({ user : foundUser});
 	}
 
 	async updateUser(userData: UsersEntity) {

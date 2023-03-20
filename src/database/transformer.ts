@@ -30,7 +30,7 @@ export const JsonTransformer = {
   },
 };
 
-export const StringTransformer = {
+export const StringTransformerDate = {
   from:(value:string) =>{
     if (value === '') return null;
     if (value === null || value == undefined) return null;
@@ -50,3 +50,24 @@ export const StringTransformer = {
     }
   },
 };
+
+export const StringTransformerArray = {
+  from:(value:string) => {
+    if (value === '') return null;
+    if (value === null || value == undefined) return null;
+    try {
+      return Array.from(value);
+    } catch (e){
+      return value;
+    }
+  },
+  to:(value:any)=>{
+    if (value === '') return null;
+    if (value === null || value == undefined) return null;
+    try{
+      return Array.from(value);
+    }catch (e) {
+      return value;
+    }
+  }
+}

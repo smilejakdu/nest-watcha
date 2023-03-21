@@ -185,7 +185,7 @@ export class UsersService {
 			maxAge: 14 * 24 * 60 * 60 * 1000,
 		});
 
-		return SuccessFulResponse({ user : foundUser});
+		return SuccessFulResponse({ user: foundUser });
 	}
 
 	async updateUser(userData: UsersEntity) {

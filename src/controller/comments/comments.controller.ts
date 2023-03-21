@@ -13,6 +13,7 @@ import {Request} from "express";
 import { endPointGetDecorator } from 'src/decorators/end-point-get.decorator';
 import { CoreResponseDto } from 'src/shared/CoreResponse';
 import {endPointPostDecorator} from "../../decorators/end-point-post.decorator";
+import { Pagination } from "../../shared/pagination";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('COMMENTS')
@@ -22,9 +23,17 @@ export class CommentsController {
 		private readonly commentsService: CommentsService,
 	) {}
 
-	@endPointGetDecorator('댓글 가져오기', '성공', CoreResponseDto,':id')
-	async getComments(@Param('id', ParseIntPipe) id: number) {
-		return this.commentsService.findBoardAndComments(id);
+	@endPointGetDecorator('게시판 정보와 댓글 가져오기', '성공', CoreResponseDto,':id')
+	async getComments(
+		@Req() request: Request,
+		@Query() page: Pagination,
+		@Param('id', ParseIntPipe) id: number,
+	) {
+		const foundUser = request?.user as UsersEntity;
+		const pageNumber = page?.pageNumber ?? 1;
+		const size = page?.size ?? 5;
+
+		return this.commentsService.findBoardAndComments(id,pageNumber, size);
 	}
 
 	@endPointPostDecorator('챗 GPT 에 질문을 하고 답변을 받는다.', '성공', CoreResponseDto, 'openai')

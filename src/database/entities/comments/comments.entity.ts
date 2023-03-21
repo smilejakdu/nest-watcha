@@ -4,6 +4,7 @@ import { CoreEntity } from '../core.entity';
 import { BoardsEntity } from '../Board/Boards.entity';
 import { UsersEntity } from '../User/Users.entity';
 import { ReplyEntitiy } from "./reply.entitiy";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity({ schema: 'nest_watcha', name: 'comments' })
 export class CommentsEntity extends CoreEntity {
@@ -15,6 +16,10 @@ export class CommentsEntity extends CoreEntity {
 
 	@Column('int', { name: 'userId', nullable: true })
 	userId: number | null;
+
+	@ApiProperty()
+	@Column('decimal', { precision: 5, scale: 2, comment: '별점 (소수점 2째자리)' })
+	like_counts: number;
 
 	@ManyToOne(() => UsersEntity, users => users.Comments, {
 		onDelete: 'SET NULL',

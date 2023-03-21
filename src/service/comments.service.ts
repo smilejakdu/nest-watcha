@@ -29,13 +29,25 @@ export class CommentsService {
 		this.openAiApi = new OpenAIApi(configuration);
 	}
 
-	async findBoardAndComments(boardId: number) {
-		const boardWithComments = await this.boardsRepository.findBoardAndComments(boardId);
-		if (!boardWithComments) {
+	async findBoardAndComments(
+		boardId: number,
+		pageNumber: number,
+		size: number,
+	) {
+		const [foundBoard, foundComments] = await Promise.all([
+				this.boardsRepository.findOneBy({id: boardId}),
+				this.commentsRepository.findCommentByBoardId(boardId, pageNumber, size),
+			]
+		);
+
+		if (!foundBoard) {
 			throw new NotFoundException('해당 게시글이 존재하지 않습니다.',String(boardId));
 		}
 
-		return SuccessFulResponse(boardWithComments);
+		return SuccessFulResponse({
+			board: foundBoard,
+			comments: foundComments,
+		});
 	}
 
 	async createComment(content: string, boardId: number, userId: number) {

@@ -70,6 +70,11 @@ export class UsersService {
 			throw new BadRequestException('이미 존재하는 이메일 입니다.');
 		}
 
+		const regExp = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/;
+		if (!regExp.test(password)) {
+			throw new BadRequestException('비밀번호는 숫자와 영문자를 포함하여 8자 이상이어야 합니다.');
+		}
+
 		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
 			signUpDto.password = await bcrypt.hash(password, 12);
 			return await queryRunner.manager.save(UsersEntity, signUpDto);

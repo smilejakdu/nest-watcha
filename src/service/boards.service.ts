@@ -47,13 +47,13 @@ export class BoardsService {
 		if (boardHashTag?.length > 0) {
 			const foundHashTagList = await this.hashTagRepository.findHashTagList(boardHashTag);
 			if (foundHashTagList.length > 0) {
-				createdBoardHashTag = await foundHashTagList.map(async (hashTag) => {
+				createdBoardHashTag = foundHashTagList.map(async (hashTag) => {
 					const newBoardHashTag = new BoardHashTagEntity();
 					newBoardHashTag.board_id = createdBoard.id;
 					newBoardHashTag.hash_id = hashTag.id;
 					return await transactionRunner(async (queryRunner) => {
 						return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
-						},this.dataSource);
+					}, this.dataSource);
 				});
 			} else {
 				const newHashTagList = boardHashTag.map(async (hashTag) => {
@@ -77,13 +77,13 @@ export class BoardsService {
 
 		let createdImagePath;
 		if (boardImages?.length > 0) {
-			createdImagePath = await boardImages.map(async (image) => {
+			createdImagePath = boardImages.map(async (image) => {
 				const newBoardImage = new BoardImageEntity();
 				newBoardImage.board_id = createdBoard.id;
 				newBoardImage.imagePath = image;
 				return await transactionRunner(async (queryRunner) => {
 					return await queryRunner.manager.save(BoardImageEntity, newBoardImage);
-				},this.dataSource);
+				}, this.dataSource);
 			});
 		}
 

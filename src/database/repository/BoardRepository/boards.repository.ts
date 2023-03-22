@@ -4,9 +4,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { transactionRunner } from '../../../shared/common/transaction/transaction';
 import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
-import {CreateBoardDto} from "../../../controller/board/board.controller.dto/create-board.dto";
 
 @CustomRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{

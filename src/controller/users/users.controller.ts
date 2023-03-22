@@ -72,7 +72,6 @@ export class UsersController {
 		return res.status(responseLogin.statusCode).json(responseLogin);
 	}
 
-
 	@ApiOperation({ summary: 'my_profile' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
@@ -81,7 +80,7 @@ export class UsersController {
 		@Req() req: Request,
 		@Body() data: UpdateUserRequestDto,
 		@Res() res: Response,
-	){
+	) {
 		const foundUser = req.user as UsersEntity;
 		if (!foundUser) {
 			throw new NotFoundException('해당 유저가 존재하지 않습니다.');

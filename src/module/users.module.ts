@@ -8,11 +8,13 @@ import { PermissionEntity } from "../database/entities/User/Permission.entity";
 import { GoogleStrategy } from "../strategies/google.strategy";
 import { KakaoStrategy } from "../strategies/kakao.strategy";
 import {NaverStrategy} from "../strategies/naver.strategy";
+import {BoardsRepository} from "../database/repository/BoardRepository/boards.repository";
 
 @Module({
 	imports: [
 		TypeOrmExModule.forCustomRepository([
 			UserRepository,
+			BoardsRepository,
 		]),
 		TypeOrmModule.forFeature([PermissionEntity]),
 	],

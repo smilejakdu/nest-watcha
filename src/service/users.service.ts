@@ -13,17 +13,30 @@ import { Response } from "express";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
 import { UserFindResponseDto } from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
 import { FoundUserType, GoogleUserData, KakaoUserData } from "../types";
+import {BoardsRepository} from "../database/repository/BoardRepository/boards.repository";
 
 @Injectable()
 export class UsersService {
 	constructor(
 		private readonly userRepository: UserRepository,
+		private readonly boardRepository: BoardsRepository,
 		private readonly dataSource: DataSource,
 	) {}
 
-	async findMyBoardsByEmail(email:string) {
-		const foundMyBoards = await this.userRepository.findMyBoardByEmail(email)
-		return SuccessFulResponse(foundMyBoards);
+	async findMyBoardsByEmail(userId: number) {
+		const [foundUser, foundMyBoards] = await Promise.all([
+			await this.userRepository.findOneBy({ id: userId }),
+			await this.boardRepository.findMyBoardByUserId(userId),
+		]);
+
+		if (!foundUser) {
+			throw new NotFoundException('존재하지 않는 유저입니다.');
+		}
+
+		return SuccessFulResponse({
+			user: foundUser,
+			myBoards: foundMyBoards,
+		});
 	}
 
 	async encryptPhoneNumber(phoneNumber: string) {

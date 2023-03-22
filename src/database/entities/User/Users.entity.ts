@@ -42,7 +42,7 @@ export class UsersEntity extends CoreEntity {
 	permission_id: number | null;
 
 	@ManyToOne(() => PermissionEntity, permission => permission.users, {
-		onDelete: 'CASCADE',
+		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({ name: 'permission_id' })

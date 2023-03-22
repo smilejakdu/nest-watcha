@@ -27,7 +27,7 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('users.id=:id',{id});
   }
 
-  findMyBoardByEmail(email: string) {
+  async findMyBoardByEmail(email: string) {
     return this.makeQueryBuilder()
       .select([
         'users.username',

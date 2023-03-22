@@ -96,8 +96,8 @@ export class UsersController {
 	@UseGuards(UserAuthGuard)
 	@Get('my_boards')
 	async findMyBoards(@Req() req: Request) {
-		const foundUser = req.user as UsersEntity;
-		return this.usersService.findMyBoardsByEmail(foundUser.email);
+		const foundUser = req?.user as UsersEntity;
+		return this.usersService.findMyBoardsByEmail(foundUser.id);
 	}
 
 	// @ApiOperation({ summary: 'kakao_login' })

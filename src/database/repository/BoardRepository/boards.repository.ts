@@ -14,17 +14,6 @@ export class BoardsRepository extends Repository<BoardsEntity>{
     return this.createQueryBuilder('boards', queryRunner);
   }
 
-  async createBoard(data: CreateBoardDto, user_id: number) {
-    const newBoard = new BoardsEntity();
-    Object.assign(newBoard ,data);
-    newBoard.user_id = user_id;
-    const createdBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
-      return await queryRunner.manager.save(BoardsEntity,newBoard);
-    });
-
-    return createdBoard.id;
-  }
-
   findBoardAndComments(boardId: number) {
     return this.makeQueryBuilder()
       .leftJoinAndSelect('board.Comments', 'comments')
@@ -33,7 +22,24 @@ export class BoardsRepository extends Repository<BoardsEntity>{
       .getManyAndCount();
   }
 
-  findAllBoards(
+  async findMyBoardByUserId(userId: number) {
+    return this.makeQueryBuilder()
+      .select([
+        'boards.id',
+        'boards.title',
+        'boards.content',
+        'boards.updatedAt',
+      ])
+      .addSelect([
+        'boardImages.id',
+        'boardImages.imagePath'
+      ])
+      .leftJoin('boards.boardImages','boardImages')
+      .where('boards.user_id =:user_id',{user_id: userId})
+      .getMany();
+  }
+
+  async findAllBoards(
     pageNumber= 1,
   ) {
     const take = 10;

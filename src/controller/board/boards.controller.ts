@@ -76,7 +76,14 @@ export class BoardsController {
 
 	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
 	async getAllBoards(@Query() pagination: Pagination) {
-		return this.boardsService.getBoardList(pagination.pageNumber);
+		const { pageNumber, size } = pagination;
+		const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
+		const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
+
+		return this.boardsService.getBoardList(
+			parsingPageNumber,
+			parsingSizeNumber,
+		);
 	}
 
 	@UseGuards(UserAuthGuard)

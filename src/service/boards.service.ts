@@ -95,8 +95,8 @@ export class BoardsService {
 	}
 
 	async getBoardList(
-		pageNumber = 1,
-		pageSize = 5,
+		pageNumber: number,
+		pageSize: number,
 	) {
 		const skip = (pageNumber - 1) * pageSize;
 		const take = pageSize;

@@ -14,10 +14,10 @@ export class MovieRepository extends Repository<MovieEntity>{
 
   async findMovieAll(
     pageNumber: number,
+    size: number,
     queryRunner?: QueryRunner,
   ) {
-    const take = 10;
-    const skip = (pageNumber - 1) * take;
+    const skip = (pageNumber - 1) * size;
 
     return this.makeQueryBuilder(queryRunner)
       .addSelect([
@@ -40,7 +40,7 @@ export class MovieRepository extends Repository<MovieEntity>{
       .innerJoin('genremovie.Genre','genre')
       .leftJoin('movie.subMovieImage','subMovieImage')
       .skip(skip)
-      .take(take)
+      .take(size)
       .getMany();
   }
 

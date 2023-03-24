@@ -51,8 +51,11 @@ export class MoviesService {
     return SuccessFulResponse(movie);
   }
 
-  async findAllMovie(pageNumber= 1) {
-    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber);
+  async findAllMovie(
+    pageNumber: number,
+    size: number,
+  ) {
+    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber, size);
     return SuccessFulResponse(foundAllMovie);
   }
 

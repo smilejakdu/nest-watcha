@@ -29,11 +29,11 @@ export class CommentsController {
 		@Query() page: Pagination,
 		@Param('id', ParseIntPipe) id: number,
 	) {
-		const foundUser = request?.user as UsersEntity;
-		const pageNumber = page?.pageNumber ?? 1;
-		const size = page?.size ?? 5;
+		const {pageNumber, size } = page;
+		const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
+		const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
 
-		return this.commentsService.findBoardAndComments(id,pageNumber, size);
+		return this.commentsService.findBoardAndComments(id, parsingPageNumber, parsingSizeNumber);
 	}
 
 	@endPointPostDecorator('챗 GPT 에 질문을 하고 답변을 받는다.', '성공', CoreResponseDto, 'openai')

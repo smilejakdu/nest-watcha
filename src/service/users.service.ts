@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } f
 // Entity
 import { SignUpRequestDto } from "../controller/users/users.controller.dto/signUpDto/signUp.request.dto";
 import { UserRepository } from "../database/repository/user.repository";
-import { CoreResponse, SuccessFulResponse } from "../shared/CoreResponse";
+import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
 import { LoginRequestDto } from "../controller/users/users.controller.dto/logInDto/logIn.request.dto";
 import bcrypt from "bcryptjs";
 import * as Jwt from "jsonwebtoken";
@@ -62,7 +62,7 @@ export class UsersService {
 		return decrypted;
 	}
 
-	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponse> {
+	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponseDto> {
 		const { password, email } = signUpDto;
 		const foundUser = await this.userRepository.findOneBy({ email });
 

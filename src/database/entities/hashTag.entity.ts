@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import {Column, Entity, OneToMany, QueryRunner} from 'typeorm';
 import { CoreEntity } from './core.entity';
 import { BoardHashTagEntity } from './Board/BoardHashTag.entity';
 
@@ -9,4 +9,12 @@ export class HashTagEntity extends CoreEntity {
 
 	@OneToMany(() => BoardHashTagEntity, boardHashTag => boardHashTag.hashtag)
 	boardHashTag: BoardHashTagEntity[];
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(BoardHashTagEntity, 'hashTag');
+		} else {
+			return this.createQueryBuilder('hashTag');
+		}
+	}
 }

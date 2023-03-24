@@ -1,5 +1,5 @@
 import {CACHE_MANAGER, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 import { transactionRunner } from "../shared/common/transaction/transaction";
 import {DataSource, QueryRunner } from "typeorm";
@@ -37,14 +37,20 @@ export class GenreService {
     return SuccessFulResponse(createdGenreResponseDto, HttpStatus.CREATED);
   }
 
-  async findGenreWithMovieByName(genreName: string): Promise<CoreResponse> {
-    // genre 와 movie 를 join 하여 가져오는 방법
+  async findGenreWithMovieByName(
+    genreName: string,
+    pageNumber: number,
+    size: number,
+  ): Promise<CoreResponseDto> {
     const redisGenre = await this.cacheService.get(genreName);
+
     if (redisGenre) {
       console.log('캐싱이야', redisGenre);
       return SuccessFulResponse(redisGenre);
     }
+
     const foundGenre = await this.genreRepository.findOne({
+      select: ['id', 'name' , 'movies'],
       where: { name: genreName },
       relations: ['movies'],
     });
@@ -63,7 +69,7 @@ export class GenreService {
     return SuccessFulResponse(foundGenre);
   }
 
-  async findAllGenre(pageNumber: number, size: number): Promise<CoreResponse> {
+  async findAllGenre(pageNumber: number, size: number): Promise<CoreResponseDto> {
     const foundAllGenre = await this.genreRepository.findAllGenre(pageNumber, size);
     return SuccessFulResponse(foundAllGenre);
   }

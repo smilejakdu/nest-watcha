@@ -1,33 +1,47 @@
 import { HttpStatus } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 
-export interface CoreResponse {
+export class CoreResponseDto {
+  @ApiProperty({
+    example: true,
+    description: '성공 여부',
+  })
+  ok: boolean;
+
+  @ApiProperty({
+    example: 200,
+    description: '상태 코드',
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    example: 'SUCCESS',
+    description: '메세지',
+  })
+  message: string;
+}
+
+export class CoreResponseListDto implements CoreResponseDto {
   ok: boolean;
   statusCode: number;
   message: string;
   data?: any;
 }
 
-export class CoreResponseDto implements CoreResponse {
-  ok: boolean;
-  statusCode: number;
-  message: string;
-  data?: any;
-}
-
-export function SuccessFulResponse(data,status = HttpStatus.OK){
-  if(status == HttpStatus.CREATED){
+export function SuccessFulResponse(data, status = HttpStatus.OK){
+  if(status == HttpStatus.CREATED) {
     return {
       ok: true,
       statusCode: HttpStatus.CREATED,
       message: 'SUCCESS',
-      data:data
+      data: data
     };
   }
   return {
     ok: true,
     statusCode: HttpStatus.OK,
     message: 'SUCCESS',
-    data:data
+    data: data
   };
 }
 

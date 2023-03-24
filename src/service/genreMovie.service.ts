@@ -11,11 +11,13 @@ export class GenreMovieService{
     private readonly genreMovieRepository: GenreMovieRepository,
   ) {}
 
-  async createGenreMovie(createGenreMovieDto : CreateGenreMovieDto){
+  async createGenreMovie(createGenreMovieDto : CreateGenreMovieDto) {
     const createdGenreMovie = await this.genreMovieRepository.createGenreMovie(createGenreMovieDto);
+
     if (!createGenreMovieDto) {
       throw new BadRequestException('BAD_REQUEST');
     }
+
     return SuccessFulResponse(createdGenreMovie,HttpStatus.CREATED);
   }
 

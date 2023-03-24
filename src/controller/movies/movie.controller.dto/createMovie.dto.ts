@@ -6,24 +6,24 @@ import { Type } from 'class-transformer';
 export class CreateMovieRequestDto {
   @IsNotEmpty()
   @ApiProperty({
-    example:1,
-    description:'genreId'
+    example: 1,
+    description: '장르 아이디'
   })
   genreId: number;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example:'movieTitle',
-    description:'movieTitle'
+    example: 'movieTitle',
+    description: 'movieTitle'
   })
   movieTitle: string;
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
-    example:4.5,
-    description:'movieScore'
+    example: 4.5,
+    description: 'movieScore'
   })
   movieScore: number;
 
@@ -31,7 +31,7 @@ export class CreateMovieRequestDto {
   @IsNotEmpty()
   @ApiProperty({
     example: 'url_image_string',
-    description:'movieImage'
+    description: 'movieImage'
   })
   movieImage: string;
 
@@ -47,11 +47,11 @@ export class CreateMovieRequestDto {
 
   @IsNotEmpty()
   @ApiProperty({
-    enum :AgeLimitStatus,
-    isArray:true,
+    enum : AgeLimitStatus,
+    isArray: true,
     example : AgeLimitStatus.ADLUT_MORE_THAN
   })
-  ageLimitStatus:AgeLimitStatus;
+  ageLimitStatus: AgeLimitStatus;
 }
 
 export class CreateMovieResponseDto {

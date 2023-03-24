@@ -43,17 +43,12 @@ export class MoviesController {
   @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post()
   async createMovie(@Req() req, @Body() body: CreateMovieRequestDto) {
-    const { genreId, ...movieDto } = body;
     const responseCreatedMovie = await this.movieService.createMovie(body);
+
     if (!responseCreatedMovie.ok) {
       throw new BadRequestException('영화 만들기 실패했습니다.');
     }
-    await this.genreMovieService.createGenreMovie(
-      {
-        genreId: genreId,
-        movieId: responseCreatedMovie.data
-      }
-    );
+
     return {
       statusCode: HttpStatus.CREATED,
       message: 'SUCCESS'

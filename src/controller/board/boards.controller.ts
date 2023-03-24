@@ -2,11 +2,8 @@ import {
 	Body,
 	Controller,
 	Delete,
-	Get,
-	HttpStatus,
 	Param,
 	ParseIntPipe,
-	Post,
 	Put,
 	Query,
 	Req,
@@ -15,7 +12,6 @@ import {
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
-	ApiCreatedResponse,
 	ApiInternalServerErrorResponse,
 	ApiOkResponse,
 	ApiOperation,
@@ -29,11 +25,11 @@ import { BoardImageService } from '../../service/boardImage.service';
 import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
-import { Response, Request } from 'express';
-import { CoreResponseDto, SuccessFulResponse } from "../../shared/CoreResponse";
+import { Request } from 'express';
+import { CoreResponseDto, SuccessFulResponse} from "../../shared/CoreResponse";
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
 import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
-import {endPointPostDecorator} from "../../decorators/end-point-post.decorator";
+import { endPointPostDecorator} from "../../decorators/end-point-post.decorator";
 
 const logAndReturn = <T extends string|number>(input: T): T => {
 	console.log('input :', input);

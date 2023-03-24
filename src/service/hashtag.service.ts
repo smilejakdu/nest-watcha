@@ -6,6 +6,7 @@ import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.enti
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { HashtagRepository } from "../database/repository/hashtag.repository";
 import { SuccessFulResponse } from "../shared/CoreResponse";
+import {response} from "express";
 
 @Injectable()
 export class HashtagService {
@@ -16,17 +17,22 @@ export class HashtagService {
 
 	async getMyHashTag(hashtag: string[]) {
 		const responseBoard = await this.boardsRepository
-			.createQueryBuilder('Boards')
-			.select('Boards.*')
+			.makeQueryBuilder()
+			.select('boards.*')
 			.addSelect([
 				'HashTag.id',
 				'HashTag.name',
 			])
-			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.boardId = Boards.id')
-			.innerJoin(HashTagEntity, 'HashTag', 'HashTag.id = BoardHashTag.hashId')
-			.where('HashTag.name IN (:...hashtag)', { hashtag })
-			.groupBy('Boards.id')
-			.getRawMany();
+			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.board_id = boards.id')
+			.innerJoin(HashTagEntity, 'hashTag', 'hashTag.id = BoardHashTag.hash_id')
+
+		if (typeof hashtag === 'string') {
+			responseBoard.where('hashTag.name = :hashtag', { hashtag });
+		} else {
+			responseBoard.where('hashTag.name IN (:...hashtag)', { hashtag })
+		}
+		responseBoard.groupBy('boards.id')
+		.getRawMany();
 
 		return SuccessFulResponse(responseBoard);
 	}

@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
 import { DataSource, QueryRunner } from 'typeorm';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
@@ -35,12 +35,19 @@ export class MoviesService {
     private readonly movieMapper: MovieMapper,
   ) { }
 
-  async createMovie(createMovieRequestDto: CreateMovieRequestDto): Promise<CoreResponse> {
+  async createMovie(createMovieRequestDto: CreateMovieRequestDto): Promise<CoreResponseDto> {
     const createdMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
       return await queryRunner.manager.save(MovieEntity, createMovieRequestDto);
     });
 
-    return SuccessFulResponse(this.movieMapper.toDto(createdMovie),HttpStatus.CREATED);
+    if (!createdMovie) {
+      throw new BadRequestException('영화 만들기 실패했습니다.');
+    }
+
+    return SuccessFulResponse(
+      this.movieMapper.toDto(createdMovie),
+      HttpStatus.CREATED,
+    );
   }
 
   async findMovieById(movieId: number) {

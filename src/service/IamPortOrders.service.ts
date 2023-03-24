@@ -1,7 +1,7 @@
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../database/repository/OrderAndPurchaseRepository/order.repository';
 import { isNil } from 'lodash';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
 import { CompletePaymentDto } from '../controller/order/order.controller.dto/createCompletePayment.dto';
 import { Iamport } from '../controller/order/iamport';
 import {
@@ -31,7 +31,7 @@ export class IamPortOrdersService {
     return generateNumber();
   }
 
-  async createOrder(email:string , set:any):Promise<CoreResponse> {
+  async createOrder(email:string , set:any):Promise<CoreResponseDto> {
     const foundUser = await this.usersRepository.findOneBy({email});
 
     const newOrder = new OrderEntity();
@@ -131,7 +131,7 @@ export class IamPortOrdersService {
     }
   }
 
-  async findOneUserOrder(userId: number):Promise<CoreResponse> {
+  async findOneUserOrder(userId: number):Promise<CoreResponseDto> {
     const foundOrderByUser = await this.ordersRepository.findUserOrders(userId).getMany();
     return SuccessFulResponse(foundOrderByUser);
   }

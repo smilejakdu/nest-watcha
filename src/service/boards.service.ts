@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
-import { CoreResponse, SuccessFulResponse } from '../shared/CoreResponse';
+import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
 import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-board.dto';
 import { CreateBoardDto} from "../controller/board/board.controller.dto/create-board.dto";
 import { BoardsEntity} from "../database/entities/Board/Boards.entity";
@@ -33,7 +33,7 @@ export class BoardsService {
 		});
 	}
 
-	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponse> {
+	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponseDto> {
 		const {boardHashTag, boardImages , ...boardData} = data;
 
 		const newBoard = new BoardsEntity();

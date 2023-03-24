@@ -63,8 +63,8 @@ export class GenreService {
     return SuccessFulResponse(foundGenre);
   }
 
-  async findAllGenre(pageNumber: number): Promise<CoreResponse> {
-    const foundAllGenre = await this.genreRepository.findAllGenre(pageNumber || 1);
+  async findAllGenre(pageNumber: number, size: number): Promise<CoreResponse> {
+    const foundAllGenre = await this.genreRepository.findAllGenre(pageNumber, size);
     return SuccessFulResponse(foundAllGenre);
   }
 

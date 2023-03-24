@@ -9,13 +9,14 @@ export class GenreRepository extends Repository<GenreEntity> {
     return this.createQueryBuilder('genre', queryRunner);
   }
 
-  async findAllGenre(pageNumber: number) {
-    const take = 10;
-    const skip = (pageNumber - 1) * take;
+  async findAllGenre(
+    pageNumber: number,
+    size: number,
+  ) {
+    const skip = (pageNumber - 1) * size;
 
     return this.makeQueryBuilder()
-      .where('genre.deletedAt is NULL')
-      .limit(take)
+      .limit(size)
       .offset(skip)
       .getRawMany();
   }

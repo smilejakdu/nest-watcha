@@ -19,9 +19,11 @@ export class BoardImageService {
 
 	async findAllImages(): Promise<CoreResponse> {
 		const foundAllImage = await this.boardImageRepository.findAllImages();
+
 		if(!foundAllImage) {
 			throw new NotFoundException(`does not found ${foundAllImage}`);
 		}
+
 		return SuccessFulResponse(foundAllImage);
 	}
 

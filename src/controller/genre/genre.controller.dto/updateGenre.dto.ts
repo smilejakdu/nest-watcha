@@ -23,8 +23,8 @@ export class UpdateGenreResponseDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example:'name',
-    description:'name'
+    example:'genreName',
+    description:'genreName'
   })
   genreName: string;
 }

@@ -6,8 +6,8 @@ import { UpdateGenreRequestDto } from './genre.controller.dto/updateGenre.dto';
 import { DeleteGenreRequestDto } from './genre.controller.dto/deleteGenre.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
-import { Pagination } from "../../shared/common/dto/core.request.dto";
 import { CreateGenreRequestDto } from "./genre.controller.dto/createGenre.dto";
+import { Pagination } from 'src/shared/pagination';
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
@@ -35,7 +35,12 @@ export class GenreController {
 	})
 	@Get()
 	async findAllGenre(@Query() page: Pagination) {
-		return this.genreService.findAllGenre(page.pageNumber);
+		const {pageNumber, size} = page;
+
+		const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
+		const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
+
+		return this.genreService.findAllGenre(parsingPageNumber, parsingSizeNumber);
 	}
 
 	@ApiOperation({ summary: '장르 가져오기' })
@@ -46,7 +51,6 @@ export class GenreController {
 	@CacheTTL(5)
 	@Get(':genreName')
 	async findOneGenre(@Query('genreName') genreName: string) {
-		console.log(genreName);
 		return this.genreService.findGenreWithMovieByName(genreName);
 	}
 

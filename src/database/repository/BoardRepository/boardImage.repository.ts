@@ -18,9 +18,22 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
 		return generatedFiles;
 	}
 
-	findAllImages() {
+	async findAllImages() {
     return this.makeQueryBuilder()
-      .select('board_images.imagePath').getMany();
+      .select('board_images.imagePath')
+			.addSelect([
+				'board.id',
+				'board.title',
+				'board.content',
+			])
+			.addSelect([
+				'user.id',
+				'user.username',
+				'user.email',
+			])
+			.innerJoin('board_images.board', 'board')
+			.innerJoin('board.User', 'user')
+			.getMany();
 	}
 
 	deleteImage(board_id: number) {

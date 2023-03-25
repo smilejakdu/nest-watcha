@@ -18,7 +18,6 @@ export class HashtagController {
 	@endPointGetDecorator('해시태그에 따른 뮤비 가져오기', '성공', CoreResponseDto,'')
 	async getMyHashTag(@Query() query: SelectHashtagDto) {
 		const { hashtag } = query;
-		console.log(hashtag);
-		return this.hashTagService.getMyHashTag(hashtag);
+		return await this.hashTagService.getMyHashTag(hashtag);
 	}
 }

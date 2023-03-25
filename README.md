@@ -43,3 +43,7 @@ Used TypeScript , Nest js , MySQL , Docker , CI CD
 배포라는게 어떠한 상황에 맞게 배포를 할때가 있는것 같아서 ,
 우선적으로 그냥 ubuntu 에 pm2 올려서 배포를 해봤다 .
 그 후에 , docker 를 사용해서 배포를 진행을 했다.
+
+## work to be done
+
+- hash tag 에 따른 movie 불러오기 []

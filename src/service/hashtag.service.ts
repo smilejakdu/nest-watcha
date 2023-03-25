@@ -6,35 +6,42 @@ import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.enti
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { HashtagRepository } from "../database/repository/hashtag.repository";
 import { SuccessFulResponse } from "../shared/CoreResponse";
-import {response} from "express";
+import { BoardImageRepository } from "src/database/repository/BoardRepository/boardImage.repository";
+import {makeLogger} from "ts-loader/dist/logger";
 
 @Injectable()
 export class HashtagService {
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
+		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
 	) {}
 
-	async getMyHashTag(hashtag: string[]) {
+	async getMyHashTag(hashtag: string|string[]) {
+		console.log('hashtag: ', hashtag);
 		const responseBoard = await this.boardsRepository
 			.makeQueryBuilder()
-			.select('boards.*')
+			.select()
 			.addSelect([
-				'HashTag.id',
-				'HashTag.name',
+				'boardHashTag.id',
 			])
-			.innerJoin(BoardHashTagEntity, 'BoardHashTag', 'BoardHashTag.board_id = boards.id')
-			.innerJoin(HashTagEntity, 'hashTag', 'hashTag.id = BoardHashTag.hash_id')
+			.addSelect([
+				'hashtag.id',
+				'hashtag.name',
+			])
+			.innerJoin('boards.boardHashTag', 'boardHashTag')
+			.innerJoin('boardHashTag.hashtag', 'hashtag');
 
 		if (typeof hashtag === 'string') {
-			responseBoard.where('hashTag.name = :hashtag', { hashtag });
+			console.log('string')
+			responseBoard.where('hashtag.name =: hashtag', { hashtag });
 		} else {
-			responseBoard.where('hashTag.name IN (:...hashtag)', { hashtag })
+			console.log('array')
+			responseBoard.where('hashtag.name in (:names)', { names: hashtag })
 		}
-		responseBoard.groupBy('boards.id')
-		.getRawMany();
 
-		return SuccessFulResponse(responseBoard);
+		const result = await responseBoard.getMany();
+		return SuccessFulResponse(result);
 	}
 
 	async insertHashtagList(hashTagList) {

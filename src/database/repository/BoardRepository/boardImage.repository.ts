@@ -36,7 +36,7 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
 			.getMany();
 	}
 
-	deleteImage(board_id: number) {
+	async deleteImage(board_id: number) {
 		return this.makeQueryBuilder()
 			.delete()
 			.where('board_id = :board_id', { board_id: board_id })

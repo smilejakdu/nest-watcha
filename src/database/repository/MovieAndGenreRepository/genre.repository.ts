@@ -1,7 +1,6 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../../entities/MovieAndGenre/genre.entity';
-import { transactionRunner } from '../../../shared/common/transaction/transaction';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
 
 @CustomRepository(GenreEntity)
 export class GenreRepository extends Repository<GenreEntity> {
@@ -16,6 +15,7 @@ export class GenreRepository extends Repository<GenreEntity> {
     const skip = (pageNumber - 1) * size;
 
     return this.makeQueryBuilder()
+      .innerJoin('genre.Genremovie', 'movies')
       .limit(size)
       .offset(skip)
       .getRawMany();

@@ -102,7 +102,6 @@ export class BoardsService {
 		const take = pageSize;
 
 		const totalCount = await this.boardsRepository.count();
-
 		const boards = await this.boardsRepository.find({
 			select: {
 				id: true,

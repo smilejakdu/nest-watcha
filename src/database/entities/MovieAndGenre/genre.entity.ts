@@ -10,13 +10,14 @@ export enum AgeLimitStatus {
 
 @Entity({ schema: 'nest_watcha', name: 'genre' })
 export class GenreEntity extends CoreEntity {
-    @Column('varchar', { name: 'name', length: 150 })
-    name: string;
+  @Column('varchar', { name: 'name', length: 150 })
+  name: string;
 
-    @OneToMany(
-      () => GenreMovieEntity,
-      genreMovieEntity => genreMovieEntity.Genre,{
-          cascade: true,
-      })
-    movies: GenreMovieEntity[];
+  @OneToMany(
+    () => GenreMovieEntity,
+      genreMovieEntity =>
+        genreMovieEntity.Genre,{
+      cascade: true,
+    })
+  genreMovie: GenreMovieEntity[];
 }

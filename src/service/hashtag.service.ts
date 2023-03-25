@@ -7,7 +7,6 @@ import { BoardsRepository } from "../database/repository/BoardRepository/boards.
 import { HashtagRepository } from "../database/repository/hashtag.repository";
 import { SuccessFulResponse } from "../shared/CoreResponse";
 import { BoardImageRepository } from "src/database/repository/BoardRepository/boardImage.repository";
-import {makeLogger} from "ts-loader/dist/logger";
 
 @Injectable()
 export class HashtagService {
@@ -17,8 +16,7 @@ export class HashtagService {
 		private readonly hashTagRepository: HashtagRepository,
 	) {}
 
-	async getMyHashTag(hashtag: string|string[]) {
-		console.log('hashtag: ', hashtag);
+	async getMyHashTag(hashtag: string| string[]) {
 		const responseBoard = await this.boardsRepository
 			.makeQueryBuilder()
 			.select()
@@ -33,10 +31,8 @@ export class HashtagService {
 			.innerJoin('boardHashTag.hashtag', 'hashtag');
 
 		if (typeof hashtag === 'string') {
-			console.log('string')
 			responseBoard.where('hashtag.name =: hashtag', { hashtag });
 		} else {
-			console.log('array')
 			responseBoard.where('hashtag.name in (:names)', { names: hashtag })
 		}
 

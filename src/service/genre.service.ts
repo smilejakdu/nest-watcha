@@ -41,7 +41,8 @@ export class GenreService {
     genreName: string,
     pageNumber: number,
     size: number,
-  ): Promise<CoreResponseDto> {
+  ): Promise<CoreResponseDto>
+  {
     const redisGenre = await this.cacheService.get(genreName);
 
     if (redisGenre) {
@@ -49,10 +50,25 @@ export class GenreService {
       return SuccessFulResponse(redisGenre);
     }
 
-    const foundGenre = await this.genreRepository.findOne({
-      select: ['id', 'name' , 'movies'],
+    const foundGenre = await this.genreRepository.find({
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        genreMovie: {
+          movieId: true,
+          genreId: true,
+          Movie:{
+            id: true,
+            movie_title : true,
+            movie_score : true,
+          }
+        }
+      },
+      relations: ['genreMovie', 'genreMovie.Movie'],
       where: { name: genreName },
-      relations: ['movies'],
+      order: { createdAt: 'DESC' },
     });
 
     if (!foundGenre) {
@@ -62,10 +78,10 @@ export class GenreService {
     await this.cacheService.set(
       genreName,
       foundGenre,
-      5);
+      5,
+    );
 
     console.log('캐싱 아니야', redisGenre);
-
     return SuccessFulResponse(foundGenre);
   }
 

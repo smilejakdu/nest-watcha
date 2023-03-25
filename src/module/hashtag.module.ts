@@ -18,4 +18,5 @@ import { BoardImageRepository } from "../database/repository/BoardRepository/boa
 	controllers: [HashtagController],
 	exports: [HashtagService],
 })
-export class HashtagModule {}
+
+export class HashtagModule { }

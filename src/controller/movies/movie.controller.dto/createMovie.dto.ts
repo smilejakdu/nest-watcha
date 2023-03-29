@@ -4,46 +4,45 @@ import { AgeLimitStatus } from '../../../database/entities/MovieAndGenre/genre.e
 import { Type } from 'class-transformer';
 
 export class CreateMovieRequestDto {
-  @IsNotEmpty()
-  @ApiProperty({
-    example: 1,
-    description: '장르 아이디'
-  })
-  genreId: number;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'movieTitle',
-    description: 'movieTitle'
+    example: 'movie_title',
+    description: 'movie_title'
   })
-  movieTitle: string;
+  movie_title: string;
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 4.5,
-    description: 'movieScore'
+    description: 'movie_score'
   })
-  movieScore: number;
+  movie_score: number;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'url_image_string',
-    description: 'movieImage'
+    example: 'movie_image',
+    description: 'movie_image'
   })
-  movieImage: string;
+  movie_image: string;
 
   @IsNotEmpty()
   @IsDefined()
   @Type(() => Object)
-  director:Record<string, any>;
+  @ApiProperty({
+    example : "director"
+  })
+  director: Record<string, any>;
 
   @IsNotEmpty()
   @IsDefined()
   @Type(() => Object)
-  appearance:Record<string, any>;
+  @ApiProperty({
+    example : "appearance"
+  })
+  appearance: Record<string, any>;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -51,7 +50,7 @@ export class CreateMovieRequestDto {
     isArray: true,
     example : AgeLimitStatus.ADLUT_MORE_THAN
   })
-  ageLimitStatus: AgeLimitStatus;
+  age_limit_status: AgeLimitStatus;
 }
 
 export class CreateMovieResponseDto {

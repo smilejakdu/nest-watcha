@@ -20,7 +20,7 @@ export class GenreMovieEntity extends CoreEntity {
 	Genre: GenreEntity;
 
 	@ManyToOne(() => MovieEntity,
-			movie => movie.genre, {
+			movie => movie.genreMovie, {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})

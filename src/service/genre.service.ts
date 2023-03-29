@@ -81,7 +81,6 @@ export class GenreService {
       5,
     );
 
-    console.log('캐싱 아니야', redisGenre);
     return SuccessFulResponse(foundGenre);
   }
 

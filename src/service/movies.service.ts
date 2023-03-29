@@ -9,11 +9,10 @@ import { transactionRunner } from "../shared/common/transaction/transaction";
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
     const newMovieEntity = new CreateMovieRequestDto();
-    newMovieEntity.movieTitle = createMovieRequestDto.movieTitle;
-    newMovieEntity.movieImage = createMovieRequestDto.movieImage;
-    newMovieEntity.movieScore = createMovieRequestDto.movieScore;
-    newMovieEntity.ageLimitStatus = createMovieRequestDto.ageLimitStatus;
-    newMovieEntity.genreId = createMovieRequestDto.genreId;
+    newMovieEntity.movie_title = createMovieRequestDto.movie_title;
+    newMovieEntity.movie_image = createMovieRequestDto.movie_image;
+    newMovieEntity.movie_score = createMovieRequestDto.movie_score;
+    newMovieEntity.age_limit_status = createMovieRequestDto.age_limit_status;
     newMovieEntity.appearance = createMovieRequestDto.appearance;
     newMovieEntity.director = createMovieRequestDto.director;
     return newMovieEntity;
@@ -36,9 +35,11 @@ export class MoviesService {
   ) { }
 
   async createMovie(createMovieRequestDto: CreateMovieRequestDto): Promise<CoreResponseDto> {
+    const newMovie = new MovieEntity();
+    Object.assign(newMovie, createMovieRequestDto);
     const createdMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
-      return await queryRunner.manager.save(MovieEntity, createMovieRequestDto);
-    });
+      return await queryRunner.manager.save(MovieEntity, newMovie);
+    }, this.dataSource);
 
     if (!createdMovie) {
       throw new BadRequestException('영화 만들기 실패했습니다.');

@@ -37,7 +37,6 @@ export class GenreController {
 	@Get()
 	async findAllGenre(@Query() page: Pagination) {
 		const {pageNumber, size} = page;
-
 		const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
 		const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
 

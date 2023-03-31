@@ -50,7 +50,7 @@ export class MovieRepository extends Repository<MovieEntity>{
   }
 
   async findOneMovieById(media_id: number, queryRunner?: QueryRunner) {
-    const foundReviewAvgByMediaId = await this.makeQueryBuilder()
+    const reviewAvgQuery = await this.makeQueryBuilder()
       .select([
         'ROUND(AVG(reviews.like_counts), 1) as likes_count_avg',
       ])
@@ -58,10 +58,8 @@ export class MovieRepository extends Repository<MovieEntity>{
       .where(`movie.id=:id`, { id: media_id})
       .andWhere('movie.is_active =:is_active', { is_active: true })
       .groupBy('movie.id')
-      .getRawOne();
 
-    const foundOneMovie = await this
-      .makeQueryBuilder()
+    const movieQuery = this.makeQueryBuilder()
       .select([
         'movie.movie_title',
         'movie.movie_score',
@@ -70,7 +68,11 @@ export class MovieRepository extends Repository<MovieEntity>{
         'movie.age_limit_status',
       ])
       .where('movie.id = :id', {})
-      .getOne();
+
+    const [foundReviewAvgByMediaId, foundOneMovie] = await Promise.all([
+      reviewAvgQuery.getRawOne(),
+      movieQuery.getOne(),
+    ]);
     foundOneMovie.like_counts_avg = foundReviewAvgByMediaId?.likes_count_avg;
     return foundOneMovie;
   }

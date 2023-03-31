@@ -62,7 +62,6 @@ export class MoviesController {
   async findOneMovie(
     @Param('media_id', ParseIntPipe) media_id: number,
   ) {
-    console.log('media_id', media_id);
     return this.movieService.findOneMovie(media_id);
   }
 

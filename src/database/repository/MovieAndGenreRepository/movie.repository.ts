@@ -18,6 +18,11 @@ export class MovieRepository extends Repository<MovieEntity>{
     queryRunner?: QueryRunner,
   ) {
     const skip = (pageNumber - 1) * size;
+    const foundLikeCountsAvg = await this
+      .makeQueryBuilder()
+      .select()
+      .where('movie.id = :id', {id: 1})
+      .getRawOne();
 
     return this.makeQueryBuilder(queryRunner)
       .addSelect([
@@ -42,6 +47,13 @@ export class MovieRepository extends Repository<MovieEntity>{
       .skip(skip)
       .take(size)
       .getMany();
+  }
+  async findOneMovieById(id: number, queryRunner?: QueryRunner) {
+    const foundOneMovie = await this
+      .makeQueryBuilder()
+      .select()
+      .where('movie.id = :id', {id})
+      .getRawOne();
   }
 
   async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {

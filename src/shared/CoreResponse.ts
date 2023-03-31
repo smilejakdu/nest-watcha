@@ -28,7 +28,7 @@ export class CoreResponseListDto implements CoreResponseDto {
   data?: any;
 }
 
-export function SuccessFulResponse(data, status = HttpStatus.OK){
+export function SuccessFulResponse(data?, status = HttpStatus.OK) {
   if(status == HttpStatus.CREATED) {
     return {
       ok: true,

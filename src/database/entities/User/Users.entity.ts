@@ -8,6 +8,7 @@ import { SchedulesEntity } from '../schedules.entity';
 import { OrderClaimEntity } from '../Order/orderClaim.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
 import { PermissionEntity } from './Permission.entity';
+import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
 
 export enum LoginType {
 	NAVER = 'naver',
@@ -62,6 +63,9 @@ export class UsersEntity extends CoreEntity {
 
 	@OneToMany(() => OrderClaimEntity, orderClaim => orderClaim.User)
 	OrderClaims: OrderClaimEntity[];
+
+	@OneToMany(() => MovieReviewEntitiy, movieReview => movieReview.user)
+	movieReviews: MovieReviewEntitiy[];
 
 	@OneToMany(() => OrderLogEntity, orderLog => orderLog.User)
 	OrderLog: OrderLogEntity[];

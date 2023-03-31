@@ -50,9 +50,20 @@ export class MoviesController {
     }
 
     return {
+      ok: true,
       statusCode: HttpStatus.CREATED,
-      message: 'SUCCESS'
+      message: 'SUCCESS',
     };
+  }
+
+  @ApiOperation({ summary: '모든 영화 가져오기' })
+  @ApiOkResponse({ description: '성공' })
+  @Get(':movie_id')
+  async findOneMovie(
+    @Param('media_id', ParseIntPipe) media_id: number,
+  ) {
+    console.log('media_id', media_id);
+    return this.movieService.findOneMovie(media_id);
   }
 
   @ApiOperation({ summary: '모든 영화 가져오기' })

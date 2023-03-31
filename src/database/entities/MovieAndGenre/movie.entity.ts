@@ -6,6 +6,7 @@ import { JsonTransformer } from '../../transformer';
 import { subMovieImageEntity } from './subMovieImage.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
 import { MovieOptionEntity } from './movieOption.entity';
+import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
@@ -42,6 +43,8 @@ export class MovieEntity extends CoreEntity {
 	})
 	age_limit_status: AgeLimitStatus;
 
+	like_counts_avg: string;
+
 	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Movie)
 	genreMovie: GenreMovieEntity[];
 
@@ -50,6 +53,9 @@ export class MovieEntity extends CoreEntity {
 
 	@OneToMany(() => OrderLogEntity, orderLog => orderLog.Movie)
 	OrderLog: OrderLogEntity[];
+
+	@OneToMany(() => MovieReviewEntitiy, movieReview => movieReview.movie)
+	movieReviews: MovieReviewEntitiy[];
 
 	@Column('int', { name: 'movie_option_id', nullable: true })
 	movie_option_id: number| null;

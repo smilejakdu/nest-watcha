@@ -5,6 +5,7 @@ import { MovieRepository } from '../database/repository/MovieAndGenreRepository/
 import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
 import { CreateMovieRequestDto, CreateMovieResponseDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
 import { transactionRunner } from "../shared/common/transaction/transaction";
+import {CommentsRepository} from "../database/repository/comments.repository";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
@@ -30,6 +31,7 @@ export class MovieMapper {
 export class MoviesService {
   constructor(
     private readonly movieRepository: MovieRepository,
+    private readonly commentRepository: CommentsRepository,
     private readonly dataSource: DataSource,
     private readonly movieMapper: MovieMapper,
   ) { }
@@ -57,6 +59,15 @@ export class MoviesService {
       throw new BadRequestException('Movie not found');
     }
     return SuccessFulResponse(movie);
+  }
+
+  async findOneMovie(media_id: number) {
+
+    const [foundOneBoard, foundComments] = await Promise.all([
+        this.movieRepository.findOneBy({id: media_id}),
+        this.commentRepository.findCommentByBoardId(boardId, pageNumber, size),
+      ]
+    );
   }
 
   async findAllMovie(
@@ -87,5 +98,3 @@ export class MoviesService {
     return SuccessFulResponse(deletedMovie.raw.insertId);
   }
 }
-
-

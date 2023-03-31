@@ -13,6 +13,9 @@ export class MovieEntity extends CoreEntity {
 	@Column('varchar', { name: 'movieTitle', length: 100 })
 	movie_title: string;
 
+	@Column('varchar', { name: 'movie_description', length: 200 })
+	movie_description: string;
+
 	@Column('decimal', { precision: 5, scale: 2, nullable: true })
 	movie_score: number;
 

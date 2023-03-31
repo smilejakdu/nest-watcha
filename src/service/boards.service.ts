@@ -14,6 +14,7 @@ import {UsersEntity} from "../database/entities/User/Users.entity";
 import {BoardImageRepository} from "../database/repository/BoardRepository/boardImage.repository";
 import solr from 'solr-node';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import MiniSearch from 'minisearch'
 
 @Injectable()
 export class BoardsService {
@@ -164,6 +165,7 @@ export class BoardsService {
 		});
 		return responseSearch;
 	}
+
 
 	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {
 		const { boardHashTag, boardImages, ...boardData } = data;

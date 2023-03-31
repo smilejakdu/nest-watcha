@@ -6,6 +6,7 @@ import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
 import { CreateMovieRequestDto, CreateMovieResponseDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
 import { transactionRunner } from "../shared/common/transaction/transaction";
 import {CommentsRepository} from "../database/repository/comments.repository";
+import MiniSearch from "minisearch";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
@@ -77,6 +78,25 @@ export class MoviesService {
   ) {
     const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber, size);
     return SuccessFulResponse(foundAllMovie);
+  }
+
+  async searchByMinisearch(query: string) {
+    const foundMovie = await this.movieRepository.find();
+    const miniSearch = new MiniSearch({
+      fields: ['movie_title', 'movie_description'],
+      storeFields: ['movie_title', 'movie_description'],
+    })
+
+    miniSearch.addAll(foundMovie);
+    const results = miniSearch.search(query);
+    const searchResult = results.map((result) => {
+      return {
+        id: result.id,
+        title: result.movie_title,
+        description: result.movie_description,
+      }
+    });
+    return searchResult;
   }
 
   async updateMovieById(movieId: number, set: any, queryRunner?: QueryRunner) {

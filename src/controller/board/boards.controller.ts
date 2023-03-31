@@ -66,7 +66,6 @@ export class BoardsController {
 	async searchBoardByElastic(
 		@Query('search') search: string,
 	) {
-		console.log('search:',search);
 		return this.boardsService.searchBoardByElastic(search);
 	}
 

@@ -28,6 +28,8 @@ import { UpdateMovieDto } from './movie.controller.dto/updateMovie.dto';
 import { Pagination } from '../../shared/pagination';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
+import {endPointGetDecorator} from "../../decorators/end-point-get.decorator";
+import {CoreResponseDto} from "../../shared/CoreResponse";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
@@ -56,6 +58,13 @@ export class MoviesController {
     };
   }
 
+  @endPointGetDecorator('mini search 로 검색하기', '성공', CoreResponseDto, 'minisearch')
+  async searchByMinisearch(
+    @Query('search') search: string,
+  ) {
+    return await this.movieService.searchByMinisearch(search);
+  }
+
   @ApiOperation({ summary: '모든 영화 가져오기' })
   @ApiOkResponse({ description: '성공' })
   @Get(':movie_id')
@@ -75,6 +84,7 @@ export class MoviesController {
 
     return this.movieService.findAllMovie(parsingPageNumber, parsingSizeNumber);
   }
+
 
   @ApiOperation({ summary: '영화 수정하기' })
   @ApiCreatedResponse({ description: '성공' })

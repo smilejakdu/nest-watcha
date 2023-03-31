@@ -48,12 +48,31 @@ export class MovieRepository extends Repository<MovieEntity>{
       .take(size)
       .getMany();
   }
-  async findOneMovieById(id: number, queryRunner?: QueryRunner) {
+
+  async findOneMovieById(media_id: number, queryRunner?: QueryRunner) {
+    const foundReviewAvgByMediaId = await this.makeQueryBuilder()
+      .select([
+        'ROUND(AVG(reviews.like_counts), 1) as likes_count_avg',
+      ])
+      .leftJoin('movie.movieReviews', 'movieReviews')
+      .where(`movie.id=:id`, { id: media_id})
+      .andWhere('movie.is_active =:is_active', { is_active: true })
+      .groupBy('movie.id')
+      .getRawOne();
+
     const foundOneMovie = await this
       .makeQueryBuilder()
-      .select()
-      .where('movie.id = :id', {id})
-      .getRawOne();
+      .select([
+        'movie.movie_title',
+        'movie.movie_score',
+        'movie.director',
+        'movie.appearance',
+        'movie.age_limit_status',
+      ])
+      .where('movie.id = :id', {})
+      .getOne();
+    foundOneMovie.like_counts_avg = foundReviewAvgByMediaId?.likes_count_avg;
+    return foundOneMovie;
   }
 
   async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {

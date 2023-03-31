@@ -1,26 +1,27 @@
 import {CoreEntity} from "../core.entity";
-import {Column, JoinColumn, ManyToOne} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne} from "typeorm";
 import {MovieEntity} from "../MovieAndGenre/movie.entity";
 import { UsersEntity } from "../User/Users.entity";
 
+@Entity({ schema: 'nest_watcha', name: 'movie_reviews' })
 export class MovieReviewEntitiy extends CoreEntity {
   @Column('varchar', { name: 'content', length: 500 })
   content: string;
 
-  @Column('varchar', { name: 'rating', length: 500 })
-  rating: string;
+  @Column('int', { name: 'rating', nullable: true })
+  rating: number;
 
-  @Column('varchar', { name: 'movie_id', length: 500 })
-  movie_id: string;
+  @Column('int', { name: 'user_id', nullable: true })
+  user_id: number| null;
 
-  @Column('varchar', { name: 'user_id', length: 500 })
-  user_id: string;
+  @Column('int', { name: 'movie_id', nullable: true })
+  movie_id: number| null;
 
   @ManyToOne(() => UsersEntity, user => user.movieReviews)
   @JoinColumn({ name: 'user_id' })
   user: UsersEntity;
 
-  @ManyToOne(() => MovieEntity, user => user.movieReviews)
+  @ManyToOne(() => MovieEntity, movie => movie.movieReviews)
   @JoinColumn({ name: 'movie_id' })
   movie: MovieEntity;
 }

@@ -8,12 +8,14 @@ import { MovieOptionsController } from '../controller/movies/movieOptions.contro
 import { MovieOptionsRepository } from '../database/repository/MovieAndGenreRepository/movieOptions.repository';
 import { MovieOptionsService } from '../service/movieOptions.service';
 import {TypeOrmExModule} from "../shared/typeorm-ex.module";
+import {CommentsRepository} from "../database/repository/comments.repository";
 
 @Module({
   imports: [
     TypeOrmExModule.forCustomRepository([
       MovieRepository,
       GenreMovieRepository,
+      CommentsRepository,
       MovieOptionsRepository,
     ]),
   ],

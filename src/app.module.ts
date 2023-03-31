@@ -34,6 +34,7 @@ import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
 import process from "process";
 import {ReplyEntitiy} from "./database/entities/comments/reply.entitiy";
+import {MovieReviewEntitiy} from "./database/entities/movieReview/movieReview.entitiy";
 
 @Module({
 	imports: [
@@ -86,8 +87,9 @@ import {ReplyEntitiy} from "./database/entities/comments/reply.entitiy";
 				HashTagEntity,
 				SchedulesEntity,
 				ReplyEntitiy,
+				MovieReviewEntitiy,
 			],
-			autoLoadEntities: false,
+			autoLoadEntities: true,
 			charset: "utf8mb4",
 			synchronize: process.env.NODE_ENV === 'local' ? true : false,
 			logging: process.env.NODE_ENV === 'local' ? true : false,

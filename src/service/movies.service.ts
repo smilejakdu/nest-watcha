@@ -62,12 +62,13 @@ export class MoviesService {
   }
 
   async findOneMovie(media_id: number) {
+    const foundOneMovie = await this.movieRepository.findOneMovieById(media_id);
 
-    const [foundOneBoard, foundComments] = await Promise.all([
-        this.movieRepository.findOneBy({id: media_id}),
-        this.commentRepository.findCommentByBoardId(boardId, pageNumber, size),
-      ]
-    );
+    if (!foundOneMovie){
+      throw new BadRequestException('Movie not found');
+    }
+
+    return SuccessFulResponse(foundOneMovie);
   }
 
   async findAllMovie(

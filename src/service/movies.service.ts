@@ -89,6 +89,11 @@ export class MoviesService {
 
     miniSearch.addAll(foundMovie);
     const results = miniSearch.search(query);
+
+    if (results.length === 0) {
+      throw new BadRequestException('Movie not found');
+    }
+
     const searchResult = results.map((result) => {
       return {
         id: result.id,

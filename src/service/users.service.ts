@@ -111,7 +111,7 @@ export class UsersService {
 	}
 
 	async findUserByEmail(email:string): Promise<UserFindResponseDto> {
-		const foundUser: FoundUserType = await this.userRepository.findOne({
+		const foundUser= await this.userRepository.findOne({
 			select: ['id', 'email', 'username', 'phone'],
 			where: { email },
 		})

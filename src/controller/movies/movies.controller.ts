@@ -42,7 +42,7 @@ export class MoviesController {
 
   @ApiOperation({ summary: '영화 만들기' })
   @ApiCreatedResponse({ description: '성공' })
-  @UseGuards(UserAuthGuard, PermissionsGuard)
+  // @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post()
   async createMovie(@Req() req, @Body() body: CreateMovieRequestDto) {
     const responseCreatedMovie = await this.movieService.createMovie(body);
@@ -63,6 +63,13 @@ export class MoviesController {
     @Query('search') search: string,
   ) {
     return await this.movieService.searchByMinisearch(search);
+  }
+
+  @endPointGetDecorator('elasticSearch로 게시판 검색하기', '성공', CoreResponseDto, 'elasticSearch')
+  async searchBoardByElastic(
+    @Query('search') search: string,
+  ) {
+    return this.movieService.searchBoardByElastic(search);
   }
 
   @ApiOperation({ summary: '모든 영화 가져오기' })

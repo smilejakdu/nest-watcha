@@ -10,6 +10,7 @@ import {
 import { transactionRunner } from "../shared/common/transaction/transaction";
 import { CommentsRepository } from "../database/repository/comments.repository";
 import MiniSearch from "minisearch";
+import { ElasticsearchService } from "@nestjs/elasticsearch";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
@@ -34,6 +35,7 @@ export class MovieMapper {
 @Injectable()
 export class MoviesService {
   constructor(
+    private readonly elasticsearchService: ElasticsearchService,
     private readonly movieRepository: MovieRepository,
     private readonly commentRepository: CommentsRepository,
     private readonly dataSource: DataSource,
@@ -75,6 +77,20 @@ export class MoviesService {
     return SuccessFulResponse(foundOneMovie);
   }
 
+  async searchBoardByElastic(query: string) {
+    return await this.elasticsearchService.search({
+      index: 'board',
+      body: {
+        query: {
+          query_string: {
+            query: query,
+            // 	필요한 경우 다른 질의 문자열 쿼리 옵션 추가
+          }
+        }
+      }
+    });
+  }
+
   async findAllMovie(
     pageNumber: number,
     size: number,
@@ -106,7 +122,7 @@ export class MoviesService {
     });
   }
 
-  async updateMovieById(movieId: number, set: any, queryRunner?: QueryRunner) {
+  async updateMovieById(movieId: number, set: any) {
     const foundMovie = await this.movieRepository.findOneBy({ id: movieId });
     if (!foundMovie) {
       throw new BadRequestException('Movie not found');
@@ -121,7 +137,7 @@ export class MoviesService {
     return SuccessFulResponse(responseMovie);
   }
 
-  async deleteMovieById(ids:number[], queryRunner?: QueryRunner) {
+  async deleteMovieById(ids:number[]) {
     const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
     return SuccessFulResponse(deletedMovie.raw.insertId);
   }

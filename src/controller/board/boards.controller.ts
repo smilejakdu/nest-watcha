@@ -62,12 +62,6 @@ export class BoardsController {
 		return this.boardsService.searchBoardBySorl(search);
 	}
 
-	@endPointGetDecorator('elasticSearch로 게시판 검색하기', '성공', CoreResponseDto, 'elasticSearch')
-	async searchBoardByElastic(
-		@Query('search') search: string,
-	) {
-		return this.boardsService.searchBoardByElastic(search);
-	}
 
 	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
 	async getAllBoards(@Query() pagination: Pagination) {

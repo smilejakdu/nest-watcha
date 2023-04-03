@@ -13,13 +13,11 @@ import { HashTagEntity } from "../database/entities/hashTag.entity";
 import { UsersEntity } from "../database/entities/User/Users.entity";
 import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
 import solr from "solr-node";
-import { ElasticsearchService } from "@nestjs/elasticsearch";
 
 @Injectable()
 export class BoardsService {
 	private solrNodeclient;
 	constructor(
-		private readonly elasticsearchService: ElasticsearchService,
 		private readonly boardsRepository: BoardsRepository,
 		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
@@ -149,21 +147,6 @@ export class BoardsService {
 			throw err;
 		}
 	}
-
-	async searchBoardByElastic(query: string) {
-		return await this.elasticsearchService.search({
-			index: 'board',
-			body: {
-				query: {
-					query_string: {
-						query: query,
-						// 	필요한 경우 다른 질의 문자열 쿼리 옵션 추가
-					}
-				}
-			}
-		});
-	}
-
 
 	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {
 		const { boardHashTag, boardImages, ...boardData } = data;

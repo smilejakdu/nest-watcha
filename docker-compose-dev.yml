@@ -1,32 +1,23 @@
 version: '3.7'
 services:
-  redis:
-    image: redis:alpine
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - ./redis-data:/data
-
   nginx:
     build:
       context: .
       dockerfile: ./compose/local/nginx/Dockerfile
-    container_name: watcha_nginx
+    container_name: group_up_nginx
     depends_on:
-      - watcha
+      - group_up
       - db
     ports:
       - "80:80"
     links:
-      - watcha
+      - group_up
 
-  watcha:
+  group_up:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: watcha_backend
+    container_name: group_up_backend
     ports:
       - '13014:13014'
     env_file:
@@ -42,7 +33,7 @@ services:
   db:
     image: mysql:8.0.23
     restart: unless-stopped
-    container_name: watcha_mysql
+    container_name: group_up_mysql
     platform: linux/x86_64
     ports:
       - '3306:3306'

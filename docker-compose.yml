@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/nginx/Dockerfile
+    container_name: group_up_nginx
     depends_on:
       - group_up
       - db
@@ -14,13 +15,14 @@ services:
 
   group_up:
     build:
-      dockerfile: ./compose/local/backend/Dockerfile
       context: .
+      dockerfile: ./compose/local/backend/Dockerfile
+    container_name: group_up_backend
     ports:
-      - '8000:8000'
+      - '13014:13014'
     volumes:
-      - /usr/src/app/node_modules
       - .:/usr/src/app
+      - /usr/src/app/node_modules
     env_file:
       - compose/local/dev.env
     links:

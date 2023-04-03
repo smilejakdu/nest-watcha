@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } f
 // Entity
 import { SignUpRequestDto } from "../controller/users/users.controller.dto/signUpDto/signUp.request.dto";
 import { UserRepository } from "../database/repository/user.repository";
-import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
+import { CoreResponseDto, SuccessFulResponse } from "../shared/CoreResponse";
 import { LoginRequestDto } from "../controller/users/users.controller.dto/logInDto/logIn.request.dto";
 import bcrypt from "bcryptjs";
 import * as Jwt from "jsonwebtoken";
@@ -12,8 +12,10 @@ import { DataSource, QueryRunner } from "typeorm";
 import { Response } from "express";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
 import { UserFindResponseDto } from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import { FoundUserType, GoogleUserData, KakaoUserData } from "../types";
-import {BoardsRepository} from "../database/repository/BoardRepository/boards.repository";
+import { GoogleUserData, KakaoUserData } from "../types";
+import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
+import { ConfigService } from "@nestjs/config";
+import { OneWeeks } from "../shared/dateFormat/dateFormat.service";
 
 @Injectable()
 export class UsersService {
@@ -21,6 +23,7 @@ export class UsersService {
 		private readonly userRepository: UserRepository,
 		private readonly boardRepository: BoardsRepository,
 		private readonly dataSource: DataSource,
+		private readonly configService: ConfigService,
 	) {}
 
 	async findMyBoardsByEmail(userId: number) {
@@ -92,7 +95,7 @@ export class UsersService {
 
 		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
 			return await queryRunner.manager.save(UsersEntity, newUser);
-		},this.dataSource);
+		}, this.dataSource);
 
 		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
 	}
@@ -108,7 +111,7 @@ export class UsersService {
 	}
 
 	async findUserByEmail(email:string): Promise<UserFindResponseDto> {
-		const foundUser: FoundUserType = await this.userRepository.findOne({
+		const foundUser= await this.userRepository.findOne({
 			select: ['id', 'email', 'username', 'phone'],
 			where: { email },
 		})
@@ -195,12 +198,14 @@ export class UsersService {
 		const accessToken = Jwt.sign(payload, process.env.JWT_SECRET, options);
 		delete foundUser.password;
 
+		const domain = process.env.NODE_ENV === 'production' ? 'grow_up.im' : 'localhost';
+
 		res.cookie('access-token', accessToken, {
-			domain: 'localhost',
-			httpOnly: true,
-			secure: true,
+			domain: domain,
 			sameSite: 'lax',
-			maxAge: 14 * 24 * 60 * 60 * 1000,
+			httpOnly: this.configService.get('STAGE') !== 'local',
+			secure: this.configService.get('STAGE') !== 'local',
+			maxAge: OneWeeks,
 		});
 
 		return SuccessFulResponse({ user: foundUser });
@@ -213,7 +218,10 @@ export class UsersService {
 		return SuccessFulResponse(updatedUser);
 	}
 
-	async createToken(email: string) {
-		return await this.userRepository.getToken(email);
+	async makeAccessToken(user: UsersEntity) {
+		const payload = {email: user.email};
+
+		const options: Jwt.SignOptions = {expiresIn: OneWeeks, issuer: 'robert', algorithm: 'HS256'};
+		return Jwt.sign(payload, this.configService.get('JWT_SECRET'), options);
 	}
 }

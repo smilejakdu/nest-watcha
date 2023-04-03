@@ -45,17 +45,7 @@ export class MoviesController {
   @UseGuards(UserAuthGuard, PermissionsGuard)
   @Post()
   async createMovie(@Req() req, @Body() body: CreateMovieRequestDto) {
-    const responseCreatedMovie = await this.movieService.createMovie(body);
-
-    if (!responseCreatedMovie.ok) {
-      throw new BadRequestException('영화 만들기 실패했습니다.');
-    }
-
-    return {
-      ok: true,
-      statusCode: HttpStatus.CREATED,
-      message: 'SUCCESS',
-    };
+    return await this.movieService.createMovie(body);
   }
 
   @endPointGetDecorator('mini search 로 검색하기', '성공', CoreResponseDto, 'minisearch')
@@ -63,6 +53,13 @@ export class MoviesController {
     @Query('search') search: string,
   ) {
     return await this.movieService.searchByMiniSearch(search);
+  }
+
+  @endPointGetDecorator('elasticSearch로 movie 검색하기', '성공', CoreResponseDto, 'elasticSearch')
+  async searchBoardByElastic(
+    @Query('search') search: string,
+  ) {
+    return this.movieService.searchBoardByElastic(search);
   }
 
   @ApiOperation({ summary: '모든 영화 가져오기' })

@@ -7,7 +7,6 @@ export function IsNotEmptyNumber(example: number,
                                  description:string) {
 
   return applyDecorators(
-    IsInt(),
     IsNotEmpty(),
     ApiProperty({
       example: example,

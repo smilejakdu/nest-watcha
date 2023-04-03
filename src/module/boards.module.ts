@@ -7,15 +7,9 @@ import { BoardImageService } from "../service/boardImage.service";
 import { HashtagService } from "../service/hashtag.service";
 import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
 import { HashtagRepository } from "../database/repository/hashtag.repository";
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
-
 
 @Module({
 	imports: [
-		ElasticsearchModule.register({
-			node: 'http://localhost:9200',
-			// 기타 Elasticsearch 클라이언트 옵션 (예: API 버전, 인증 등) 설정
-		}),
 		TypeOrmExModule.forCustomRepository([
 			BoardsRepository,
 			BoardImageRepository,

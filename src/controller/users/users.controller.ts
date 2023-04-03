@@ -38,7 +38,6 @@ export const BAD_REQUEST = 'bad request';
 export class UsersController {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UserRepository,
 	) {}
 
 	@ApiOperation({ summary: 'my_profile' })
@@ -99,34 +98,6 @@ export class UsersController {
 		return this.usersService.findMyBoardsByEmail(foundUser.id);
 	}
 
-	// @ApiOperation({ summary: 'kakao_login' })
-	// @ApiOkResponse({ description: '성공', type: 'application/json' })
-	// @Get('/kakao/callback')
-	// async kakaoCallback(@Req() req, @Res() res: Response) {
-	// 	const data: { foundUser: any; userData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
-	// 	console.log('data:',data);
-	// 	let userData = data.foundUser;
-	// 	if (!userData) {
-	// 		const result = await this.usersService.socialSignUp(data.userData);
-	// 		userData = result.data;
-	// 	}
-	// 	const accessToken = await this.usersService.createToken(userData.email);
-	//
-	// 	res.cookie('accessToken', accessToken, {
-	// 		domain: 'localhost',
-	// 		expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
-	// 		httpOnly: true,
-	// 		secure: true,
-	// 	});
-	//
-	// 	return res.status(HttpStatus.OK).json({
-	// 		ok: true,
-	// 		statusCode: HttpStatus.OK,
-	// 		message: 'SUCCESS',
-	// 		data: userData,
-	// 	});
-	// }
-
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(KaKaoGuard)
@@ -166,6 +137,7 @@ export class UsersController {
 	@UseGuards(NaverGuard)
 	@Get('naver')
 	async naverLogin(@Req() req, @Res() res: Response) {
+		console.log('req:',req);
 	}
 
 	@ApiOperation({ summary: 'naver_login_callback' })

@@ -54,7 +54,7 @@ export class MoviesService {
     }
 
     return SuccessFulResponse(
-      this.movieMapper.toDto(createdMovie),
+      createdMovie,
       HttpStatus.CREATED,
     );
   }
@@ -78,6 +78,7 @@ export class MoviesService {
   }
 
   async searchBoardByElastic(query: string) {
+    console.log('query', query);
     return await this.elasticsearchService.search({
       index: 'board',
       body: {

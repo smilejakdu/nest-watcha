@@ -20,10 +20,6 @@ import { ElasticsearchModule } from "@nestjs/elasticsearch";
         requestTimeout: 60000,
         pingTimeout: 60000,
         sniffOnStart: true,
-        auth: {
-          username: process.env.ELASTIC_SEARCH_USERNAME,
-          password: process.env.ELASTIC_SEARCH_PASSWORD,
-        }
       }),
     }),
     TypeOrmExModule.forCustomRepository([

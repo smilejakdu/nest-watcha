@@ -10,7 +10,7 @@ import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
-	@Column('varchar', { name: 'movieTitle', length: 100 })
+	@Column('varchar', { name: 'movie_title', length: 100 })
 	movie_title: string;
 
 	@Column('varchar', { name: 'movie_description', length: 200 })

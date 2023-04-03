@@ -45,11 +45,19 @@ export function SuccessFulResponse(data?, status = HttpStatus.OK) {
   };
 }
 
-export function BadRequest(){
+export function BadRequest(message = 'BAD REQUEST', status = HttpStatus.BAD_REQUEST){
   return {
-    ok:false,
-    statusCode:HttpStatus.BAD_REQUEST,
-    message:'BAD REQUEST'
+    ok: false,
+    statusCode: status,
+    message: message,
+  };
+}
+
+export function HttpRequestResponse(message: string, status = HttpStatus.BAD_REQUEST) {
+  return {
+    ok: false,
+    statusCode: status,
+    message,
   };
 }
 

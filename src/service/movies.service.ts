@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
+import { CoreResponseDto, HttpRequestResponse, SuccessFulResponse} from '../shared/CoreResponse';
 import { DataSource, QueryRunner } from 'typeorm';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
@@ -80,7 +80,8 @@ export class MoviesService {
     return SuccessFulResponse(foundAllMovie);
   }
 
-  async searchByMinisearch(query: string) {
+  // 근데 이렇게 하면 한글 검색이 제대로 잡히지않는다.
+  async searchByMiniSearch(query: string) {
     const foundMovie = await this.movieRepository.find();
     const miniSearch = new MiniSearch({
       fields: ['movie_title', 'movie_description'],
@@ -88,23 +89,23 @@ export class MoviesService {
     })
 
     miniSearch.addAll(foundMovie);
-    const results = miniSearch.search(query);
+    const miniSearchResults = miniSearch.search(query);
 
-    if (results.length === 0) {
-      throw new BadRequestException('Movie not found');
+    if (miniSearchResults.length === 0) {
+      return HttpRequestResponse('Movie not found', HttpStatus.NOT_FOUND);
     }
 
-    const searchResult = results.map((result) => {
+     const responseMiniSearch = miniSearchResults.map((result) => {
       return {
         id: result.id,
         title: result.movie_title,
         description: result.movie_description,
       }
     });
-    return searchResult;
+    return SuccessFulResponse(responseMiniSearch);
   }
 
-  async updateMovieById(movieId: number, set: any, queryRunner?: QueryRunner) {
+  async updateMovieById(movieId: number, set: any) {
     const foundMovie = await this.movieRepository.findOneBy({ id: movieId });
     if (!foundMovie) {
       throw new BadRequestException('Movie not found');

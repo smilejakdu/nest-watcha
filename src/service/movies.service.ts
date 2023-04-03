@@ -1,11 +1,14 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
-import { DataSource, QueryRunner } from 'typeorm';
-import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
+import { BadRequestException, HttpStatus, Injectable } from "@nestjs/common";
+import { CoreResponseDto, SuccessFulResponse } from "../shared/CoreResponse";
+import { DataSource, QueryRunner } from "typeorm";
+import { MovieRepository } from "../database/repository/MovieAndGenreRepository/movie.repository";
 import { MovieEntity } from "../database/entities/MovieAndGenre/movie.entity";
-import { CreateMovieRequestDto, CreateMovieResponseDto} from "../controller/movies/movie.controller.dto/createMovie.dto";
+import {
+  CreateMovieRequestDto,
+  CreateMovieResponseDto
+} from "../controller/movies/movie.controller.dto/createMovie.dto";
 import { transactionRunner } from "../shared/common/transaction/transaction";
-import {CommentsRepository} from "../database/repository/comments.repository";
+import { CommentsRepository } from "../database/repository/comments.repository";
 import MiniSearch from "minisearch";
 
 export class MovieMapper {
@@ -94,14 +97,13 @@ export class MoviesService {
       throw new BadRequestException('Movie not found');
     }
 
-    const searchResult = results.map((result) => {
+    return results.map((result) => {
       return {
         id: result.id,
         title: result.movie_title,
         description: result.movie_description,
       }
     });
-    return searchResult;
   }
 
   async updateMovieById(movieId: number, set: any, queryRunner?: QueryRunner) {

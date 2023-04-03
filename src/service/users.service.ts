@@ -12,7 +12,7 @@ import { DataSource, QueryRunner } from "typeorm";
 import { Response } from "express";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
 import { UserFindResponseDto } from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
-import { FoundUserType, GoogleUserData, KakaoUserData } from "../types";
+import { GoogleUserData, KakaoUserData } from "../types";
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { ConfigService } from "@nestjs/config";
 import { OneWeeks } from "../shared/dateFormat/dateFormat.service";
@@ -95,7 +95,7 @@ export class UsersService {
 
 		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
 			return await queryRunner.manager.save(UsersEntity, newUser);
-		},this.dataSource);
+		}, this.dataSource);
 
 		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
 	}

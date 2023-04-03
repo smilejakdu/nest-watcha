@@ -8,13 +8,19 @@ import { HashtagService } from "../service/hashtag.service";
 import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
 import { HashtagRepository } from "../database/repository/hashtag.repository";
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import process from "process";
 
 
 @Module({
 	imports: [
-		ElasticsearchModule.register({
-			node: 'http://localhost:9200',
-			// 기타 Elasticsearch 클라이언트 옵션 (예: API 버전, 인증 등) 설정
+		ElasticsearchModule.registerAsync({
+			useFactory: () => ({
+				node: process.env.ELASTIC_SEARCH_HOST,
+				maxRetries: 5,
+				requestTimeout: 60000,
+				pingTimeout: 60000,
+				sniffOnStart: true,
+			}),
 		}),
 		TypeOrmExModule.forCustomRepository([
 			BoardsRepository,

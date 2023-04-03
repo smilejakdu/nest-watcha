@@ -1,20 +1,19 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { BoardsRepository } from '../database/repository/BoardRepository/boards.repository';
-import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
-import { UpdateBoardDto } from '../controller/board/board.controller.dto/update-board.dto';
-import { CreateBoardDto} from "../controller/board/board.controller.dto/create-board.dto";
-import { BoardsEntity} from "../database/entities/Board/Boards.entity";
-import { DataSource, QueryRunner} from "typeorm";
-import { transactionRunner } from 'src/shared/common/transaction/transaction';
-import { HashtagRepository} from "../database/repository/hashtag.repository";
-import { BoardHashTagEntity} from "../database/entities/Board/BoardHashTag.entity";
-import { BoardImageEntity } from 'src/database/entities/Board/BoardImage.entity';
-import {HashTagEntity} from "../database/entities/hashTag.entity";
-import {UsersEntity} from "../database/entities/User/Users.entity";
-import {BoardImageRepository} from "../database/repository/BoardRepository/boardImage.repository";
-import solr from 'solr-node';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
-import MiniSearch from 'minisearch'
+import { HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
+import { CoreResponseDto, SuccessFulResponse } from "../shared/CoreResponse";
+import { UpdateBoardDto } from "../controller/board/board.controller.dto/update-board.dto";
+import { CreateBoardDto } from "../controller/board/board.controller.dto/create-board.dto";
+import { BoardsEntity } from "../database/entities/Board/Boards.entity";
+import { DataSource, QueryRunner } from "typeorm";
+import { transactionRunner } from "src/shared/common/transaction/transaction";
+import { HashtagRepository } from "../database/repository/hashtag.repository";
+import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.entity";
+import { BoardImageEntity } from "src/database/entities/Board/BoardImage.entity";
+import { HashTagEntity } from "../database/entities/hashTag.entity";
+import { UsersEntity } from "../database/entities/User/Users.entity";
+import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
+import solr from "solr-node";
+import { ElasticsearchService } from "@nestjs/elasticsearch";
 
 @Injectable()
 export class BoardsService {
@@ -152,7 +151,7 @@ export class BoardsService {
 	}
 
 	async searchBoardByElastic(query: string) {
-		const responseSearch = await this.elasticsearchService.search({
+		return await this.elasticsearchService.search({
 			index: 'board',
 			body: {
 				query: {
@@ -163,7 +162,6 @@ export class BoardsService {
 				}
 			}
 		});
-		return responseSearch;
 	}
 
 

@@ -54,7 +54,7 @@ export class BoardsController {
 		return this.boardImageService.findAllImages();
 	}
 
-	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'solrSearch')
+	@endPointGetDecorator('solrSearch로 게시판 검색하기', '성공', CoreResponseDto, 'solrSearch')
 	async searchBoardBySolr(
 		@Query('search') search: string,
 	) {
@@ -62,7 +62,7 @@ export class BoardsController {
 		return this.boardsService.searchBoardBySorl(search);
 	}
 
-	@endPointGetDecorator('게시판 검색하기', '성공', CoreResponseDto, 'elasticSearch')
+	@endPointGetDecorator('elasticSearch로 게시판 검색하기', '성공', CoreResponseDto, 'elasticSearch')
 	async searchBoardByElastic(
 		@Query('search') search: string,
 	) {

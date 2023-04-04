@@ -48,13 +48,6 @@ export class MoviesController {
     return await this.movieService.createMovie(body);
   }
 
-  @endPointGetDecorator('mini search 로 검색하기', '성공', CoreResponseDto, 'minisearch')
-  async searchByMiniSearch(
-    @Query('search') search: string,
-  ) {
-    return await this.movieService.searchByMiniSearch(search);
-  }
-
   @ApiOperation({ summary: '모든 영화 가져오기' })
   @ApiOkResponse({ description: '성공' })
   @Get(':movie_id')

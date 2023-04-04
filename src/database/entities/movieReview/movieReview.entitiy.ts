@@ -8,8 +8,8 @@ export class MovieReviewEntitiy extends CoreEntity {
   @Column('varchar', { name: 'content', length: 500 })
   content: string;
 
-  @Column('int', { name: 'rating', nullable: true })
-  rating: number;
+  @Column('float', { name: 'like_counts', precision: 10, scale: 1, nullable: true })
+  like_counts: number;
 
   @Column('int', { name: 'user_id', nullable: true })
   user_id: number| null;

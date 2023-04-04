@@ -9,7 +9,7 @@ import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
 @CustomRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<MovieEntity> {
-    return this.createQueryBuilder('movie', queryRunner);
+    return this.createQueryBuilder('movies', queryRunner);
   }
 
   async findMovieAll(
@@ -18,12 +18,6 @@ export class MovieRepository extends Repository<MovieEntity>{
     queryRunner?: QueryRunner,
   ) {
     const skip = (pageNumber - 1) * size;
-    const foundLikeCountsAvg = await this
-      .makeQueryBuilder()
-      .select()
-      .where('movie.id = :id', {id: 1})
-      .getRawOne();
-
     return this.makeQueryBuilder(queryRunner)
       .addSelect([
         'genre.id',
@@ -49,31 +43,24 @@ export class MovieRepository extends Repository<MovieEntity>{
       .getMany();
   }
 
-  async findOneMovieById(media_id: number, queryRunner?: QueryRunner) {
-    const reviewAvgQuery = await this.makeQueryBuilder()
+  async findOneMovieAndReviewAvgById(media_id: number, queryRunner?: QueryRunner) {
+    const reviewAvgQuery = this.makeQueryBuilder()
       .select([
-        'ROUND(AVG(reviews.like_counts), 1) as likes_count_avg',
+        'ROUND(AVG(movieReviews.like_counts), 1) as likes_count_avg',
       ])
-      .leftJoin('movie.movieReviews', 'movieReviews')
-      .where(`movie.id=:id`, { id: media_id})
-      .andWhere('movie.is_active =:is_active', { is_active: true })
-      .groupBy('movie.id')
+      .leftJoin('movies.movieReviews', 'movieReviews')
+      .where(`movies.id=:id`, { id: media_id})
+      .groupBy('movies.id')
 
     const movieQuery = this.makeQueryBuilder()
-      .select([
-        'movie.movie_title',
-        'movie.movie_score',
-        'movie.director',
-        'movie.appearance',
-        'movie.age_limit_status',
-      ])
-      .where('movie.id = :id', {})
+      .where('movies.id=:id', {id: media_id})
 
     const [foundReviewAvgByMediaId, foundOneMovie] = await Promise.all([
       reviewAvgQuery.getRawOne(),
       movieQuery.getOne(),
     ]);
-    foundOneMovie.like_counts_avg = foundReviewAvgByMediaId?.likes_count_avg;
+
+    foundOneMovie.like_counts_avg = foundReviewAvgByMediaId?.likes_count_avg ?? 0;
     return foundOneMovie;
   }
 

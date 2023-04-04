@@ -53,14 +53,6 @@ export function BadRequest(message = 'BAD REQUEST', status = HttpStatus.BAD_REQU
   };
 }
 
-export function HttpRequestResponse(message: string, status = HttpStatus.BAD_REQUEST) {
-  return {
-    ok: false,
-    statusCode: status,
-    message,
-  };
-}
-
 export function NotFoundResponse(data) {
   return {
     ok: false,

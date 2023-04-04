@@ -1,9 +1,7 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -48,18 +46,15 @@ export class MoviesController {
     return await this.movieService.createMovie(body);
   }
 
-  @ApiOperation({ summary: '모든 영화 가져오기' })
-  @ApiOkResponse({ description: '성공' })
-  @Get(':movie_id')
+  @endPointGetDecorator('영화 하나 가져오기', '성공', CoreResponseDto, ':movie_id')
   async findOneMovie(
-    @Param('media_id', ParseIntPipe) media_id: number,
+    @Param('movie_id', ParseIntPipe) movie_id: number,
   ) {
-    return this.movieService.findOneMovie(media_id);
+    console.log('movie_id', movie_id);
+    return this.movieService.findOneMovie(movie_id);
   }
 
-  @ApiOperation({ summary: '모든 영화 가져오기' })
-  @ApiOkResponse({ description: '성공' })
-  @Get()
+  @endPointGetDecorator('모든 영화 가져오기', '성공', CoreResponseDto, '')
   async findAllMovie(@Query() pagination: Pagination) {
     const {pageNumber, size } = pagination;
     const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;

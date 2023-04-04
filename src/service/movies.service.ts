@@ -6,9 +6,10 @@ import {
 import { transactionRunner } from "../shared/common/transaction/transaction";
 import { CommentsRepository } from "../database/repository/comments.repository";
 import {BadRequestException, HttpStatus, Injectable} from "@nestjs/common";
-import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
+import {BadRequest, CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
 import {DataSource, QueryRunner} from "typeorm";
 import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
+import {MovieReviewRepository} from "../database/repository/movieReview.repository";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
@@ -37,6 +38,7 @@ export class MoviesService {
     private readonly commentRepository: CommentsRepository,
     private readonly dataSource: DataSource,
     private readonly movieMapper: MovieMapper,
+    private readonly movieReviewRepository: MovieReviewRepository,
   ) { }
 
   async createMovie(createMovieRequestDto: CreateMovieRequestDto): Promise<CoreResponseDto> {
@@ -57,13 +59,19 @@ export class MoviesService {
   }
 
   async findOneMovie(media_id: number) {
-    const foundOneMovie = await this.movieRepository.findOneMovieById(media_id);
+    const [foundOneMovie, foundReviewListByMovieId] = await Promise.all([
+      this.movieRepository.findOneMovieAndReviewAvgById(media_id),
+      this.movieReviewRepository.findReviewListByMovieId(media_id),
+    ]);
 
-    if (!foundOneMovie){
-      throw new BadRequestException('Movie not found');
+    if (!foundOneMovie) {
+      return BadRequest('Movie not found', HttpStatus.NOT_FOUND);
     }
 
-    return SuccessFulResponse(foundOneMovie);
+    return SuccessFulResponse({
+      movie: foundOneMovie,
+      reviewList: foundReviewListByMovieId,
+    });
   }
 
   async findAllMovie(

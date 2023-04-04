@@ -9,6 +9,7 @@ import { MovieOptionsRepository } from '../database/repository/MovieAndGenreRepo
 import { MovieOptionsService } from '../service/movieOptions.service';
 import {TypeOrmExModule} from "../shared/typeorm-ex.module";
 import {CommentsRepository} from "../database/repository/comments.repository";
+import {MovieReviewRepository} from "../database/repository/movieReview.repository";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import {CommentsRepository} from "../database/repository/comments.repository";
       GenreMovieRepository,
       CommentsRepository,
       MovieOptionsRepository,
+      MovieReviewRepository,
     ]),
   ],
   providers: [MoviesService, GenreMovieService, MovieOptionsService, MovieMapper],

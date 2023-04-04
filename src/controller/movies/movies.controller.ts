@@ -55,13 +55,6 @@ export class MoviesController {
     return await this.movieService.searchByMiniSearch(search);
   }
 
-  @endPointGetDecorator('elasticSearch로 movie 검색하기', '성공', CoreResponseDto, 'elasticSearch')
-  async searchBoardByElastic(
-    @Query('search') search: string,
-  ) {
-    return this.movieService.searchBoardByElastic(search);
-  }
-
   @ApiOperation({ summary: '모든 영화 가져오기' })
   @ApiOkResponse({ description: '성공' })
   @Get(':movie_id')

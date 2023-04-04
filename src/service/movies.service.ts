@@ -5,8 +5,6 @@ import {
 } from "../controller/movies/movie.controller.dto/createMovie.dto";
 import { transactionRunner } from "../shared/common/transaction/transaction";
 import { CommentsRepository } from "../database/repository/comments.repository";
-import MiniSearch from "minisearch";
-import { ElasticsearchService } from "@nestjs/elasticsearch";
 import {BadRequestException, HttpStatus, Injectable} from "@nestjs/common";
 import {CoreResponseDto, SuccessFulResponse} from "../shared/CoreResponse";
 import {DataSource, QueryRunner} from "typeorm";
@@ -35,7 +33,6 @@ export class MovieMapper {
 @Injectable()
 export class MoviesService {
   constructor(
-    private readonly elasticsearchService: ElasticsearchService,
     private readonly movieRepository: MovieRepository,
     private readonly commentRepository: CommentsRepository,
     private readonly dataSource: DataSource,
@@ -59,14 +56,6 @@ export class MoviesService {
     );
   }
 
-  async findMovieById(movieId: number) {
-    const movie = await this.movieRepository.findOneBy({ id: movieId });
-    if (!movie) {
-      throw new BadRequestException('Movie not found');
-    }
-    return SuccessFulResponse(movie);
-  }
-
   async findOneMovie(media_id: number) {
     const foundOneMovie = await this.movieRepository.findOneMovieById(media_id);
 
@@ -75,21 +64,6 @@ export class MoviesService {
     }
 
     return SuccessFulResponse(foundOneMovie);
-  }
-
-  async searchBoardByElastic(query: string) {
-    console.log('query', query);
-    return await this.elasticsearchService.search({
-      index: 'board',
-      body: {
-        query: {
-          query_string: {
-            query: query,
-            // 	필요한 경우 다른 질의 문자열 쿼리 옵션 추가
-          }
-        }
-      }
-    });
   }
 
   async findAllMovie(
@@ -113,10 +87,5 @@ export class MoviesService {
 
     const responseMovie = this.movieMapper.toDto(updatedMovie);
     return SuccessFulResponse(responseMovie);
-  }
-
-  async deleteMovieById(ids:number[]) {
-    const deletedMovie = await this.movieRepository.deleteMovieByIds(ids);
-    return SuccessFulResponse(deletedMovie.raw.insertId);
   }
 }

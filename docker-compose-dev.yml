@@ -3,25 +3,27 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: ./compose/local/nginx/Dockerfile
-    container_name: group_up_nginx
+      dockerfile: ./compose/dev/nginx/Dockerfile
+    container_name: watcha_nginx
     depends_on:
-      - group_up
+      - nest_watcha
       - db
     ports:
       - "80:80"
     links:
-      - group_up
+      - nest_watcha
 
-  group_up:
+  nest_watcha:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: group_up_backend
+    container_name: watcha_backend
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - '13014:13014'
     env_file:
-      - compose/local/dev.env
+      - compose/dev/dev.env
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -29,11 +31,13 @@ services:
       - db
     depends_on:
       - db
+    networks:
+      - watcha
 
   db:
     image: mysql:8.0.23
     restart: unless-stopped
-    container_name: group_up_mysql
+    container_name: watcha_mysql
     platform: linux/x86_64
     ports:
       - '3306:3306'
@@ -41,4 +45,4 @@ services:
       - ./mysql/mysql_data:/var/lib/mysql
       - ./mysql/sqls/:/docker-entrypoint-initdb.d/
     env_file:
-      - compose/local/mysql.env
+      - compose/dev/mysql.env

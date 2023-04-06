@@ -3,37 +3,41 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: ./compose/local/nginx/Dockerfile
-    container_name: group_up_nginx
+      dockerfile: ./compose/dev/nginx/Dockerfile
+    container_name: watcha_nginx
     depends_on:
-      - group_up
+      - watcha
       - db
     ports:
       - "80:80"
     links:
-      - group_up
+      - watcha
+    networks:
+      - watcha_network
 
-  group_up:
+  watcha:
     build:
+      dockerfile: ./compose/dev/backend/Dockerfile
       context: .
-      dockerfile: ./compose/local/backend/Dockerfile
-    container_name: group_up_backend
+    container_name: watcha_backend
     ports:
       - '13014:13014'
     volumes:
-      - .:/usr/src/app
       - /usr/src/app/node_modules
+      - .:/usr/src/app
     env_file:
-      - compose/local/dev.env
+      - compose/dev/dev.env
     links:
       - db
     depends_on:
       - db
+    networks:
+      - watcha_network
 
   db:
     image: mysql:8.0.23
     restart: unless-stopped
-    container_name: group_up_mysql
+    container_name: watcha_mysql
     platform: linux/x86_64
     ports:
       - '3306:3306'
@@ -41,4 +45,10 @@ services:
       - ./mysql/mysql_data:/var/lib/mysql
       - ./mysql/sqls/:/docker-entrypoint-initdb.d/
     env_file:
-      - compose/local/mysql.env
+      - compose/dev/mysql.env
+    networks:
+      - watcha_network
+
+networks:
+  watcha_network:
+    driver: bridge

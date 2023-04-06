@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import passport from 'passport';
-import { join } from 'path';
+import { join } from 'path'
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
 import {SwaggerSetting} from "./shared/swaggerConfig";

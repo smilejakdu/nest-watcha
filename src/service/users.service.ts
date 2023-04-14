@@ -87,30 +87,12 @@ export class UsersService {
 		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
 	}
 
-	async socialSignUp(data: any) {
-		const newUser = new UsersEntity();
-		newUser.username = data.properties.nickname;
-		newUser.email = data.kakao_account.email;
-		newUser.kakao_auth_id = data.id;
-
-		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
-			return await queryRunner.manager.save(UsersEntity, newUser);
-		}, this.dataSource);
-
-		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
-	}
-
 	async findAuthId(authId:string , type) {
 		const foundUserByAuthId = await this.userRepository.findAuthId(authId,type);
 		return SuccessFulResponse(foundUserByAuthId);
 	}
 
-	async findAuthLoginId(id:number) {
-		const foundUserAuthId = await this.userRepository.findAuthLoginId(id).getMany();
-		return SuccessFulResponse(foundUserAuthId);
-	}
-
-	async findUserByEmail(email:string): Promise<UserFindResponseDto> {
+	async findUserByEmail(email: string): Promise<UserFindResponseDto> {
 		const foundUser= await this.userRepository.findOne({
 			select: ['id', 'email', 'username', 'phone'],
 			where: { email },
@@ -202,7 +184,7 @@ export class UsersService {
 
 		res.cookie('access-token', accessToken, {
 			domain: domain,
-			sameSite: 'lax',
+			sameSite: this.configService.get('STAGE') !== 'local' ? 'none' : 'lax',
 			httpOnly: this.configService.get('STAGE') !== 'local',
 			secure: this.configService.get('STAGE') !== 'local',
 			maxAge: OneWeeks,
@@ -220,8 +202,11 @@ export class UsersService {
 
 	async makeAccessToken(user: UsersEntity) {
 		const payload = {email: user.email};
-
-		const options: Jwt.SignOptions = {expiresIn: OneWeeks, issuer: 'robert', algorithm: 'HS256'};
+		const options: Jwt.SignOptions = {
+			expiresIn: OneWeeks,
+			issuer: 'robert',
+			algorithm: 'HS256',
+		};
 		return Jwt.sign(payload, this.configService.get('JWT_SECRET'), options);
 	}
 }

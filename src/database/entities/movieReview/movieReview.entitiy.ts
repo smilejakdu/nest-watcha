@@ -5,7 +5,7 @@ import { UsersEntity } from "../User/Users.entity";
 
 @Entity({ schema: 'nest_watcha', name: 'movie_reviews' })
 export class MovieReviewEntitiy extends CoreEntity {
-  @Column('varchar', { name: 'content', length: 500 })
+  @Column('text', { name: 'content', nullable: true })
   content: string;
 
   @Column('float', { name: 'like_counts', precision: 10, scale: 1, nullable: true })

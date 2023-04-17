@@ -19,7 +19,6 @@ import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { UsersEntity } from '../../database/entities/User/Users.entity';
 import { Response, Request } from 'express';
-import { UserRepository } from 'src/database/repository/user.repository';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
 import { NaverGuard } from 'src/guards/naver.guard';
@@ -56,7 +55,7 @@ export class UsersController {
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
-		const responseSignUp = await this.usersService.signUp(data);
+		const responseSignUp = await this.usersService.signUp(data, res);
 		return res.status(responseSignUp.statusCode).json(responseSignUp);
 	}
 

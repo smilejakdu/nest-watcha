@@ -65,7 +65,7 @@ export class UsersService {
 		return decrypted;
 	}
 
-	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponseDto> {
+	async signUp(signUpDto: SignUpRequestDto, @Res() res: Response): Promise<CoreResponseDto> {
 		const { password, email } = signUpDto;
 		const foundUser = await this.userRepository.findOneBy({ email });
 
@@ -78,7 +78,7 @@ export class UsersService {
 			throw new BadRequestException('비밀번호는 숫자와 영문자를 포함하여 8자 이상이어야 합니다.');
 		}
 
-		const responseSignUpUser = await transactionRunner(async (queryRunner:QueryRunner) => {
+		const responseSignUpUser = await transactionRunner(async (queryRunner) => {
 			signUpDto.password = await bcrypt.hash(password, 12);
 			return await queryRunner.manager.save(UsersEntity, signUpDto);
 		},this.dataSource);
@@ -218,8 +218,8 @@ export class UsersService {
 		return SuccessFulResponse(updatedUser);
 	}
 
-	async makeAccessToken(user: UsersEntity) {
-		const payload = {email: user.email};
+	async makeAccessToken(email: string) {
+		const payload = {sub: email};
 
 		const options: Jwt.SignOptions = {expiresIn: OneWeeks, issuer: 'robert', algorithm: 'HS256'};
 		return Jwt.sign(payload, this.configService.get('JWT_SECRET'), options);

@@ -7,7 +7,6 @@ import {
 	Put,
 	Query,
 	Req,
-	Res,
 	UseGuards
 } from '@nestjs/common';
 import {
@@ -26,15 +25,10 @@ import { BoardsService } from '../../service/boards.service';
 import { HashtagService } from '../../service/hashtag.service';
 import { Pagination } from '../../shared/pagination';
 import { Request } from 'express';
-import { CoreResponseDto, SuccessFulResponse} from "../../shared/CoreResponse";
+import { CoreResponseDto} from "../../shared/CoreResponse";
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
 import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
 import { endPointPostDecorator} from "../../decorators/end-point-post.decorator";
-
-const logAndReturn = <T extends string|number>(input: T): T => {
-	console.log('input :', input);
-	return input;
-};
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

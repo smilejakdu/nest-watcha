@@ -55,7 +55,7 @@ export class UsersController {
 	@ApiOperation({ summary: '회원가입' })
 	@Post('signup')
 	async signUp(@Body() data: SignUpRequestDto, @Res() res: Response) {
-		const responseSignUp = await this.usersService.signUp(data, res);
+		const responseSignUp = await this.usersService.signUp(data);
 		return res.status(responseSignUp.statusCode).json(responseSignUp);
 	}
 

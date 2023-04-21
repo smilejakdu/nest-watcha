@@ -10,6 +10,7 @@ import {BadRequest, CoreResponseDto, SuccessFulResponse} from "../shared/CoreRes
 import {DataSource, QueryRunner} from "typeorm";
 import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
 import {MovieReviewRepository} from "../database/repository/movieReview.repository";
+import {GetMovieListDto} from "../controller/movies/movie.controller.dto/getMovie.dto";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {
@@ -26,7 +27,7 @@ export class MovieMapper {
   toDto(movieEntity: MovieEntity): CreateMovieResponseDto {
     const createMovieResponseDto = new CreateMovieResponseDto();
     createMovieResponseDto.movieId = movieEntity.id;
-    createMovieResponseDto.movieName = movieEntity.movie_title;
+    createMovieResponseDto.movieName = movieEntity.title;
     return createMovieResponseDto;
   }
 }
@@ -77,8 +78,9 @@ export class MoviesService {
   async findAllMovie(
     pageNumber: number,
     size: number,
+    query: GetMovieListDto,
   ) {
-    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber, size);
+    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber, size, query);
     return SuccessFulResponse(foundAllMovie);
   }
 

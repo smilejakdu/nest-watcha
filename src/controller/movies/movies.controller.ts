@@ -28,6 +28,7 @@ import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
 import {endPointGetDecorator} from "../../decorators/end-point-get.decorator";
 import {CoreResponseDto} from "../../shared/CoreResponse";
+import {GetMovieListDto} from "./movie.controller.dto/getMovie.dto";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('MOVIES')
@@ -46,23 +47,24 @@ export class MoviesController {
     return await this.movieService.createMovie(body);
   }
 
+  @endPointGetDecorator('모든 영화 가져오기', '성공', CoreResponseDto, '')
+  async findAllMovie(
+    @Query() pagination: Pagination,
+    @Query() query: GetMovieListDto,
+  ) {
+    const {pageNumber, size } = pagination;
+    const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
+    const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 10;
+
+    return this.movieService.findAllMovie(parsingPageNumber, parsingSizeNumber, query);
+  }
+
   @endPointGetDecorator('영화 하나 가져오기', '성공', CoreResponseDto, ':movie_id')
   async findOneMovie(
     @Param('movie_id', ParseIntPipe) movie_id: number,
   ) {
-    console.log('movie_id', movie_id);
     return this.movieService.findOneMovie(movie_id);
   }
-
-  @endPointGetDecorator('모든 영화 가져오기', '성공', CoreResponseDto, '')
-  async findAllMovie(@Query() pagination: Pagination) {
-    const {pageNumber, size } = pagination;
-    const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
-    const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
-
-    return this.movieService.findAllMovie(parsingPageNumber, parsingSizeNumber);
-  }
-
 
   @ApiOperation({ summary: '영화 수정하기' })
   @ApiCreatedResponse({ description: '성공' })

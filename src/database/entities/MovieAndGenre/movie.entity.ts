@@ -7,28 +7,27 @@ import { subMovieImageEntity } from './subMovieImage.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
 import { MovieOptionEntity } from './movieOption.entity';
 import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
+import {text} from "aws-sdk/clients/customerprofiles";
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
-	@Column('varchar', { name: 'movie_title', length: 100 })
-	movie_title: string;
+	@Column('varchar', { name: 'title', length: 100 })
+	title: string;
 
-	@Column('varchar', { name: 'movie_description', length: 200 })
-	movie_description: string;
+	@Column('varchar', { name: 'description', length: 200 })
+	description: string;
 
 	@Column('decimal', { precision: 5, scale: 2, nullable: true })
 	movie_score: number;
 
-	@Column('varchar', {
-		name: 'movieImage',
-		nullable: true,
-	})
-	movie_image: string;
+	@Column('text', { name: 'movie_image', nullable: true })
+	movie_image: text;
 
 	@Column({
 		type: 'text',
 		nullable: true,
 		transformer: JsonTransformer,
+		comment: '감독',
 	})
 	director: Record<string, any>;
 
@@ -36,6 +35,7 @@ export class MovieEntity extends CoreEntity {
 		type: 'text',
 		nullable: true,
 		transformer: JsonTransformer,
+		comment: '출연진',
 	})
 	appearance: Record<string, any>;
 

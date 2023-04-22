@@ -8,6 +8,17 @@ import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
 import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
 import {GetMovieListDto} from "../../../controller/movies/movie.controller.dto/getMovie.dto";
 
+export interface MovieRepositoryInterface {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  movie_score: number;
+  age_limit_status: string;
+  genre_id: number;
+  genre_name: string;
+}
+
 @CustomRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<MovieEntity> {
@@ -44,20 +55,18 @@ export class MovieRepository extends Repository<MovieEntity>{
       );
     }
 
-    const skip = (pageNumber - 1) * size;
+    const skip = (Number(pageNumber) - 1) * size;
 
-    // Use a separate query for counting the total number of records
     const countQuery = findQuery.clone().select('COUNT(*) total_count');
-    const countResult = await countQuery.getRawOne();
-    console.log(countResult)
+    const countResult = await countQuery.getRawOne< { total_count: string } >();
 
-    const [{ total_count }] = await countQuery.getRawMany();
-    const totalCount = parseInt(total_count, 10);
-
-    const paginatedData = await findQuery.offset(skip).limit(size).getRawMany();
-
-    const nextPage = pageNumber + 1;
+    const totalCount = parseInt(countResult.total_count, 10);
+    const paginatedData = await findQuery
+      .offset(skip)
+      .limit(size)
+      .getRawMany<MovieRepositoryInterface>();
     const lastPage = Math.ceil(totalCount / size);
+    const nextPage = Number(pageNumber) >= lastPage ? null : Number(pageNumber) + 1;
 
     return {
       nextPage: nextPage,

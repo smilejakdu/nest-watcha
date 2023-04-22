@@ -1,12 +1,31 @@
 import { CoreEntity } from '../core.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, ValueTransformer } from 'typeorm';
 import { AgeLimitStatus } from './genre.entity';
 import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../../transformer';
 import { subMovieImageEntity } from './subMovieImage.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
 import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
-import {text} from "aws-sdk/clients/customerprofiles";
+
+export class DecimalTransformer implements ValueTransformer {
+	to(value: number): string {
+		return value.toFixed(2);
+	}
+
+	from(value: string): number {
+		return parseFloat(value);
+	}
+}
+
+class NumberTransformer implements ValueTransformer {
+	to(value: string | number): number {
+		return Number(value);
+	}
+
+	from(value: number): string {
+		return String(value);
+	}
+}
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
@@ -16,14 +35,20 @@ export class MovieEntity extends CoreEntity {
 	@Column('varchar', { name: 'description', length: 200 })
 	description: string;
 
-	@Column('decimal', { precision: 5, scale: 2, nullable: true })
+	@Column('decimal',
+		{
+			precision: 5,
+			scale: 2,
+			nullable: true,
+			transformer: new NumberTransformer(),
+		})
 	movie_score: number;
 
 	@Column('int', { name: 'price', nullable: true })
 	price: number;
 
 	@Column('text', { name: 'movie_image', nullable: true })
-	movie_image: text;
+	movie_image: string;
 
 	@Column({
 		type: 'text',

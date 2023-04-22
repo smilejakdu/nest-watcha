@@ -54,7 +54,7 @@ export class MoviesController {
   ) {
     const {pageNumber, size } = pagination;
     const parsingPageNumber = (Number(pageNumber) !== 0 && pageNumber) ? pageNumber : 1;
-    const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 10;
+    const parsingSizeNumber = (Number(size) !== 0 && size) ? size : 5;
 
     return this.movieService.findAllMovie(parsingPageNumber, parsingSizeNumber, query);
   }

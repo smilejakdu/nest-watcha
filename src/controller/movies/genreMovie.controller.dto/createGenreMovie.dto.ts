@@ -4,15 +4,15 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateGenreMovieDto {
   @IsNotEmpty()
   @ApiProperty({
-    description:'movieId',
+    description:'movie_id',
     example:1,
   })
-  movieId : number;
+  movie_id : number;
 
   @IsNotEmpty()
   @ApiProperty({
-    description:'genreId',
+    description:'genre_id',
     example:1,
   })
-  genreId : number;
+  genre_id : number;
 }

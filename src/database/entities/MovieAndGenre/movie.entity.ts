@@ -5,13 +5,12 @@ import { GenreMovieEntity } from './genreMovie.entity';
 import { JsonTransformer } from '../../transformer';
 import { subMovieImageEntity } from './subMovieImage.entity';
 import { OrderLogEntity } from '../Order/orderLog.entity';
-import { MovieOptionEntity } from './movieOption.entity';
 import {MovieReviewEntitiy} from "../movieReview/movieReview.entitiy";
 import {text} from "aws-sdk/clients/customerprofiles";
 
 @Entity({ schema: 'nest_watcha', name: 'movies' })
 export class MovieEntity extends CoreEntity {
-	@Column('varchar', { name: 'title', length: 100 })
+	@Column('varchar', { name: 'title', length: 200 })
 	title: string;
 
 	@Column('varchar', { name: 'description', length: 200 })
@@ -19,6 +18,9 @@ export class MovieEntity extends CoreEntity {
 
 	@Column('decimal', { precision: 5, scale: 2, nullable: true })
 	movie_score: number;
+
+	@Column('int', { name: 'price', nullable: true })
+	price: number;
 
 	@Column('text', { name: 'movie_image', nullable: true })
 	movie_image: text;
@@ -48,7 +50,7 @@ export class MovieEntity extends CoreEntity {
 
 	like_counts_avg: string;
 
-	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.Movie)
+	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.movie)
 	genreMovie: GenreMovieEntity[];
 
 	@OneToMany(() => subMovieImageEntity, subMovie => subMovie.movie)
@@ -59,14 +61,4 @@ export class MovieEntity extends CoreEntity {
 
 	@OneToMany(() => MovieReviewEntitiy, movieReview => movieReview.movie)
 	movieReviews: MovieReviewEntitiy[];
-
-	@Column('int', { name: 'movie_option_id', nullable: true })
-	movie_option_id: number| null;
-
-	@ManyToOne(() => MovieOptionEntity, movieOption => movieOption.Movies, {
-		onDelete: 'SET NULL',
-		onUpdate: 'CASCADE',
-	})
-	@JoinColumn([{ name: 'movie_option_id', referencedColumnName: 'id' }])
-	MovieOption: MovieOptionEntity;
 }

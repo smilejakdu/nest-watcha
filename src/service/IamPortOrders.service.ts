@@ -80,18 +80,16 @@ export class IamPortOrdersService {
 
     const {amount, status} = paymentData;
     console.log(status);
-    if (foundMovie.MovieOption.price == amount) {
-      switch (status) {
-        case IamportPaymentStatus.PAID: // 결제 완료
-          console.log(status);
-          return {status: IamportValidateStatus.SUCCESS, message: 'payment success', data: paymentData};
-        case IamportPaymentStatus.CANCELLED: // 취소 완료
-          console.log(status);
-          return {status: IamportValidateStatus.CANCELLED, message: 'cancel success', data: paymentData};
-        case IamportPaymentStatus.FAILED: // 결제 실패
-          console.log(status);
-          return {status: IamportValidateStatus.FAILED, message: 'payment fail', data: paymentData};
-      }
+    switch (status) {
+      case IamportPaymentStatus.PAID: // 결제 완료
+        console.log(status);
+        return {status: IamportValidateStatus.SUCCESS, message: 'payment success', data: paymentData};
+      case IamportPaymentStatus.CANCELLED: // 취소 완료
+        console.log(status);
+        return {status: IamportValidateStatus.CANCELLED, message: 'cancel success', data: paymentData};
+      case IamportPaymentStatus.FAILED: // 결제 실패
+        console.log(status);
+        return {status: IamportValidateStatus.FAILED, message: 'payment fail', data: paymentData};
     }
   }
 

@@ -16,7 +16,7 @@ export class GenreEntity extends CoreEntity {
   @OneToMany(
     () => GenreMovieEntity,
       genreMovieEntity =>
-        genreMovieEntity.Genre,{
+        genreMovieEntity.genre,{
       cascade: true,
     })
   genreMovie: GenreMovieEntity[];

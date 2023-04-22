@@ -22,8 +22,8 @@ export class GenreMovieRepository extends Repository<GenreMovieEntity>{
     const updatedGenreMovie =  await this.makeQueryBuilder()
       .update()
       .set({
-        genreId:genreId,
-        movieId:movieId,
+        genre_id:genreId,
+        movie_id:movieId,
       })
       .where('genre_movie.id =:id',{id:id})
       .execute();

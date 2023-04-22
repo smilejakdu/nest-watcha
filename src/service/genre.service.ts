@@ -57,11 +57,11 @@ export class GenreService {
         createdAt: true,
         updatedAt: true,
         genreMovie: {
-          movieId: true,
-          genreId: true,
-          Movie:{
+          movie_id: true,
+          genre_id: true,
+          movie:{
             id: true,
-            movie_title : true,
+            title : true,
             movie_score : true,
           }
         }

@@ -4,7 +4,6 @@ import {BoardsEntity} from "./entities/Board/Boards.entity";
 import {GenreEntity} from "./entities/MovieAndGenre/genre.entity";
 import {GenreMovieEntity} from "./entities/MovieAndGenre/genreMovie.entity";
 import {MovieEntity} from "./entities/MovieAndGenre/movie.entity";
-import {MovieOptionEntity} from "./entities/MovieAndGenre/movieOption.entity";
 import {subMovieImageEntity} from "./entities/MovieAndGenre/subMovieImage.entity";
 import {OrderEntity} from "./entities/Order/order.entity";
 import {OrderClaimEntity} from "./entities/Order/orderClaim.entity";
@@ -33,7 +32,6 @@ export const TypeOrmModuleAsyncOptions = {
       GenreEntity,
       GenreMovieEntity,
       MovieEntity,
-      MovieOptionEntity,
       subMovieImageEntity,
       OrderEntity,
       OrderClaimEntity,

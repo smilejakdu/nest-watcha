@@ -80,8 +80,19 @@ export class MoviesService {
     size: number,
     query: GetMovieListDto,
   ) {
-    const foundAllMovie = await this.movieRepository.findMovieAll(pageNumber, size, query);
-    return SuccessFulResponse(foundAllMovie);
+    const {
+      nextPage,
+      lastPage,
+      totalCount,
+      movieData,
+    } = await this.movieRepository.findMovieAll(pageNumber, size, query);
+
+    return SuccessFulResponse({
+      nextPage,
+      lastPage,
+      totalCount,
+      movieData,
+    });
   }
 
   async updateMovieById(movieId: number, set: any) {

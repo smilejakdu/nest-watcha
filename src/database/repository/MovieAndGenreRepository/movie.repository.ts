@@ -18,30 +18,22 @@ export class MovieRepository extends Repository<MovieEntity>{
     pageNumber: number,
     size: number,
     query: GetMovieListDto,
-    queryRunner?: QueryRunner,
   ) {
-    const skip = (pageNumber - 1) * size;
     const { movie_keyword, director, appearance } = query;
-    const findQuery = await this.makeQueryBuilder(queryRunner)
-      .addSelect([
-        'genre.id',
-        'genre.name'
+
+    const findQuery = await this.makeQueryBuilder()
+      .select([
+        'movies.id',
+        'movies.title title',
+        'movies.description description',
+        'movies.price price',
+        'movies.movie_score movie_score',
+        'movies.age_limit_status age_limit_status',
+        'genre.id genre_id',
+        'genre.name genre_name',
       ])
-      .addSelect([
-        'subMovieImage.id',
-        'subMovieImage.imageString',
-        'subMovieImage.createdAt',
-      ])
-      .addSelect([
-        'movieOption.price'
-      ])
-      .addSelect([
-        'genremovie.id'
-      ])
-      .innerJoin('movies.Genremovie','genremovie')
-      .innerJoin('movies.MovieOption','movieOption')
-      .innerJoin('genremovie.Genre','genre')
-      .leftJoin('movie.subMovieImage','subMovieImage')
+      .innerJoin('movies.genreMovie','genreMovie')
+      .innerJoin('genreMovie.genre','genre')
 
     if (movie_keyword) {
       findQuery.andWhere(
@@ -52,13 +44,30 @@ export class MovieRepository extends Repository<MovieEntity>{
       );
     }
 
-    return findQuery
-      .offset(skip)
-      .limit(size)
-      .getRawMany();
+    const skip = (pageNumber - 1) * size;
+
+    // Use a separate query for counting the total number of records
+    const countQuery = findQuery.clone().select('COUNT(*) total_count');
+    const countResult = await countQuery.getRawOne();
+    console.log(countResult)
+
+    const [{ total_count }] = await countQuery.getRawMany();
+    const totalCount = parseInt(total_count, 10);
+
+    const paginatedData = await findQuery.offset(skip).limit(size).getRawMany();
+
+    const nextPage = pageNumber + 1;
+    const lastPage = Math.ceil(totalCount / size);
+
+    return {
+      nextPage: nextPage,
+      lastPage: lastPage,
+      totalCount: totalCount,
+      movieData: paginatedData,
+    }
   }
 
-  async findOneMovieAndReviewAvgById(media_id: number, queryRunner?: QueryRunner) {
+  async findOneMovieAndReviewAvgById(media_id: number) {
     const reviewAvgQuery = this.makeQueryBuilder()
       .select([
         'ROUND(AVG(movieReviews.like_counts), 1) as likes_count_avg',

@@ -18,7 +18,6 @@ import {BoardsEntity} from "./database/entities/Board/Boards.entity";
 import {GenreEntity} from "./database/entities/MovieAndGenre/genre.entity";
 import {GenreMovieEntity} from "./database/entities/MovieAndGenre/genreMovie.entity";
 import {MovieEntity} from "./database/entities/MovieAndGenre/movie.entity";
-import {MovieOptionEntity} from "./database/entities/MovieAndGenre/movieOption.entity";
 import {subMovieImageEntity} from "./database/entities/MovieAndGenre/subMovieImage.entity";
 import {OrderEntity} from "./database/entities/Order/order.entity";
 import {OrderClaimEntity} from "./database/entities/Order/orderClaim.entity";
@@ -73,7 +72,6 @@ import {MovieReviewEntitiy} from "./database/entities/movieReview/movieReview.en
 				GenreEntity,
 				GenreMovieEntity,
 				MovieEntity,
-				MovieOptionEntity,
 				subMovieImageEntity,
 				OrderEntity,
 				OrderClaimEntity,
@@ -91,7 +89,8 @@ import {MovieReviewEntitiy} from "./database/entities/movieReview/movieReview.en
 			],
 			autoLoadEntities: true,
 			charset: "utf8mb4",
-			synchronize: process.env.NODE_ENV === 'local',
+			// synchronize: process.env.NODE_ENV === 'local',
+			synchronize: false,
 			logging: process.env.NODE_ENV === 'local',
 		}),
 		ScheduleModule.forRoot(),

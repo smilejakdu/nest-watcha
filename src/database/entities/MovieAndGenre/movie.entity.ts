@@ -73,7 +73,7 @@ export class MovieEntity extends CoreEntity {
 	})
 	age_limit_status: AgeLimitStatus;
 
-	like_counts_avg: string;
+	like_counts_avg: string| number;
 
 	@OneToMany(() => GenreMovieEntity, genreMovie => genreMovie.movie)
 	genreMovie: GenreMovieEntity[];

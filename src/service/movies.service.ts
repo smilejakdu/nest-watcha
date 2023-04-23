@@ -32,6 +32,10 @@ export class MovieMapper {
   }
 }
 
+export interface MovieLikesCountAvgInterface {
+  like_counts_avg: string;
+}
+
 @Injectable()
 export class MoviesService {
   constructor(
@@ -60,18 +64,23 @@ export class MoviesService {
   }
 
   async findOneMovie(media_id: number) {
-    const [foundOneMovie, foundReviewListByMovieId] = await Promise.all([
-      this.movieRepository.findOneMovieAndReviewAvgById(media_id),
-      this.movieReviewRepository.findReviewListByMovieId(media_id),
-    ]);
+    const foundOneMovie = await this.movieRepository.findOneMovieAndReviewAvgById(media_id);
 
     if (!foundOneMovie) {
       return BadRequest('Movie not found', HttpStatus.NOT_FOUND);
     }
 
+    // 각각의 like_counts를 합산
+    let totalLikes = 0;
+    foundOneMovie.forEach(movie => {
+      totalLikes += movie.movieReviews.reduce((sum, review) => sum + review.like_counts, 0);
+    });
+
+    const avgLikes = totalLikes / foundOneMovie[0].movieReviews.length;
+    foundOneMovie[0].like_counts_avg = avgLikes;
+
     return SuccessFulResponse({
       movie: foundOneMovie,
-      reviewList: foundReviewListByMovieId,
     });
   }
 

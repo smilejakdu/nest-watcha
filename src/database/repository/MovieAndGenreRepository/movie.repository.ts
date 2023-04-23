@@ -19,6 +19,7 @@ export interface MovieRepositoryInterface {
   genre_name: string;
 }
 
+
 @CustomRepository(MovieEntity)
 export class MovieRepository extends Repository<MovieEntity>{
   makeQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<MovieEntity> {
@@ -77,24 +78,23 @@ export class MovieRepository extends Repository<MovieEntity>{
   }
 
   async findOneMovieAndReviewAvgById(media_id: number) {
-    const reviewAvgQuery = this.makeQueryBuilder()
+    return this.makeQueryBuilder()
       .select([
-        'ROUND(AVG(movieReviews.like_counts), 1) as likes_count_avg',
+        'movies.id',
+        'movies.title',
+        'movies.description',
+        'movies.price',
+        'movies.movie_score',
+        'movies.age_limit_status',
+        'movieReviews.id',
+        'movieReviews.content',
+        'movieReviews.like_counts',
+        'movieReviews.createdAt',
+        'movieReviews.updatedAt',
       ])
       .leftJoin('movies.movieReviews', 'movieReviews')
-      .where(`movies.id=:id`, { id: media_id})
-      .groupBy('movies.id')
-
-    const movieQuery = this.makeQueryBuilder()
       .where('movies.id=:id', {id: media_id})
-
-    const [foundReviewAvgByMediaId, foundOneMovie] = await Promise.all([
-      reviewAvgQuery.getRawOne(),
-      movieQuery.getOne(),
-    ]);
-
-    foundOneMovie.like_counts_avg = foundReviewAvgByMediaId?.likes_count_avg ?? 0;
-    return foundOneMovie;
+      .getMany();
   }
 
   async deleteMovieByIds(ids: number[], queryRunner?: QueryRunner) {

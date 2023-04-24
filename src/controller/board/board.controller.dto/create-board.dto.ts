@@ -1,5 +1,5 @@
 import {ApiPropertyOptional} from '@nestjs/swagger';
-import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
+import {IsNotEmptyString} from "../../../decorators/validateDecorators/is-not-empty-string.decorator";
 import {IsOptional} from "class-validator";
 
 export class CreateBoardDto {

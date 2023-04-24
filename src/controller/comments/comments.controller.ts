@@ -10,9 +10,9 @@ import { UsersEntity } from 'src/database/entities/User/Users.entity';
 import { DeleteCommentDto } from './comments.controller.dto/delete-comment.dto';
 import { UserAuthGuard } from 'src/shared/auth/guard/user-auth.guard';
 import {Request} from "express";
-import { endPointGetDecorator } from 'src/decorators/end-point-get.decorator';
+import { endPointGetDecorator } from 'src/decorators/controllerDecorators/end-point-get.decorator';
 import { CoreResponseDto } from 'src/shared/CoreResponse';
-import {endPointPostDecorator} from "../../decorators/end-point-post.decorator";
+import {endPointPostDecorator} from "../../decorators/controllerDecorators/end-point-post.decorator";
 import { Pagination } from "../../shared/pagination";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })

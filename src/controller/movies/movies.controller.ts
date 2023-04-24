@@ -24,7 +24,7 @@ import { UpdateMovieDto } from './movie.controller.dto/updateMovie.dto';
 import { Pagination } from '../../shared/pagination';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
-import {endPointGetDecorator} from "../../decorators/end-point-get.decorator";
+import {endPointGetDecorator} from "../../decorators/controllerDecorators/end-point-get.decorator";
 import {CoreResponseDto} from "../../shared/CoreResponse";
 import {GetMovieListDto} from "./movie.controller.dto/getMovie.dto";
 

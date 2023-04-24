@@ -4,7 +4,7 @@ import { ApiInternalServerErrorResponse, ApiTags } from '@nestjs/swagger';
 
 import { SelectHashtagDto } from './hashtag.controller.dto/select-hashtag.dto';
 import { HashtagService } from '../../service/hashtag.service';
-import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
+import { endPointGetDecorator } from "../../decorators/controllerDecorators/end-point-get.decorator";
 import { CoreResponseDto } from "../../shared/CoreResponse";
 
 @ApiInternalServerErrorResponse({

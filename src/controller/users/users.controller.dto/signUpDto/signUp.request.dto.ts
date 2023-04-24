@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {IsEmail, IsNotEmpty, IsOptional, IsString} from 'class-validator';
-import {IsNotEmptyString} from "../../../../decorators/is-not-empty-string.decorator";
+import {IsNotEmptyString} from "../../../../decorators/validateDecorators/is-not-empty-string.decorator";
 
 export class SignUpRequestDto {
 	@IsNotEmptyString(

@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import {IsOptionalStringMaxLength} from "../../../decorators/is-optional-string.decorator";
+import {IsOptionalStringMaxLength} from "../../../decorators/validateDecorators/is-optional-string.decorator";
 
 export class GetMovieDto{
   @IsNotEmpty()

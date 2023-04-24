@@ -27,8 +27,8 @@ import { Pagination } from '../../shared/pagination';
 import { Request } from 'express';
 import { CoreResponseDto} from "../../shared/CoreResponse";
 import { UsersEntity } from 'src/database/entities/User/Users.entity';
-import { endPointGetDecorator } from "../../decorators/end-point-get.decorator";
-import { endPointPostDecorator} from "../../decorators/end-point-post.decorator";
+import { endPointGetDecorator } from "../../decorators/controllerDecorators/end-point-get.decorator";
+import { endPointPostDecorator} from "../../decorators/controllerDecorators/end-point-post.decorator";
 
 @ApiInternalServerErrorResponse({
 	description: '서버 에러',

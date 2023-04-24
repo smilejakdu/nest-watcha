@@ -55,9 +55,16 @@ export class CommentsService {
 		if (!foundBoard) {
 			throw new NotFoundException('해당 게시글이 존재하지 않습니다.', String(boardId));
 		}
-		const createdComment = await transactionRunner(async (queryRunner) => {
-			return await queryRunner.manager.save(CommentsEntity,({content: content ,board_id: boardId, user_id: userId}));
+
+		const newComment = this.commentsRepository.create({
+			content: content,
+			boardId: boardId,
+			userId: userId,
 		});
+
+		const createdComment = await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.save(CommentsEntity, newComment);
+		},this.dataSource);
 		console.log(createdComment);
 		return SuccessFulResponse(createdComment);
 	}

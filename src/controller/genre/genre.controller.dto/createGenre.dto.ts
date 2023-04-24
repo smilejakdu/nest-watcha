@@ -1,5 +1,5 @@
-import {IsNotEmptyString} from "../../../decorators/is-not-empty-string.decorator";
-import {IsNotEmptyNumber} from "../../../decorators/is-not-empty-number.decorator";
+import {IsNotEmptyString} from "../../../decorators/validateDecorators/is-not-empty-string.decorator";
+import {IsNotEmptyNumber} from "../../../decorators/validateDecorators/is-not-empty-number.decorator";
 
 export class CreateGenreRequestDto {
   @IsNotEmptyString(0,1000,

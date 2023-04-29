@@ -6,16 +6,14 @@ services:
       dockerfile: ./compose/local/nginx/Dockerfile
     container_name: watcha_nginx
     depends_on:
-      - watcha
+      - watcha_backend
       - db
     ports:
       - "80:80"
     links:
-      - watcha
-    networks:
-      - watcha_network
+      - watcha_backend
 
-  watcha:
+  watcha_backend:
     build:
       dockerfile: ./compose/local/backend/Dockerfile
       context: .
@@ -31,8 +29,6 @@ services:
       - db
     depends_on:
       - db
-    networks:
-      - watcha_network
 
   db:
     image: mysql:8.0.23
@@ -46,9 +42,9 @@ services:
       - ./mysql/sqls/:/docker-entrypoint-initdb.d/
     env_file:
       - compose/dev/mysql.env
-    networks:
-      - watcha_network
-
-networks:
-  watcha_network:
-    driver: bridge
+    healthcheck:
+      test: [ "CMD", "mysql", "-h", "127.0.0.1", "-u", "nest_watcha", "-p", "watcha1234", "-e", "SELECT 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

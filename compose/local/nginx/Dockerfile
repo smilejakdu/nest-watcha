@@ -1,5 +1,4 @@
-#FROM 389315113065.dkr.ecr.ap-northeast-2.amazonaws.com/fym/prod/nginx:latest
-FROM nginx:latest
+FROM 955251329813.dkr.ecr.ap-northeast-2.amazonaws.com/nest_watcha/dev/nginx:latest
 
 RUN rm /etc/nginx/conf.d/default.conf || true
 COPY compose/local/nginx/nginx.conf /etc/nginx

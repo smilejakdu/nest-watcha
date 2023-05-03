@@ -36,13 +36,18 @@ export class MovieRepository extends Repository<MovieEntity>{
     const findQuery = await this.makeQueryBuilder()
       .select([
         'movies.id',
-        'movies.title title',
-        'movies.description description',
-        'movies.price price',
-        'movies.movie_score movie_score',
-        'movies.age_limit_status age_limit_status',
-        'genre.id genre_id',
-        'genre.name genre_name',
+        'movies.title',
+        'movies.description',
+        'movies.price',
+        'movies.movie_score',
+        'movies.age_limit_status',
+      ])
+      .addSelect([
+        'genreMovie.id',
+      ])
+      .addSelect([
+        'genre.id',
+        'genre.name'
       ])
       .innerJoin('movies.genreMovie','genreMovie')
       .innerJoin('genreMovie.genre','genre')
@@ -76,7 +81,8 @@ export class MovieRepository extends Repository<MovieEntity>{
       END
     `, orderByDirection
       )
-      .getRawMany<MovieRepositoryInterface>();
+      .getMany();
+      // .getRawMany<MovieRepositoryInterface>();
     const lastPage = Math.ceil(totalCount / size);
     const nextPage = Number(pageNumber) >= lastPage ? null : Number(pageNumber) + 1;
 

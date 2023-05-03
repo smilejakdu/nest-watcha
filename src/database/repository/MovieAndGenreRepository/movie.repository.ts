@@ -62,15 +62,20 @@ export class MovieRepository extends Repository<MovieEntity>{
     const countResult = await countQuery.getRawOne< { total_count: string } >();
 
     const totalCount = parseInt(countResult.total_count, 10);
-    if (order_by) {
-      findQuery = findQuery.orderBy()
-    } else {
-      findQuery = findQuery.orderBy()
-    }
+    const orderByDirection = order_by === 'DESC' ? 'DESC' : 'ASC';
+
     const paginatedData = await findQuery
       .offset(skip)
       .limit(size)
-      .orderBy()
+      .orderBy(
+        `
+      CASE
+        WHEN movies.title REGEXP '^[가-힣]' THEN CONCAT('1', movies.title)
+        WHEN movies.title REGEXP '^[a-zA-Z0-9]' THEN CONCAT('2', movies.title)
+        ELSE CONCAT('3', movies.title)
+      END
+    `, orderByDirection
+      )
       .getRawMany<MovieRepositoryInterface>();
     const lastPage = Math.ceil(totalCount / size);
     const nextPage = Number(pageNumber) >= lastPage ? null : Number(pageNumber) + 1;

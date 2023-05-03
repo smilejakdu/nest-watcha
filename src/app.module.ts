@@ -31,7 +31,6 @@ import {CommentsEntity} from "./database/entities/comments/comments.entity";
 import {HashTagEntity} from "./database/entities/hashTag.entity";
 import {SchedulesEntity} from "./database/entities/schedules.entity";
 import { HealthModule } from './module/health.module';
-import process from "process";
 import {ReplyEntitiy} from "./database/entities/comments/reply.entitiy";
 import {MovieReviewEntitiy} from "./database/entities/movieReview/movieReview.entitiy";
 

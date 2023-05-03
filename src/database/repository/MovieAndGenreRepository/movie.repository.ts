@@ -31,7 +31,7 @@ export class MovieRepository extends Repository<MovieEntity>{
     size: number,
     query: GetMovieListDto,
   ) {
-    const { movie_keyword, director, appearance } = query;
+    const { movie_keyword, director, appearance, order_by } = query;
 
     const findQuery = await this.makeQueryBuilder()
       .select([
@@ -62,9 +62,15 @@ export class MovieRepository extends Repository<MovieEntity>{
     const countResult = await countQuery.getRawOne< { total_count: string } >();
 
     const totalCount = parseInt(countResult.total_count, 10);
+    if (order_by) {
+      findQuery = findQuery.orderBy()
+    } else {
+      findQuery = findQuery.orderBy()
+    }
     const paginatedData = await findQuery
       .offset(skip)
       .limit(size)
+      .orderBy()
       .getRawMany<MovieRepositoryInterface>();
     const lastPage = Math.ceil(totalCount / size);
     const nextPage = Number(pageNumber) >= lastPage ? null : Number(pageNumber) + 1;

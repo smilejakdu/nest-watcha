@@ -11,12 +11,16 @@ export class GetMovieDto{
   movieId:number;
 }
 
-export class GetMovieListDto{
+enum OrderBy {
+  ASC = 'ASC',
+  DESC = 'DESC',
+  KOREAN = 'KOREAN',
+}
+
+export class GetMovieListDto {
   @IsOptionalStringMaxLength(
     100,
-    'movie_keyword',
-    'movie_keyword',
-  )
+    'movie_keyword', 'movie_keyword', )
   movie_keyword?: string;
 
   @IsOptionalStringMaxLength(
@@ -32,4 +36,11 @@ export class GetMovieListDto{
     'movie_description',
   )
   appearance?: string;
+
+  @IsOptionalStringMaxLength(
+      100,
+    OrderBy.DESC,
+      'order_by',
+  )
+  order_by?: string;
 }

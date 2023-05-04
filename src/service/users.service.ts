@@ -67,7 +67,9 @@ export class UsersService {
 
 	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponseDto> {
 		const { password, email } = signUpDto;
-		const foundUser = await this.userRepository.findOneBy({ email });
+		const foundUser = await this.userRepository.findOneBy({
+			email: email,
+		});
 
 		if (foundUser) {
 			throw new BadRequestException('이미 존재하는 이메일 입니다.');
@@ -81,7 +83,7 @@ export class UsersService {
 		const responseSignUpUser = await transactionRunner(async (queryRunner) => {
 			signUpDto.password = await bcrypt.hash(password, 12);
 			return await queryRunner.manager.save(UsersEntity, signUpDto);
-		},this.dataSource);
+		}, this.dataSource);
 
 		delete responseSignUpUser.password;
 		return SuccessFulResponse(responseSignUpUser, HttpStatus.CREATED);
@@ -98,22 +100,6 @@ export class UsersService {
 			where: { email },
 		})
 		return SuccessFulResponse(foundUser);
-	}
-
-	async checkRegister(loginType: string, tokenString: string) {
-		let foundUser;
-		let userData;
-
-		if (loginType === LoginType.KAKAO) {
-			console.log('kakao login')
-			userData = await this.userRepository.kakaoCallback(tokenString);
-			foundUser = await this.findAuthId(userData.id, LoginType.KAKAO);
-		}
-
-		return {
-			foundUser: foundUser.data,
-			userData: userData
-		};
 	}
 
 	async kakaoLogin(userData: KakaoUserData) {
@@ -166,7 +152,10 @@ export class UsersService {
 
 	async logIn(logInDto:LoginRequestDto, @Res() res: Response) {
 		const { email, password }= logInDto;
-		const [foundUser] = await Promise.all([this.userRepository.findOneBy({email})]);
+		const foundUser = await this.userRepository.findOneBy({
+			email: email,
+		});
+
 		if (!foundUser) {
 			throw new NotFoundException(`does not found user ${email}`);
 		}
@@ -177,13 +166,15 @@ export class UsersService {
 
 		const payload = {email: foundUser.email};
 		const options: Jwt.SignOptions = {expiresIn: '1d', issuer: 'robert', algorithm: 'HS256'};
-		const accessToken = Jwt.sign(payload, process.env.JWT_SECRET, options);
-		delete foundUser.password;
+		const JWT_SECRET =  this.configService.get('JWT_SECRET');
 
-		const domain = process.env.NODE_ENV === 'production' ? 'grow_up.im' : 'localhost';
+		const accessToken = Jwt.sign(payload, JWT_SECRET, options);
+		delete foundUser.password;
+		this.configService.get('NODE_ENV')
+		let cookieDomain = this.configService.get('NODE_ENV') === 'production' ? 'grow_up.im' : 'localhost';
 
 		res.cookie('access-token', accessToken, {
-			domain: domain,
+			domain: cookieDomain,
 			sameSite: this.configService.get('STAGE') !== 'local' ? 'none' : 'lax',
 			httpOnly: this.configService.get('STAGE') !== 'local',
 			secure: this.configService.get('STAGE') !== 'local',

@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
 import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
-import {GetMovieListDto} from "../../../controller/movies/movie.controller.dto/getMovie.dto";
+import { GetMovieListDto } from "../../../controller/movies/movie.controller.dto/getMovie.dto";
 
 export interface MovieRepositoryInterface {
   id: number;

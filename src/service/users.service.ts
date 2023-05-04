@@ -171,7 +171,7 @@ export class UsersService {
 		const accessToken = Jwt.sign(payload, JWT_SECRET, options);
 		delete foundUser.password;
 		this.configService.get('NODE_ENV')
-		let cookieDomain = this.configService.get('NODE_ENV') === 'production' ? 'grow_up.im' : 'localhost';
+		let cookieDomain = this.configService.get('NODE_ENV') === 'production' ? 'nest_watcha.im' : 'localhost';
 
 		res.cookie('access-token', accessToken, {
 			domain: cookieDomain,

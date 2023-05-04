@@ -10,12 +10,10 @@ services:
       - db
     ports:
       - "80:80"
-    links:
-      - watcha_backend
 
   watcha_backend:
     build:
-      dockerfile: ./compose/local/backend/Dockerfile
+      dockerfile: ./compose/dev/backend/Dockerfile
       context: .
     container_name: watcha_backend
     ports:
@@ -25,8 +23,6 @@ services:
       - .:/usr/src/app
     env_file:
       - compose/dev/dev.env
-    links:
-      - db
     depends_on:
       - db
 
@@ -43,7 +39,7 @@ services:
     env_file:
       - compose/dev/mysql.env
     healthcheck:
-      test: [ "CMD", "mysql", "-h", "127.0.0.1", "-u", "nest_watcha", "-p", "watcha1234", "-e", "SELECT 1" ]
+      test: [ "CMD", "mysql", "-h", "127.0.0.1", "-u", "nest_watcha", "-p", "xnaoqyuraoqwuyr", "-e", "SELECT 1" ]
       interval: 10s
       timeout: 5s
       retries: 5

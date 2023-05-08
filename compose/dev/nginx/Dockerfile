@@ -7,5 +7,5 @@ COPY compose/local/nginx/nest_watcha.conf /etc/nginx/conf.d
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
   && ln -sf /dev/stderr /var/log/nginx/error.log
 
-EXPOSE 8
+EXPOSE 80
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

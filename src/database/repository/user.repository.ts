@@ -108,7 +108,7 @@ export class UserRepository extends Repository<UsersEntity> {
 
     let profileResponse;
 
-    const response = await axios.post(get_profile_url, {
+    await axios.post(get_profile_url, {
       property_keys: [
         'properties.nickname',
         'kakao_account.email',
@@ -116,14 +116,13 @@ export class UserRepository extends Repository<UsersEntity> {
     } , {
       headers: getProfileHeaders,
     })
-      // .then(res=>{
-      // profileResponse = {res: res};
-      // console.log('profileResponse', profileResponse.res.data);
-      // }).catch(error=>{
-      // console.log('error', error.message);
-      //   throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
-      // });
-    console.log(response.data);
+      .then(res=>{
+      profileResponse = {res: res};
+      }).catch(error=>{
+        console.log('error', error.message);
+        throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
+      });
+
     if (!profileResponse.res.data.id) {
       throw new HttpException('Kakao login error',
                                         HttpStatus.INTERNAL_SERVER_ERROR);

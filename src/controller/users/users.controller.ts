@@ -17,12 +17,14 @@ import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import { UsersEntity } from '../../database/entities/User/Users.entity';
+import {LoginType, UsersEntity} from '../../database/entities/User/Users.entity';
 import { Response, Request } from 'express';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
 import { NaverGuard } from 'src/guards/naver.guard';
 import { KaKaoGuard } from 'src/guards/kakao.guard';
+import {OneWeeks} from "../../shared/dateFormat/dateFormat.service";
+import { ConfigService } from '@nestjs/config';
 
 
 export const BAD_REQUEST = 'bad request';
@@ -37,6 +39,7 @@ export const BAD_REQUEST = 'bad request';
 export class UsersController {
 	constructor(
 		private readonly usersService: UsersService,
+		private readonly configService: ConfigService,
 	) {}
 
 	@ApiOperation({ summary: 'my_profile' })
@@ -110,8 +113,39 @@ export class UsersController {
 	@UseGuards(KaKaoGuard)
 	@Get('kakao/callback')
 	async kakaoLoginCallback(@Req() req: any, @Res() res: Response) {
-		const responseKakaoUser = await this.usersService.kakaoLogin(req.user);
-		return res.status(responseKakaoUser.statusCode).json(responseKakaoUser);
+		return await this.usersService.kakaoLogin(req.user);
+	}
+
+	@ApiOperation({ summary: 'kakao_login 두번째 방법' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@Get('/kakaologin')
+	async kakaoCallback(@Req() req: any, @Res() res: Response) {
+		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
+		console.log('data:',data);
+		let userData = data.foundUser;
+		if (!userData) {
+			const result = await this.usersService.socialSignUp(data.kakaoUserData);
+			userData = result.data;
+		}
+		const accessToken = await this.usersService.makeAccessToken(userData.email);
+		console.log('accessToken:',accessToken);
+
+		const cookieDomain = this.configService.get('STAGE') === 'local' ? 'localhost' : 'nest_watcha.im';
+
+		res.cookie("accessToken", accessToken, {
+			domain: cookieDomain,
+			sameSite: 'lax',
+			httpOnly: this.configService.get('STAGE') !== 'local',
+			secure: this.configService.get('STAGE') !== 'local',
+			maxAge: OneWeeks,
+		});
+
+		return res.status(HttpStatus.OK).json({
+			ok: true,
+			statusCode: HttpStatus.OK,
+			message: 'SUCCESS',
+			data: userData,
+		});
 	}
 
 	@ApiOperation({ summary: 'google_login' })

@@ -17,7 +17,7 @@ import { UsersService } from '../../service/users.service';
 import { LoginRequestDto } from './users.controller.dto/logInDto/logIn.request.dto';
 import { LoginResponseDto } from './users.controller.dto/logInDto/logIn.response.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
-import {LoginType, UsersEntity} from '../../database/entities/User/Users.entity';
+import {IKakaoUserData, LoginType, UsersEntity} from '../../database/entities/User/Users.entity';
 import { Response, Request } from 'express';
 import {UpdateUserRequestDto} from "./users.controller.dto/updateUser.request.dto";
 import { GoogleGuard } from 'src/guards/google.guard';
@@ -120,14 +120,18 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakaologin')
 	async kakaoCallback(@Req() req: any, @Res() res: Response) {
-		const data: { foundUser: any; kakaoUserData: any } = await this.usersService.checkRegister(LoginType.KAKAO, req.headers['access-token']);
+		const data: { foundUser: UsersEntity; kakaoUserData: IKakaoUserData } = await this.usersService.checkRegister(
+			LoginType.KAKAO,
+			req.headers['access-token'],
+		);
+
 		console.log('data:',data);
 		let userData = data.foundUser;
 		if (!userData) {
 			const result = await this.usersService.socialSignUp(data.kakaoUserData);
 			userData = result.data;
 		}
-		const accessToken = await this.usersService.makeAccessToken(userData.email);
+		const accessToken = await this.usersService.makeAccessToken(userData);
 		console.log('accessToken:',accessToken);
 
 		const cookieDomain = this.configService.get('STAGE') === 'local' ? 'localhost' : 'nest_watcha.im';

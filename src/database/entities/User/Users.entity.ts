@@ -16,6 +16,25 @@ export enum LoginType {
 	GOOGLE = 'google',
 }
 
+export interface IKakaoUserData {
+	id: number;
+	connected_at: string;
+	properties: {
+		nickname: string;
+		profile_image: string;
+		thumbnail_image: string;
+	};
+	kakao_account: {
+		profile_needs_agreement: boolean;
+		profile: any; // 객체 타입이 정해져 있지 않으므로 any로 처리합니다.
+		has_email: boolean;
+		email_needs_agreement: boolean;
+		is_email_valid: boolean;
+		is_email_verified: boolean;
+		email: string;
+	};
+}
+
 @Entity({ schema: 'nest_watcha', name: 'users' })
 export class UsersEntity extends CoreEntity {
 	@Column('varchar', { name: 'username', length: 150 })

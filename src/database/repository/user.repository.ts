@@ -101,33 +101,34 @@ export class UserRepository extends Repository<UsersEntity> {
 
   async kakaoCallback(tokenString: string): Promise<any> {
     const get_profile_url = 'https://kapi.kakao.com/v2/user/me';
-    console.log('tokenString',tokenString);
+    console.log('tokenString', tokenString);
     const getProfileHeaders = {
       Authorization: `Bearer ${tokenString}`,
     };
 
-    let profileResponse;
+    try {
+      const response = await axios.post(
+        get_profile_url,
+        {
+          property_keys: [
+            'properties.nickname',
+            'kakao_account.email',
+          ],
+        },
+        {
+          headers: getProfileHeaders,
+        }
+      );
 
-    await axios.post(get_profile_url, {
-      property_keys: [
-        'properties.nickname',
-        'kakao_account.email',
-      ],
-    } , {
-      headers: getProfileHeaders,
-    })
-      .then(res=>{
-      profileResponse = {res: res};
-      }).catch(error=>{
-        console.log('error', error.message);
-        throw new HttpException('Kakao login error',HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+      if (!response.data.id) {
+        throw new HttpException('Kakao login error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
 
-    if (!profileResponse.res.data.id) {
-      throw new HttpException('Kakao login error',
-                                        HttpStatus.INTERNAL_SERVER_ERROR);
+      return response.data;
+    } catch (error) {
+      console.log('error', error.message);
+      throw new HttpException('Kakao login error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return profileResponse.res.data;
   }
 
   // 이 방식은 google 에서 token 을 받아오고 그 받은 token 으로 구현하게 될때

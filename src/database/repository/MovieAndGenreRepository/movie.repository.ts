@@ -82,7 +82,21 @@ export class MovieRepository extends Repository<MovieEntity>{
     `, orderByDirection
       )
       .getMany();
-      // .getRawMany<MovieRepositoryInterface>();
+
+    // const result =  advertiserData.sort((a, b) => {
+    //   const aKeywordIndex = a.name.indexOf(keyword);
+    //   const bKeywordIndex = b.name.indexOf(keyword);
+    //
+    //   if (aKeywordIndex === 0 && bKeywordIndex !== 0) {
+    //     return -1;
+    //   }
+    //   if (bKeywordIndex === 0 && aKeywordIndex !== 0) {
+    //     return 1;
+    //   }
+    //   return a.name.localeCompare(b.name);
+    // });
+
+    // .getRawMany<MovieRepositoryInterface>();
     const lastPage = Math.ceil(totalCount / size);
     const nextPage = Number(pageNumber) >= lastPage ? null : Number(pageNumber) + 1;
 
@@ -120,5 +134,22 @@ export class MovieRepository extends Repository<MovieEntity>{
       .from(MovieEntity)
       .where('movies.id in (:ids) ', {ids})
       .execute();
+  }
+
+  async searchMovieByTitleOrDescription(keyword: string) {
+    const findQuery = await this.makeQueryBuilder()
+      .select('movies.name name')
+      .execute();
+
+    if (keyword) {
+      findQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where('movies.title LIKE :keyword', { keyword: `%${keyword}%` });
+          qb.orWhere('movies.description LIKE :keyword', { keyword: `%${keyword}%` });
+        })
+      );
+    }
+
+    return findQuery;
   }
 }

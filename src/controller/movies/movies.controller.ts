@@ -45,6 +45,14 @@ export class MoviesController {
     return await this.movieService.createMovie(body);
   }
 
+  @ApiOperation({ summary: '영화 만들기' })
+  @ApiCreatedResponse({ description: '성공' })
+  @UseGuards(UserAuthGuard, PermissionsGuard)
+  @Post()
+  async searchMovie(@Req() req, @Body() body: CreateMovieRequestDto) {
+    return await this.movieService.createMovie(body);
+  }
+
   @endPointGetDecorator('모든 영화 가져오기', '성공', CoreResponseDto, '')
   async findAllMovie(
     @Query() pagination: Pagination,

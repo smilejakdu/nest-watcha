@@ -63,6 +63,29 @@ export class MoviesService {
     );
   }
 
+  async searchMovie(keyword: string){
+    const foundMovie = await this.movieRepository.searchMovieByTitleOrDescription(keyword);
+
+    if (!foundMovie) {
+      return BadRequest('Movie not found', HttpStatus.NOT_FOUND);
+    }
+
+    const result =  foundMovie.sort((a, b) => {
+      const aKeywordIndex = a.name.indexOf(keyword);
+      const bKeywordIndex = b.name.indexOf(keyword);
+
+      if (aKeywordIndex === 0 && bKeywordIndex !== 0) {
+        return -1;
+      }
+      if (bKeywordIndex === 0 && aKeywordIndex !== 0) {
+        return 1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    return SuccessFulResponse(result);
+  }
+
   async findOneMovie(media_id: number) {
     const foundOneMovie = await this.movieRepository.findOneMovieAndReviewAvgById(media_id);
 

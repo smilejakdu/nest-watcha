@@ -116,6 +116,14 @@ export class UsersController {
 		return await this.usersService.kakaoLogin(req.user);
 	}
 
+	@ApiOperation({ summary: 'kakao_login_call_back' })
+	@ApiOkResponse({ description: '성공', type: 'application/json' })
+	@UseGuards(KaKaoGuard)
+	@Post('kakao/callback')
+	async logoutUser(@Req() req: any, @Res() res: Response) {
+		return await this.usersService.kakaoLogin(req.user);
+	}
+
 	@ApiOperation({ summary: 'kakao_login 두번째 방법' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@Get('/kakaologin')
@@ -125,7 +133,6 @@ export class UsersController {
 			req.headers['access-token'],
 		);
 
-		console.log('data:',data);
 		let userData = data.foundUser;
 		if (!userData) {
 			const result = await this.usersService.socialSignUp(data.kakaoUserData);

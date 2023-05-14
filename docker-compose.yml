@@ -13,7 +13,7 @@ services:
 
   watcha_backend:
     build:
-      dockerfile: ./compose/dev/backend/Dockerfile
+      dockerfile: ./compose/local/backend/Dockerfile
       context: .
     container_name: watcha_backend
     ports:

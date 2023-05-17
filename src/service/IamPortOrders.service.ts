@@ -39,7 +39,7 @@ export class IamPortOrdersService {
     newOrder.order_status = OrderStatus.INIT;
     newOrder.user_id = foundUser.id;
 
-    const createdOrder = await transactionRunner(async (queryRunner:QueryRunner) => {
+    const createdOrder = await transactionRunner<OrderEntity>(async (queryRunner:QueryRunner) => {
       return await queryRunner.manager.save(OrderEntity, newOrder);
     });
 

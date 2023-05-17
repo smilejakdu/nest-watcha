@@ -99,7 +99,6 @@ export class UsersController {
 		const foundUser = req?.user as UsersEntity;
 		return this.usersService.findMyBoardsByEmail(foundUser.id);
 	}
-
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(KaKaoGuard)
@@ -107,7 +106,6 @@ export class UsersController {
 	async kakaoLogin(@Req() req, @Res() res: Response) {
 		// console.log('req:',req);
 	}
-
 	@ApiOperation({ summary: 'kakao_login_call_back' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(KaKaoGuard)

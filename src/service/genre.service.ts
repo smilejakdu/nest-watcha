@@ -25,7 +25,7 @@ export class GenreService {
     }
 
     const newGenre = new GenreEntity();
-    const createdGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
+    const createdGenre = await transactionRunner<GenreEntity>(async (queryRunner:QueryRunner) => {
       newGenre.name = genreName;
       return await queryRunner.manager.save(GenreEntity, newGenre);
     },this.dataSource);
@@ -96,7 +96,7 @@ export class GenreService {
       throw new NotFoundException('does not found genre');
     }
 
-    const updatedGenre = await transactionRunner(async (queryRunner:QueryRunner)=>{
+    const updatedGenre = await transactionRunner<GenreEntity>(async (queryRunner:QueryRunner)=>{
       foundGenre.name = genreName;
       return await queryRunner.manager.save(GenreEntity, foundGenre);
     },this.dataSource);
@@ -115,12 +115,12 @@ export class GenreService {
       throw new NotFoundException('does not found genre');
     }
 
-    const deletedGenre = await transactionRunner(async (queryRunner:QueryRunner) => {
+    const deletedGenre = await transactionRunner<GenreEntity>(async (queryRunner:QueryRunner) => {
       return await queryRunner.manager.softDelete(GenreEntity, foundGenre);
     });
 
     const deletedGenreResponseDto = new DeleteGenreResponseDto();
-    deletedGenreResponseDto.id = deletedGenre.raw.id;
+    deletedGenreResponseDto.id = deletedGenre.id
     return SuccessFulResponse(deletedGenre);
   }
 }

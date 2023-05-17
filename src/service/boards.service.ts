@@ -37,7 +37,7 @@ export class BoardsService {
 		const newBoard = new BoardsEntity();
 		Object.assign(newBoard, boardData);
 		newBoard.user_id = userId;
-		const createdBoard = await transactionRunner(async (queryRunner:QueryRunner) => {
+		const createdBoard = await transactionRunner<BoardsEntity>(async (queryRunner:QueryRunner) => {
 			return await queryRunner.manager.save(BoardsEntity, newBoard);
 		}, this.dataSource);
 

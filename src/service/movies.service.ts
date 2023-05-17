@@ -134,7 +134,7 @@ export class MoviesService {
     }
 
     Object.assign(foundMovie, set);
-    const updatedMovie = await transactionRunner(async (queryRunner: QueryRunner) => {
+    const updatedMovie = await transactionRunner<MovieEntity>(async (queryRunner: QueryRunner) => {
       return await queryRunner.manager.save(MovieEntity, foundMovie);
     });
 

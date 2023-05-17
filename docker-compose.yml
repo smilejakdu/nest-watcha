@@ -3,7 +3,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: ./compose/local/nginx/Dockerfile
+      dockerfile: ./compose/dev/nginx/Dockerfile
     container_name: watcha_nginx
     depends_on:
       - watcha_backend

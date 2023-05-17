@@ -80,7 +80,7 @@ export class UsersService {
 			throw new BadRequestException('비밀번호는 숫자와 영문자를 포함하여 8자 이상이어야 합니다.');
 		}
 
-		const responseSignUpUser = await transactionRunner(async (queryRunner) => {
+		const responseSignUpUser = await transactionRunner<UsersEntity>(async (queryRunner) => {
 			signUpDto.password = await bcrypt.hash(password, 12);
 			return await queryRunner.manager.save(UsersEntity, signUpDto);
 		}, this.dataSource);

@@ -47,7 +47,7 @@
       ],
       "dnsServers": null,
       "mountPoints": [],
-      "workingDirectory": "/usr/src/app",
+      "workingDirectory": "/app",
       "secrets": null,
       "dockerSecurityOptions": null,
       "memory": null,

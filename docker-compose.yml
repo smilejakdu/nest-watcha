@@ -5,11 +5,11 @@ services:
       context: .
       dockerfile: ./compose/dev/nginx/Dockerfile
     container_name: watcha_nginx
+    ports:
+      - "80:80"
     depends_on:
       - watcha_backend
       - db
-    ports:
-      - "80:80"
 
   watcha_backend:
     build:

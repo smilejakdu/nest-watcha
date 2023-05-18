@@ -3,7 +3,7 @@ FROM 955251329813.dkr.ecr.ap-northeast-2.amazonaws.com/nest_watcha/node:16.15.1-
 # 필요한 패키지를 설치합니다.
 RUN apk add --no-cache make g++ && \
     apk add --update --no-cache python3 && \
-    ln -sf python3 /usr/bin/python
+    ln -sf python3 /usr/bin/python \
 
 FROM node AS install
 WORKDIR /app

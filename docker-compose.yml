@@ -10,10 +10,12 @@ services:
     depends_on:
       - watcha_backend
       - db
+    links:
+      - watcha_backend
 
   watcha_backend:
     build:
-      dockerfile: ./compose/dev/backend/Dockerfile
+      dockerfile: ./compose/local/backend/Dockerfile
       context: .
     container_name: watcha_backend
     ports:
@@ -23,6 +25,8 @@ services:
       - .:/usr/src/app
     env_file:
       - compose/dev/dev.env
+    links:
+      - db
     depends_on:
       - db
 

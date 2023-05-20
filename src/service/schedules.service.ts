@@ -16,7 +16,6 @@ export class SchedulesService {
     return OrderEntity.makeQueryBuilder()
       .select('IFNULL(SUM(orders.order_price),0) as sum_price')
       .innerJoin('orders.Movie', 'movie')
-      .innerJoin('movie.MovieOption', 'MovieOption')
       .where('orders.createdAt between :forDate and :toDate', {forDate: fromDate, toDate: toDate})
   }
   async findNewUser() {

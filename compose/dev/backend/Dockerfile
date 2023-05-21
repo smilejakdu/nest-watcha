@@ -20,4 +20,4 @@ FROM node
 WORKDIR /usr/src/app
 COPY --from=builder /app .
 
-ENTRYPOINT node ./dist/main.js
+CMD node ./dist/main.js

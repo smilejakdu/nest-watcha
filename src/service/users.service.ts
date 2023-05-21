@@ -9,7 +9,6 @@ import * as Jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import { LoginType, UsersEntity } from "../database/entities/User/Users.entity";
 import { DataSource, QueryRunner } from "typeorm";
-import { Response } from "express";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
 import { UserFindResponseDto } from "../controller/users/users.controller.dto/userFindDto/userFind.response.dto";
 import { GoogleUserData, KakaoUserData } from "../types";
@@ -181,7 +180,7 @@ export class UsersService {
 		return SuccessFulResponse(foundUser);
 	}
 
-	async logIn(logInDto:LoginRequestDto, @Res() res: Response) {
+	async logIn(logInDto:LoginRequestDto) {
 		const { email, password }= logInDto;
 		const foundUser = await this.userRepository.findOneBy({
 			email: email,
@@ -197,22 +196,15 @@ export class UsersService {
 
 		const payload = {email: foundUser.email};
 		const options: Jwt.SignOptions = {expiresIn: '1d', issuer: 'robert', algorithm: 'HS256'};
-		const JWT_SECRET =  this.configService.get('JWT_SECRET');
+		const JWT_SECRET = this.configService.get('JWT_SECRET');
 
 		const accessToken = Jwt.sign(payload, JWT_SECRET, options);
 		delete foundUser.password;
-		this.configService.get('NODE_ENV')
-		let cookieDomain = this.configService.get('NODE_ENV') === 'production' ? 'nest_watcha.im' : 'localhost';
 
-		res.cookie('access-token', accessToken, {
-			domain: cookieDomain,
-			sameSite: this.configService.get('STAGE') !== 'local' ? 'none' : 'lax',
-			httpOnly: this.configService.get('STAGE') !== 'local',
-			secure: this.configService.get('STAGE') !== 'local',
-			maxAge: OneWeeks,
-		});
-
-		return SuccessFulResponse({ user: foundUser });
+		return  {
+			user: foundUser,
+			accessToken: accessToken,
+		}
 	}
 
 	async updateUser(userData: UsersEntity) {

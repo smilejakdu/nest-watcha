@@ -69,8 +69,16 @@ export class UsersController {
 	})
 	@Post('login')
 	async logIn(@Body() data: LoginRequestDto, @Res() res: Response) {
-		const responseLogin = await this.usersService.logIn(data, res);
-		return res.status(responseLogin.statusCode).json(responseLogin);
+		const {user, accessToken} = await this.usersService.logIn(data);
+		const cookieDomain = this.configService.get('NODE_ENV') === 'production' ? 'nest_watcha.im' : 'localhost';
+		res.cookie('access-token', accessToken, {
+			domain: cookieDomain,
+			sameSite: this.configService.get('STAGE') !== 'local' ? 'none' : 'lax',
+			httpOnly: this.configService.get('STAGE') !== 'local',
+			secure: this.configService.get('STAGE') !== 'local',
+			maxAge: OneWeeks,
+		});
+		return res.status(HttpStatus.OK).json(user);
 	}
 
 	@ApiOperation({ summary: 'my_profile' })

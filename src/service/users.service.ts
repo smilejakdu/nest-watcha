@@ -64,7 +64,7 @@ export class UsersService {
 		return decrypted;
 	}
 
-	async signUp(signUpDto: SignUpRequestDto): Promise<CoreResponseDto> {
+	async signUp(signUpDto: SignUpRequestDto) {
 		const { password, email } = signUpDto;
 		const foundUser = await this.userRepository.findOneBy({
 			email: email,

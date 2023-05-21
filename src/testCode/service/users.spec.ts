@@ -1,12 +1,14 @@
-import {Test, TestingModule } from "@nestjs/testing";
+import {Test, TestingModule} from "@nestjs/testing";
 import {UserRepository} from "../../database/repository/user.repository";
 import {UsersService} from "../../service/users.service";
 import bcrypt from "bcryptjs";
 import {UsersEntity} from "../../database/entities/User/Users.entity";
 import {LoginRequestDto} from "../../controller/users/users.controller.dto/logInDto/logIn.request.dto";
-import { BoardsRepository } from "src/database/repository/BoardRepository/boards.repository";
-import { DataSource } from "typeorm";
-import { ConfigService } from "@nestjs/config";
+import {BoardsRepository} from "src/database/repository/BoardRepository/boards.repository";
+import {DataSource} from "typeorm";
+import {ConfigService} from "@nestjs/config";
+import {SignUpRequestDto} from "src/controller/users/users.controller.dto/signUpDto/signUp.request.dto";
+import {BadRequestException} from "@nestjs/common";
 
 describe('UserService', () => {
   let userService: UsersService;
@@ -15,6 +17,8 @@ describe('UserService', () => {
   let boardsRepository: BoardsRepository;
   let dataSource: DataSource;
   let configuService: ConfigService;
+
+  const newUser = new UsersEntity();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,9 +29,16 @@ describe('UserService', () => {
         {
           provide: DataSource,
           useValue: {
-            // 필요한 메소드를 여기서 목으로 구현하세요.
-            // 예를 들어, DataSource가 'getData'라는 메소드를 가지고 있다면:
-            // getData: jest.fn().mockResolvedValue({}),
+            createQueryRunner: jest.fn().mockReturnValue({
+              connect: jest.fn(),
+              startTransaction: jest.fn(),
+              commitTransaction: jest.fn(),
+              rollbackTransaction: jest.fn(),
+              release: jest.fn(),
+              manager: {
+                save: jest.fn().mockResolvedValue(newUser),
+              },
+            }),
           },
         },
         {
@@ -51,7 +62,39 @@ describe('UserService', () => {
     dataSource = module.get<DataSource>(DataSource);
   });
 
-  it('should login correctly', async () => {
+  it('회원가입 검증', async () => {
+    const newUser = new UsersEntity();
+
+    // 이미 존재하는 이메일로 회원가입 시도
+    jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(newUser);
+    const existingEmailDto = new SignUpRequestDto();
+    existingEmailDto.email = 'existing@test.com';
+    existingEmailDto.password = 'password';
+    await expect(userService.signUp(existingEmailDto)).rejects.toThrow(BadRequestException);
+
+    // 비밀번호가 조건에 맞지 않을 경우
+    jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
+    const weakPasswordDto = new SignUpRequestDto();
+    weakPasswordDto.email = 'new@test.com';
+    weakPasswordDto.password = 'weak';
+    await expect(userService.signUp(weakPasswordDto)).rejects.toThrow(BadRequestException);
+
+    // 유효한 회원가입
+    const signUpDto = new SignUpRequestDto();
+    signUpDto.email = 'new@test.com';
+    signUpDto.password = 'password123';
+
+    userService['transactionRunner'] = jest.fn().mockImplementation(async (callback) => {
+      const mockQueryRunner = {manager: {save: jest.fn().mockResolvedValue(newUser)}};
+      return await callback(mockQueryRunner);
+    }); // Assuming transactionRunner is a public or private method of userService
+
+    const result = await userService.signUp(signUpDto);
+
+    expect(result.data).toEqual(newUser);
+  });
+
+  it('로그인 검증', async () => {
     // 미리 정의된 User 객체
     const newUser = new UsersEntity();
 

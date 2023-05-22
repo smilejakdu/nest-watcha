@@ -35,10 +35,12 @@ export class UsersService {
 			throw new NotFoundException('존재하지 않는 유저입니다.');
 		}
 
-		return SuccessFulResponse({
+		return {
+			ok: true,
 			user: foundUser,
+			statusCode: HttpStatus.OK,
 			myBoards: foundMyBoards,
-		});
+		}
 	}
 
 	async encryptPhoneNumber(phoneNumber: string) {

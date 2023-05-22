@@ -103,9 +103,13 @@ export class UsersController {
 	@ApiOkResponse({ description: '성공', type: 'application/json' })
 	@UseGuards(UserAuthGuard)
 	@Get('my_boards')
-	async findMyBoards(@Req() req: Request) {
+	async findMyBoards(
+		@Req() req: Request,
+		@Res() res: Response,
+	) {
 		const foundUser = req?.user as UsersEntity;
-		return this.usersService.findMyBoardsByEmail(foundUser.id);
+		const responseBoards = await this.usersService.findMyBoardsByEmail(foundUser.id);
+		return res.status(responseBoards.statusCode).json(responseBoards);
 	}
 	@ApiOperation({ summary: 'kakao_login' })
 	@ApiOkResponse({ description: '성공', type: 'application/json' })

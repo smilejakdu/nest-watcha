@@ -8,7 +8,7 @@ import {BoardsRepository} from "src/database/repository/BoardRepository/boards.r
 import {DataSource} from "typeorm";
 import {ConfigService} from "@nestjs/config";
 import {SignUpRequestDto} from "src/controller/users/users.controller.dto/signUpDto/signUp.request.dto";
-import {BadRequestException} from "@nestjs/common";
+import {BadRequestException, HttpStatus} from "@nestjs/common";
 
 describe('UserService', () => {
   let userService: UsersService;
@@ -116,5 +116,43 @@ describe('UserService', () => {
     expect(result).toHaveProperty('user');
 
     expect(result.user).toEqual(newUser);
+  });
+
+  it('이메일로 게시판 리스트 찾기', async () => {
+    // 가상의 유저 ID 생성
+    const userId = 123;
+
+    // 가짜 유저 객체 생성
+    const fakeUser = { id: userId, email: 'example@example.com' };
+
+    // 가짜 게시판 리스트 생성
+    const fakeBoards = [
+      { id: 1, title: '게시판 1' },
+      { id: 2, title: '게시판 2' },
+      { id: 3, title: '게시판 3' },
+    ];
+
+    // userRepository.findOneBy() 함수를 대체할 mock 함수 생성
+    userRepository.findOneBy = jest.fn().mockResolvedValue(fakeUser);
+
+    // boardRepository.findMyBoardByUserId() 함수를 대체할 mock 함수 생성
+    boardsRepository.findMyBoardByUserId = jest.fn().mockResolvedValue(fakeBoards);
+
+    // 함수 호출 및 결과 확인
+    const result = await userService.findMyBoardsByEmail(userId);
+
+    // userRepository.findOneBy() 함수가 주어진 userId로 호출되었는지 확인
+    expect(userRepository.findOneBy).toHaveBeenCalledWith({ id: userId });
+
+    // boardRepository.findMyBoardByUserId() 함수가 주어진 userId로 호출되었는지 확인
+    expect(boardsRepository.findMyBoardByUserId).toHaveBeenCalledWith(userId);
+
+    // 반환된 결과의 유저와 게시판 리스트가 예상과 일치하는지 확인
+    expect(result).toEqual({
+      ok: true,
+      user: fakeUser,
+      statusCode: HttpStatus.OK,
+      myBoards: fakeBoards,
+    });
   });
 });

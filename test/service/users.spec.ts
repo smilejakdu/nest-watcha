@@ -34,35 +34,32 @@ describe('UserService', () => {
   });
 
   describe('회원가입 검증', () => {
+    // signUpDto를 미리 선언합니다.
+    let signUpDto;
+
+    // signUpDto를 beforeEach에서 초기화합니다.
+    beforeEach(() => {
+      signUpDto = {
+        username: 'ash',
+        email: 'ash@gmail.com',
+        password: 'Password1234',
+        phone: '21342',
+      }
+    });
+
     it('이미 가입한 유저 입니다.', async () => {
-      const signUpDto = {
-        username:'newUser',
-        email: 'newUser@gmail.com',
-        password: 'Password123',
-        phone:'21234',
-      };
 
-      const user = new UsersEntity();
-      user.username = signUpDto.username;
-      user.email = signUpDto.email;
-      user.password = signUpDto.password;
-      user.phone = signUpDto.phone;
+      const newUser = new UsersEntity();
+      Object.assign(newUser, signUpDto);
 
-      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(newUser);
 
-      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(user);
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(newUser);
       await expect(userService.signUp(signUpDto)).rejects.toThrow(BadRequestException);
       await expect(userService.signUp(signUpDto)).rejects.toThrow('이미 존재하는 이메일 입니다.');
     });
 
     it('비밀번호가 길이가 짧습니다.', async () => {
-      const signUpDto = {
-        username:'newUser',
-        email: 'newUser@gmail.com',
-        password: 'Pass',
-        phone:'21234',
-      };
-
       // 이메일이 존재하지 않음을 mock
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(undefined);
 
@@ -77,10 +74,7 @@ describe('UserService', () => {
 
     it('회원가입 성공', async () => {
       const newUser = new UsersEntity();
-      newUser.username = 'newUser';
-      newUser.email = 'ash@gmail.com';
-      newUser.password = 'Password123';
-      newUser.phone = '21234';
+      Object.assign(newUser, signUpDto);
 
       // `findOneBy`가 null을 반환하도록 설정하여 회원가입이 가능하게 합니다.
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
@@ -112,4 +106,9 @@ describe('UserService', () => {
       expect(response.data.email).toBe(newUser.email);
     });
   })
+
+  describe('로그인 검증', () => {
+    let signInDto;
+  });
 });
+

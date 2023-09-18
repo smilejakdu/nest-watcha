@@ -16,8 +16,10 @@ import { BoardsRepository } from "../database/repository/BoardRepository/boards.
 import { ConfigService } from "@nestjs/config";
 import { OneWeeks } from "../shared/dateFormat/dateFormat.service";
 
+
 @Injectable()
 export class UsersService {
+	// static string
 	constructor(
 		private readonly userRepository: UserRepository,
 		private readonly boardRepository: BoardsRepository,

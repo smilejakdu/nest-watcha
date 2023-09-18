@@ -55,6 +55,26 @@ describe('UserService', () => {
       await expect(userService.signUp(signUpDto)).rejects.toThrow('이미 존재하는 이메일 입니다.');
     });
 
+    it('비밀번호가 길이가 짧습니다.', async () => {
+      const signUpDto = {
+        username:'newUser',
+        email: 'newUser@gmail.com',
+        password: 'Pass',
+        phone:'21234',
+      };
+
+      // 이메일이 존재하지 않음을 mock
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(undefined);
+
+      // userService.signUp 호출 시 BadRequestException 예외가 발생하는 것을 검증합니다.
+      await expect(userService.signUp(signUpDto)).rejects.toThrow(BadRequestException);
+
+      // 예외 메시지까지 검증하려면 다음과 같이 합니다.
+      await expect(userService.signUp(signUpDto)).rejects.toThrow(
+        new BadRequestException('비밀번호는 숫자와 영문자를 포함하여 8자 이상이어야 합니다.')
+      );
+    });
+
     it('회원가입 성공', async () => {
       const newUser = new UsersEntity();
       newUser.username = 'newUser';
@@ -80,7 +100,7 @@ describe('UserService', () => {
       })
 
       const response = await userService.signUp(newUser);
-
+      console.log('response:', response);
       expect(response.ok).toEqual(true);
       // 반환된 객체에서 비밀번호가 삭제되었는지 확인
       expect(response.data.password).toBeUndefined();

@@ -3,7 +3,7 @@ import { LoginType, UsersEntity } from '../entities/User/Users.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as Jwt from 'jsonwebtoken';
 import axios from 'axios';
-import {CustomRepository} from "../../shared/typeorm-ex.decorator";
+import {CustomRepository} from "../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {

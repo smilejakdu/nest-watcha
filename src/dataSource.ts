@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const dataSource = new DataSource({
+export const dataSource = new DataSource({
   type: 'mysql',
   host: process.env.MYSQL_HOST,
   port: Number(process.env.MYSQL_PORT) as number,
@@ -16,5 +16,3 @@ const dataSource = new DataSource({
   synchronize: false,
   logging: true,
 });
-
-export default dataSource;

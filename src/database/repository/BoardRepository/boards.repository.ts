@@ -4,7 +4,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import {CustomRepository} from "../../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(BoardsEntity)
 export class BoardsRepository extends Repository<BoardsEntity>{

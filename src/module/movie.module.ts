@@ -4,9 +4,9 @@ import {MovieMapper, MoviesService} from '../service/movies.service';
 import { MovieRepository } from '../database/repository/MovieAndGenreRepository/movie.repository';
 import { GenreMovieRepository } from '../database/repository/MovieAndGenreRepository/genreMovie.repository';
 import { GenreMovieService } from '../service/genreMovie.service';
-import {TypeOrmExModule} from "../shared/typeorm-ex.module";
 import {CommentsRepository} from "../database/repository/comments.repository";
 import {MovieReviewRepository} from "../database/repository/movieReview.repository";
+import {TypeOrmExModule} from "../shared/typeorm/typeorm-ex.module";
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreMovieEntity } from '../../entities/MovieAndGenre/genreMovie.entity';
 import { CreateGenreMovieDto } from '../../../controller/movies/genreMovie.controller.dto/createGenreMovie.dto';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import { CustomRepository } from "../../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(GenreMovieEntity)
 export class GenreMovieRepository extends Repository<GenreMovieEntity>{

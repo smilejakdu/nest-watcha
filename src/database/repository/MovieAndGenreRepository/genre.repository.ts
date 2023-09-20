@@ -1,6 +1,6 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { GenreEntity } from '../../entities/MovieAndGenre/genre.entity';
-import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
+import {CustomRepository} from "../../../shared/typeorm/typeorm-ex.decorator";
 
 export interface GenreWithMovies {
   genre_id: number;

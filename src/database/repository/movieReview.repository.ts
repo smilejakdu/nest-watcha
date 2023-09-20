@@ -1,6 +1,6 @@
-import {CustomRepository} from "../../shared/typeorm-ex.decorator";
 import {QueryRunner, Repository, SelectQueryBuilder} from "typeorm";
 import {MovieReviewEntitiy} from "../entities/movieReview/movieReview.entitiy";
+import {CustomRepository} from "../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(MovieReviewEntitiy)
 export class MovieReviewRepository extends Repository<MovieReviewEntitiy> {

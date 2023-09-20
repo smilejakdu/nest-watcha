@@ -15,6 +15,7 @@ import { GoogleUserData, KakaoUserData } from "../types";
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { ConfigService } from "@nestjs/config";
 import { OneWeeks } from "../shared/dateFormat/dateFormat.service";
+import {InjectRepository} from "@nestjs/typeorm";
 
 
 @Injectable()

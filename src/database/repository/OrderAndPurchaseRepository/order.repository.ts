@@ -1,7 +1,6 @@
 import { QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { OrderEntity, OrderStatus } from '../../entities/Order/order.entity';
-import dayjs from 'dayjs';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import { CustomRepository } from "../../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(OrderEntity)
 export class OrderRepository extends Repository<OrderEntity>{

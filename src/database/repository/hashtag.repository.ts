@@ -1,6 +1,6 @@
 import {QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { HashTagEntity } from '../entities/hashTag.entity';
-import {CustomRepository} from "../../shared/typeorm-ex.decorator";
+import {CustomRepository} from "../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(HashTagEntity)
 export class HashtagRepository extends Repository<HashTagEntity>{

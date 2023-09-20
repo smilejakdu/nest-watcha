@@ -2,7 +2,7 @@ import {QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
 import { BoardImageEntity } from '../../entities/Board/BoardImage.entity';
 import { createImageURL } from '../../../shared/lib/multerOptions';
 import { isNil } from 'lodash';
-import {CustomRepository} from "../../../shared/typeorm-ex.decorator";
+import {CustomRepository} from "../../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(BoardImageEntity)
 export class BoardImageRepository extends Repository<BoardImageEntity> {

@@ -5,8 +5,8 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { MovieEntity } from '../../entities/MovieAndGenre/movie.entity';
-import { CustomRepository } from "../../../shared/typeorm-ex.decorator";
 import { GetMovieListDto } from "../../../controller/movies/movie.controller.dto/getMovie.dto";
+import {CustomRepository} from "../../../shared/typeorm/typeorm-ex.decorator";
 
 export interface MovieRepositoryInterface {
   id: number;

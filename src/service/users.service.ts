@@ -190,7 +190,7 @@ export class UsersService {
 		});
 
 		if (!foundUser) {
-			throw new NotFoundException(`does not found user ${email}`);
+			throw new NotFoundException(`가입하지 않은 유저입니다 : ${email}`);
 		}
 
 		if (!await bcrypt.compare(password, foundUser.password)) {

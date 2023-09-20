@@ -4,7 +4,7 @@ import {UsersService} from "../../src/service/users.service";
 import bcrypt from "bcryptjs";
 import {UsersEntity} from "../../src/database/entities/User/Users.entity";
 import {BoardsRepository} from "src/database/repository/BoardRepository/boards.repository";
-import {BadRequestException, HttpStatus} from "@nestjs/common";
+import {BadRequestException, HttpStatus, NotFoundException} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {DataSource} from "typeorm";
 
@@ -36,7 +36,6 @@ describe('UserService', () => {
   describe('회원가입 검증', () => {
     // signUpDto를 미리 선언합니다.
     let signUpDto;
-
     // signUpDto를 beforeEach에서 초기화합니다.
     beforeEach(() => {
       signUpDto = {
@@ -108,7 +107,36 @@ describe('UserService', () => {
   })
 
   describe('로그인 검증', () => {
-    let signInDto;
+    let loginDto;
+    beforeEach(() => {
+      loginDto = {
+        email: 'ash@gmail.com',
+        password: 'Password1234',
+      }
+    });
+
+    it('가입 하지 않은 user 입니다.', async () => {
+      const user = new UsersEntity();
+      Object.assign(user, loginDto);
+
+      const doesNotExistUser = new UsersEntity();
+      doesNotExistUser.email = 'doesnotuser@gmail.com';
+      doesNotExistUser.password = 'Password1234';
+
+      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(undefined);
+
+      await expect(userService.logIn(doesNotExistUser)).rejects.toThrow(NotFoundException);
+      await expect(userService.logIn(doesNotExistUser)).rejects.toThrow(`가입하지 않은 유저입니다 : ${doesNotExistUser.email}`);
+    });
+
+    it('패스워드 가 틀립니다.', () => {
+
+    });
+
+    it('로그인 성공', () => {
+
+    });
   });
 });
 

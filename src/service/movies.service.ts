@@ -11,7 +11,6 @@ import {DataSource, QueryRunner} from "typeorm";
 import {MovieRepository} from "../database/repository/MovieAndGenreRepository/movie.repository";
 import {MovieReviewRepository} from "../database/repository/movieReview.repository";
 import {GetMovieListDto} from "../controller/movies/movie.controller.dto/getMovie.dto";
-import {UsersService} from "./users.service";
 
 export class MovieMapper {
   toMovieEntity(createMovieRequestDto: CreateMovieRequestDto) {

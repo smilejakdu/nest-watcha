@@ -7,11 +7,12 @@ import {BoardsRepository} from "src/database/repository/BoardRepository/boards.r
 import {BadRequestException, HttpStatus, NotFoundException} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {DataSource} from "typeorm";
+import * as Jwt from "jsonwebtoken";
 
 describe('UserService', () => {
   let userService: UsersService;
+  let configService: ConfigService;
   let userRepository: UserRepository;
-  let boardsRepository: BoardsRepository;
   let mockDataSource;
 
   beforeEach(async () => {
@@ -30,7 +31,7 @@ describe('UserService', () => {
 
     userService = module.get<UsersService>(UsersService);
     userRepository = module.get<UserRepository>(UserRepository);
-    boardsRepository = module.get<BoardsRepository>(BoardsRepository);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   describe('회원가입 검증', () => {
@@ -130,12 +131,39 @@ describe('UserService', () => {
       await expect(userService.logIn(doesNotExistUser)).rejects.toThrow(`가입하지 않은 유저입니다 : ${doesNotExistUser.email}`);
     });
 
-    it('패스워드 가 틀립니다.', () => {
+    it('패스워드 가 틀립니다.', async () => {
+      const user = new UsersEntity();
+      Object.assign(user, loginDto);
 
+      const doesNotFoundPasswordUser = new UsersEntity();
+      doesNotFoundPasswordUser.email = 'ash@gmail.com';
+      doesNotFoundPasswordUser.password = 'qqqqword12345';
+      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(user);
+
+      await expect(userService.logIn(doesNotFoundPasswordUser)).rejects.toThrow(BadRequestException);
+      await expect(userService.logIn(doesNotFoundPasswordUser)).rejects.toThrow('password is not correct');
     });
 
-    it('로그인 성공', () => {
+    it('로그인 성공', async () => {
+      const newUser = new UsersEntity();
+      Object.assign(newUser, loginDto);
+      newUser.password = await bcrypt.hash(newUser.password, 12)
 
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(newUser);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest.spyOn(configService, 'get').mockReturnValue('JWT_SECRET');
+
+      const JWT_SECRET = configService.get('JWT_SECRET');
+      const payload = { email: newUser.email };
+      const options: Jwt.SignOptions = { expiresIn: '1d', issuer: 'robert', algorithm: 'HS256' };
+      const accessToken = Jwt.sign(payload, JWT_SECRET, options);
+
+      const response = await userService.logIn(newUser);
+
+      expect(response.user.password).toBeUndefined();
+      expect(response.user).toEqual(newUser);
+      expect(response.accessToken).toEqual(accessToken);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, QueryRunner} from 'typeorm';
 import { CommentsEntity } from '../comments/comments.entity';
 import { CoreEntity } from '../core.entity';
 import { UsersEntity } from '../User/Users.entity';
@@ -40,4 +40,12 @@ export class BoardsEntity extends CoreEntity {
 			boardHashTag => boardHashTag.boards
 	)
 	boardHashTag: BoardHashTagEntity[];
+
+	static makeQueryBuilder(queryRunner?: QueryRunner) {
+		if (queryRunner) {
+			return queryRunner.manager.createQueryBuilder(BoardsEntity, 'boards');
+		} else {
+			return this.createQueryBuilder('boards');
+		}
+	}
 }

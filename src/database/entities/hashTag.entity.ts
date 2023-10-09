@@ -17,4 +17,10 @@ export class HashTagEntity extends CoreEntity {
 			return this.createQueryBuilder('hashTag');
 		}
 	}
+
+	static async saveHashTag(hashTag: string) {
+		const newHashTag = new HashTagEntity();
+		newHashTag.name = hashTag;
+		return await this.save(newHashTag);
+	}
 }

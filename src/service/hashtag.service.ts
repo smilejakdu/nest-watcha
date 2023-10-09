@@ -1,12 +1,12 @@
-import { isEmpty } from "lodash";
 import { Injectable } from "@nestjs/common";
 // Entity
-import { HashTagEntity } from "../database/entities/hashTag.entity";
 import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.entity";
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { HashtagRepository } from "../database/repository/hashtag.repository";
 import { SuccessFulResponse } from "../shared/CoreResponse";
 import { BoardImageRepository } from "src/database/repository/BoardRepository/boardImage.repository";
+import {transactionRunner} from "../shared/common/transaction/transaction";
+import {DataSource} from "typeorm";
 
 @Injectable()
 export class HashtagService {
@@ -14,10 +14,11 @@ export class HashtagService {
 		private readonly boardsRepository: BoardsRepository,
 		private readonly boardImageRepository: BoardImageRepository,
 		private readonly hashTagRepository: HashtagRepository,
+		private readonly dataSource: DataSource,
 	) {}
 
 	async getMyHashTag(hashtag: string| string[]) {
-		const responseBoard = await this.boardsRepository
+		const responseBoard = this.boardsRepository
 			.makeQueryBuilder()
 			.select()
 			.addSelect([
@@ -40,52 +41,21 @@ export class HashtagService {
 		return SuccessFulResponse(result);
 	}
 
+	async getHashTagList(hashTagList: string[]) {
+		return await this.hashTagRepository.findHashTagList(hashTagList)
+	}
+
 	async insertHashtagList(hashTagList) {
 		return await this.hashTagRepository.insertHashtagList(hashTagList);
 	}
 
-	async createHashTag(boardId: number, hashtag: string) {
-		const BoardIdhashId: { board_id: number, hash_id: number }[] = [];
+	async saveHashTag(hashTag, boardId: number) {
+		const newBoardHashTag = new BoardHashTagEntity();
+		newBoardHashTag.board_id = boardId;
+		newBoardHashTag.hash_id = hashTag.id;
 
-		const hashtags: string[] = hashtag.match(/#[^\s#]+/g);
-		if (!isEmpty(hashtags)) {
-			const HashSliceLowcase: string[] = hashtags.map((v: string) => v.slice(1).toLowerCase());
-			const hashEntityList: HashTagEntity[] = await this.hashTagRepository
-				.findHashTagList(HashSliceLowcase);
-
-			const hashTagResultList = hashEntityList.map(hashtag => {
-				return hashtag.name
-			});
-
-			if (isEmpty(hashEntityList)) {
-				const hashList = hashTagResultList.map(function (hashtag) {
-					return { hash: hashtag };
-				});
-				const hashtagInsertedList = await this.insertHashtagList(hashList);
-
-				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
-				}
-			} else {
-				const differenceHash = HashSliceLowcase.filter(value => !hashTagResultList.includes(value));
-				const differencehashList = differenceHash.map(function (hashtag) {
-					return { hash: hashtag };
-				});
-				const hashtagInsertedList = await this.insertHashtagList(differencehashList);
-
-				for (const hashTag of hashtagInsertedList.identifiers) {
-					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
-				}
-
-				for (const hashTag of hashEntityList) {
-					BoardIdhashId.push({ board_id: boardId, hash_id: hashTag.id });
-				}
-
-				await BoardHashTagEntity
-					.makeQueryBuilder()
-					.insert()
-					.values(BoardIdhashId).execute();
-			}
-		}
+		return await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
+		}, this.dataSource);
 	}
 }

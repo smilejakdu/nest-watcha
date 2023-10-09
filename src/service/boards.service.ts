@@ -13,14 +13,14 @@ import { HashTagEntity } from "../database/entities/hashTag.entity";
 import { UsersEntity } from "../database/entities/User/Users.entity";
 import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
 import solr from "solr-node";
+import {HashtagService} from "./hashtag.service";
 
 @Injectable()
 export class BoardsService {
 	private solrNodeclient;
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
-		private readonly boardImageRepository: BoardImageRepository,
-		private readonly hashTagRepository: HashtagRepository,
+		private readonly hashTagService: HashtagService,
 		private readonly dataSource: DataSource,
 	) {
 		this.solrNodeclient = new solr({
@@ -51,27 +51,18 @@ export class BoardsService {
 		}, this.dataSource);
 	}
 
-	private async saveNewHashTag(hashTag: string) {
-		const newHashTag = new HashTagEntity();
-		newHashTag.name = hashTag;
-
-		return transactionRunner(async (queryRunner) => {
-			return queryRunner.manager.save(HashTagEntity, newHashTag);
-		}, this.dataSource);
-	}
-
 	// 이미 데이터베이스에 있는 해시태그는 재사용하고, 없는 해시태그는 새로 생성합니다.
 	private async saveBoardHashTags(boardHashTag: string[], boardId: number) {
 		if (!boardHashTag?.length) return;
 
-		const existingHashTags = await this.hashTagRepository.findHashTagList(boardHashTag);
+		const existingHashTags = await this.hashTagService.getHashTagList(boardHashTag);
 		// 만약 위의 코드에서 existingHashTags 가 중복된 코드를 제거하려면 new Set 을 사용하면 됩니다.
 		const existingHashTagNames = existingHashTags.map((hashTag) => hashTag.name);
 
 		// 데이터베이스에 없는 해시태그만 필터링합니다.
 		const tagsToCreate = boardHashTag.filter((hashTag) => !existingHashTagNames.includes(hashTag));
 		// 선택된 해시태그를 데이터베이스에 새로 저장한다.
-		const createdHashTags = await Promise.all(tagsToCreate.map(tag => this.saveNewHashTag(tag)));
+		const createdHashTags = await Promise.all(tagsToCreate.map(tag => this.hashTagService.saveHashTag(tag, boardId)));
 		console.log(createdHashTags)
 		// 기존 해시태그와 새로 생성된 해시태그를 모두 합칩니다.
 		const allHashTags = [...existingHashTags, ...createdHashTags];

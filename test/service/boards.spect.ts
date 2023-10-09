@@ -12,9 +12,9 @@ describe('BoardsService', () => {
   let mockDataSource: any;
 
   beforeEach(async () => {
-    mockBoardsRepository = {
-      // Add mock implementations if needed
-    };
+    mockDataSource = {
+      createQueryRunner: jest.fn()
+    }
 
     mockHashtagRepository = {
       findHashTagList: jest.fn().mockResolvedValue([]),

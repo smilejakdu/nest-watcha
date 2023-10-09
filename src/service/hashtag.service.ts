@@ -49,6 +49,25 @@ export class HashtagService {
 		return await this.hashTagRepository.insertHashtagList(hashTagList);
 	}
 
+	// 이미 데이터베이스에 있는 해시태그는 재사용하고, 없는 해시태그는 새로 생성합니다.
+	async saveBoardHashTags(boardHashTag: string[], boardId: number) {
+		if (!boardHashTag?.length) return;
+
+		const existingHashTags = await this.getHashTagList(boardHashTag);
+		// 만약 위의 코드에서 existingHashTags 가 중복된 코드를 제거하려면 new Set 을 사용하면 됩니다.
+		const existingHashTagNames = existingHashTags.map((hashTag) => hashTag.name);
+
+		// 데이터베이스에 없는 해시태그만 필터링합니다.
+		const tagsToCreate = boardHashTag.filter((hashTag) => !existingHashTagNames.includes(hashTag));
+		// 선택된 해시태그를 데이터베이스에 새로 저장한다.
+		const createdHashTags = await Promise.all(tagsToCreate.map(tag => this.saveHashTag(tag, boardId)));
+		console.log(createdHashTags)
+		// 기존 해시태그와 새로 생성된 해시태그를 모두 합칩니다.
+		const allHashTags = [...existingHashTags, ...createdHashTags];
+		// 모든 해시태그를 해당 게시판에 연결합니다
+		return await Promise.all(allHashTags.map(hashTag => this.saveHashTag(hashTag, boardId)));
+	}
+
 	async saveHashTag(hashTag, boardId: number) {
 		const newBoardHashTag = new BoardHashTagEntity();
 		newBoardHashTag.board_id = boardId;

@@ -1,5 +1,5 @@
-import {QueryRunner, Repository, SelectQueryBuilder } from 'typeorm';
-import { HashTagEntity } from '../entities/hashTag.entity';
+import {QueryRunner, Repository, SelectQueryBuilder} from 'typeorm';
+import {HashTagEntity} from '../entities/hashTag.entity';
 import {CustomRepository} from "../../shared/typeorm/typeorm-ex.decorator";
 
 @CustomRepository(HashTagEntity)
@@ -15,11 +15,10 @@ export class HashtagRepository extends Repository<HashTagEntity>{
   }
 
   async insertHashtagList(hashTagList) {
-    const createdHashtagList = await this.makeQueryBuilder()
+    return await this.makeQueryBuilder()
       .insert()
       .values(hashTagList)
       .execute();
-    return createdHashtagList;
   }
 
   async findHashTagList(hashTagList: string[]) {

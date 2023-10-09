@@ -1,12 +1,16 @@
 import { isNil } from 'lodash';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BoardImageRepository } from '../database/repository/BoardRepository/boardImage.repository';
 import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
+import {BoardImageEntity} from "../database/entities/Board/BoardImage.entity";
+import {transactionRunner} from "../shared/common/transaction/transaction";
+import {DataSource, QueryRunner} from "typeorm";
 
 @Injectable()
 export class BoardImageService {
 	constructor(
 		private readonly boardImageRepository : BoardImageRepository,
+		private readonly dataSource: DataSource,
 	) {}
 
 	async uploadFiles(files) {
@@ -27,11 +31,16 @@ export class BoardImageService {
 		return SuccessFulResponse(foundAllImage);
 	}
 
-	async insertImages(boardId: number, imagePathList: string[]) {
-		const responseInsertImages = await this.boardImageRepository.insertImages(boardId,imagePathList);
-		if(!isNil(responseInsertImages)){
-			throw new BadRequestException('BAD REQUEST');
-		}
-		return SuccessFulResponse(responseInsertImages);
+	async saveBoardImages(images: string[], boardId: number) {
+		if (!images?.length) return null;
+
+		return await Promise.all(images.map(async (image) => {
+			const boardImage = new BoardImageEntity();
+			boardImage.board_id = boardId;
+			boardImage.imagePath = image;
+			return await transactionRunner(async (queryRunner: QueryRunner) => {
+				return await queryRunner.manager.save(BoardImageEntity, boardImage);
+			}, this.dataSource);
+		}));
 	}
 }

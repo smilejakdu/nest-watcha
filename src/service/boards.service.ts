@@ -6,30 +6,19 @@ import { CreateBoardDto } from "../controller/board/board.controller.dto/create-
 import { BoardsEntity } from "../database/entities/Board/Boards.entity";
 import { DataSource, QueryRunner } from "typeorm";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
-import { HashtagRepository } from "../database/repository/hashtag.repository";
-import { BoardHashTagEntity } from "../database/entities/Board/BoardHashTag.entity";
 import { BoardImageEntity } from "src/database/entities/Board/BoardImage.entity";
-import { HashTagEntity } from "../database/entities/hashTag.entity";
 import { UsersEntity } from "../database/entities/User/Users.entity";
-import { BoardImageRepository } from "../database/repository/BoardRepository/boardImage.repository";
-import solr from "solr-node";
 import {HashtagService} from "./hashtag.service";
+import {BoardImageService} from "./boardImage.service";
 
 @Injectable()
 export class BoardsService {
-	private solrNodeclient;
 	constructor(
 		private readonly boardsRepository: BoardsRepository,
+		private readonly boardImageService: BoardImageService,
 		private readonly hashTagService: HashtagService,
 		private readonly dataSource: DataSource,
-	) {
-		this.solrNodeclient = new solr({
-			host: 'localhost',
-			port: '8983',
-			core: 'board',
-			protocol: 'http',
-		});
-	}
+	) {}
 
 	private async saveBoard(boardData, userId: number): Promise<BoardsEntity> {
 		const newBoard = new BoardsEntity();
@@ -41,54 +30,12 @@ export class BoardsService {
 		}, this.dataSource);
 	}
 
-	private async saveBoardHashTag(hashTag, boardId: number) {
-		const newBoardHashTag = new BoardHashTagEntity();
-		newBoardHashTag.board_id = boardId;
-		newBoardHashTag.hash_id = hashTag.id;
-
-		return await transactionRunner(async (queryRunner) => {
-			return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
-		}, this.dataSource);
-	}
-
-	// 이미 데이터베이스에 있는 해시태그는 재사용하고, 없는 해시태그는 새로 생성합니다.
-	private async saveBoardHashTags(boardHashTag: string[], boardId: number) {
-		if (!boardHashTag?.length) return;
-
-		const existingHashTags = await this.hashTagService.getHashTagList(boardHashTag);
-		// 만약 위의 코드에서 existingHashTags 가 중복된 코드를 제거하려면 new Set 을 사용하면 됩니다.
-		const existingHashTagNames = existingHashTags.map((hashTag) => hashTag.name);
-
-		// 데이터베이스에 없는 해시태그만 필터링합니다.
-		const tagsToCreate = boardHashTag.filter((hashTag) => !existingHashTagNames.includes(hashTag));
-		// 선택된 해시태그를 데이터베이스에 새로 저장한다.
-		const createdHashTags = await Promise.all(tagsToCreate.map(tag => this.hashTagService.saveHashTag(tag, boardId)));
-		console.log(createdHashTags)
-		// 기존 해시태그와 새로 생성된 해시태그를 모두 합칩니다.
-		const allHashTags = [...existingHashTags, ...createdHashTags];
-		// 모든 해시태그를 해당 게시판에 연결합니다
-		return await Promise.all(allHashTags.map(hashTag => this.saveBoardHashTag(hashTag, boardId)));
-	}
-
-	private async saveBoardImages(images: string[], boardId: number) {
-		if (!images?.length) return null;
-
-		return await Promise.all(images.map(async (image) => {
-			const boardImage = new BoardImageEntity();
-			boardImage.board_id = boardId;
-			boardImage.imagePath = image;
-			return await transactionRunner(async (queryRunner: QueryRunner) => {
-				return await queryRunner.manager.save(BoardImageEntity, boardImage);
-			}, this.dataSource);
-		}));
-	}
-
 	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponseDto> {
 		const {boardHashTag, boardImages , ...boardData} = data;
 
 		const savedBoard = await this.saveBoard(boardData, userId);
-		const savedBoardHashTag = await this.saveBoardHashTags(boardHashTag, savedBoard.id);
-		const createdImagePath = await this.saveBoardImages(boardImages, savedBoard.id);
+		const savedBoardHashTag = await this.hashTagService.saveBoardHashTags(boardHashTag, savedBoard.id);
+		const createdImagePath = await this.boardImageService.saveBoardImages(boardImages, savedBoard.id);
 
 		return SuccessFulResponse({
 			board : savedBoard,
@@ -141,16 +88,6 @@ export class BoardsService {
 				totalPages,
 			}
 		});
-	}
-
-	async searchBoardBySorl(query: string) {
-		try {
-			const result = await this.solrNodeclient.query().q(query);
-			const responseSearch = await this.solrNodeclient.search(result);
-			return JSON.stringify(responseSearch);
-		} catch (err) {
-			throw err;
-		}
 	}
 
 	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {

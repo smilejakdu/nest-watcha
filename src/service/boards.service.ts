@@ -31,63 +31,78 @@ export class BoardsService {
 		});
 	}
 
-	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponseDto> {
-		const {boardHashTag, boardImages , ...boardData} = data;
-
+	private async saveBoard(boardData, userId: number): Promise<BoardsEntity> {
 		const newBoard = new BoardsEntity();
 		Object.assign(newBoard, boardData);
 		newBoard.user_id = userId;
-		const createdBoard = await transactionRunner<BoardsEntity>(async (queryRunner:QueryRunner) => {
+
+		return await transactionRunner<BoardsEntity>(async (queryRunner: QueryRunner) => {
 			return await queryRunner.manager.save(BoardsEntity, newBoard);
 		}, this.dataSource);
+	}
 
-		let createdBoardHashTag;
-		if (boardHashTag?.length > 0) {
-			const foundHashTagList = await this.hashTagRepository.findHashTagList(boardHashTag);
-			if (foundHashTagList.length > 0) {
-				createdBoardHashTag = foundHashTagList.map(async (hashTag) => {
-					const newBoardHashTag = new BoardHashTagEntity();
-					newBoardHashTag.board_id = createdBoard.id;
-					newBoardHashTag.hash_id = hashTag.id;
-					return await transactionRunner(async (queryRunner) => {
-						return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
-					}, this.dataSource);
-				});
-			} else {
-				const newHashTagList = boardHashTag.map(async (hashTag) => {
-					const newHashTag = new HashTagEntity();
-					newHashTag.name = hashTag;
-					return transactionRunner(async (queryRunner) => {
-						return queryRunner.manager.save(HashTagEntity, newHashTag);
-					},this.dataSource);
-				});
-				createdBoardHashTag = await Promise.all(newHashTagList);
-				createdBoardHashTag = await createdBoardHashTag.map(async (hashTag) => {
-					const newBoardHashTag = new BoardHashTagEntity();
-					newBoardHashTag.board_id = createdBoard.id;
-					newBoardHashTag.hash_id = hashTag.id;
-					return await transactionRunner(async (queryRunner) => {
-						return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
-					},this.dataSource);
-				});
-			}
-		}
+	private async saveBoardHashTag(hashTag, boardId: number) {
+		const newBoardHashTag = new BoardHashTagEntity();
+		newBoardHashTag.board_id = boardId;
+		newBoardHashTag.hash_id = hashTag.id;
 
-		let createdImagePath;
-		if (boardImages?.length > 0) {
-			createdImagePath = boardImages.map(async (image) => {
-				const newBoardImage = new BoardImageEntity();
-				newBoardImage.board_id = createdBoard.id;
-				newBoardImage.imagePath = image;
-				return await transactionRunner(async (queryRunner) => {
-					return await queryRunner.manager.save(BoardImageEntity, newBoardImage);
-				}, this.dataSource);
-			});
+		return await transactionRunner(async (queryRunner) => {
+			return await queryRunner.manager.save(BoardHashTagEntity, newBoardHashTag);
+		}, this.dataSource);
+	}
+
+	private async saveNewHashTag(hashTag: string) {
+		const newHashTag = new HashTagEntity();
+		newHashTag.name = hashTag;
+
+		return transactionRunner(async (queryRunner) => {
+			return queryRunner.manager.save(HashTagEntity, newHashTag);
+		}, this.dataSource);
+	}
+
+	private async saveBoardHashTags(boardHashTag: string[], boardId: number) {
+		if (!boardHashTag?.length) return;
+
+		const foundHashTagList = await this.hashTagRepository.findHashTagList(boardHashTag);
+
+		if (foundHashTagList.length > 0) {
+			return await Promise.all(foundHashTagList.map(async (hashTag) => {
+				return this.saveBoardHashTag(hashTag, boardId);
+			}));
+		} else {
+			const newHashTagList = await Promise.all(boardHashTag.map(async (hashTag) => {
+				return this.saveNewHashTag(hashTag);
+			}));
+
+			return await Promise.all(newHashTagList.map(async (hashTag) => {
+				return this.saveBoardHashTag(hashTag, boardId);
+			}));
 		}
+	}
+
+	private async saveBoardImages(boardImages: string[], boardId: number) {
+		if (!boardImages?.length) return null;
+
+		return await Promise.all(boardImages.map(async (image) => {
+			const newBoardImage = new BoardImageEntity();
+			newBoardImage.board_id = boardId;
+			newBoardImage.imagePath = image;
+			return await transactionRunner(async (queryRunner: QueryRunner) => {
+				return await queryRunner.manager.save(BoardImageEntity, newBoardImage);
+			}, this.dataSource);
+		}));
+	}
+
+	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponseDto> {
+		const {boardHashTag, boardImages , ...boardData} = data;
+
+		const savedBoard = await this.saveBoard(boardData, userId);
+		const savedBoardHashTag = await this.saveBoardHashTags(boardHashTag, savedBoard.id);
+		const createdImagePath = await this.saveBoardImages(boardImages, savedBoard.id);
 
 		return SuccessFulResponse({
-			board : createdBoard,
-			hashTag: createdBoardHashTag,
+			board : savedBoard,
+			hashTag: savedBoardHashTag,
 			boardImages : createdImagePath,
 		}, HttpStatus.CREATED);
 	}

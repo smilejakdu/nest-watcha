@@ -1,4 +1,3 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import {BoardsEntity} from "../../database/entities/Board/Boards.entity";
 import {GenreEntity} from "../../database/entities/MovieAndGenre/genre.entity";
 import {GenreMovieEntity} from "../../database/entities/MovieAndGenre/genreMovie.entity";
@@ -19,6 +18,7 @@ import {ReplyEntitiy} from "../../database/entities/comments/reply.entitiy";
 import {MovieReviewEntitiy} from "../../database/entities/movieReview/movieReview.entitiy";
 import {BoardHashTagEntity} from "../../database/entities/Board/BoardHashTag.entity";
 import {BoardImageEntity} from "../../database/entities/Board/BoardImage.entity";
+import {ConfigModule, ConfigService} from "@nestjs/config";
 
 export const entities = [
   BoardHashTagEntity,
@@ -43,17 +43,24 @@ export const entities = [
   MovieReviewEntitiy,
 ];
 
-export const typeormModule: TypeOrmModuleOptions = {
-  type: 'mysql',
-  host: process.env.MYSQL_HOST,
-  port: Number(process.env.MYSQL_PORT),
-  username: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  entities: [...entities],
-  autoLoadEntities: true,
-  charset: "utf8mb4",
-  synchronize: true,
-  logging: process.env.NODE_ENV === 'local',
-  keepConnectionAlive: true,
+export const typeormModule = {
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: async (configService: ConfigService) => {
+    const NODE_ENV = configService.get('NODE_ENV');
+    return {
+      type: 'mysql' as const,
+      host: configService.get(`MYSQL_HOST`),
+      port: Number(configService.get<number>(`MYSQL_PORT`) || 3306),
+      username: configService.get(`MYSQL_USER`),
+      password: configService.get(`MYSQL_PASSWORD`),
+      database: configService.get(`MYSQL_DATABASE`),
+      entities: [...entities],
+      autoLoadEntities: true,
+      charset: "utf8mb4",
+      synchronize: true,
+      logging: NODE_ENV === 'local',
+      keepConnectionAlive: true,
+    };
+  }
 };

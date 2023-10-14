@@ -1,5 +1,5 @@
 import {CacheModule, MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import {ConfigModule, ConfigService} from '@nestjs/config';
 import { LoggerMiddleware } from './shared/middlewares/logger.middlewares';
 import { UsersModule } from './module/users.module';
 import { BoardsModule } from './module/boards.module';
@@ -41,7 +41,7 @@ import {typeormModule} from "./shared/typeorm/typeorm.module";
 			port: Number(process.env.REDIS_PORT),
 			password: process.env.REDIS_PASSWORD,
 		}),
-		TypeOrmModule.forRoot(typeormModule),
+		TypeOrmModule.forRootAsync(typeormModule),
 		ScheduleModule.forRoot(),
 		UsersModule,
 		BoardsModule,

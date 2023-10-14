@@ -48,15 +48,6 @@ export class BoardsController {
 		return this.boardImageService.findAllImages();
 	}
 
-	@endPointGetDecorator('solrSearch로 게시판 검색하기', '성공', CoreResponseDto, 'solrSearch')
-	async searchBoardBySolr(
-		@Query('search') search: string,
-	) {
-		console.log('search:',search);
-		return this.boardsService.searchBoardBySorl(search);
-	}
-
-
 	@endPointGetDecorator('게시판 모두 가져오기', '성공', CoreResponseDto, '')
 	async getAllBoards(@Query() pagination: Pagination) {
 		const { pageNumber, size } = pagination;

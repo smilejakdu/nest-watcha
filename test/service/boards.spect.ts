@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
-import {BoardsService} from "../../src/service/boards.service";
-import {BoardsRepository} from "../../src/database/repository/BoardRepository/boards.repository";
-import {HashtagRepository} from "../../src/database/repository/hashtag.repository";
-import {CreateBoardDto} from "../../src/controller/board/board.controller.dto/create-board.dto";
+import { BoardsService } from "../../src/service/boards.service";
+import { BoardsRepository } from "../../src/database/repository/BoardRepository/boards.repository";
+import { HashtagRepository } from "../../src/database/repository/hashtag.repository";
+import { CreateBoardDto } from "../../src/controller/board/board.controller.dto/create-board.dto";
 
 describe('BoardsService', () => {
   let service: BoardsService;
-  let mockBoardsRepository: any;
-  let mockHashtagRepository: any;
+  let boardsRepository: BoardsRepository;
+  let hashtagRepository: HashtagRepository;
   let mockDataSource: any;
 
   beforeEach(async () => {

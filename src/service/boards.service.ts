@@ -120,16 +120,7 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(boardId: number) {
-		const foundBoard = await this.boardsRepository.findOneBy({id:boardId});
-
-		if (!foundBoard) {
-			throw new NotFoundException('해당하는 게시판이 없습니다.');
-		}
-
-		const deletedBoard = await transactionRunner(async (queryRunner:QueryRunner) => {
-			return await queryRunner.manager.softDelete(BoardsEntity,{id:foundBoard});
-		}, this.dataSource);
-
-		return SuccessFulResponse(deletedBoard);
+		const deletedBoard = await BoardsEntity.deleteBoardOne(boardId);
+		if (deletedBoard) return SuccessFulResponse(deletedBoard);
 	}
 }

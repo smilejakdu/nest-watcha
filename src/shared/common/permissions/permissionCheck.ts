@@ -1,6 +1,6 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { PermissionEntity, PermissionType } from '../../../database/entities/User/Permission.entity';
+import {CanActivate, ExecutionContext, ForbiddenException, Injectable} from '@nestjs/common';
+import {Reflector} from '@nestjs/core';
+import {PermissionEntity, PermissionType} from '../../../database/entities/User/Permission.entity';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -27,20 +27,18 @@ export class PermissionsGuard implements CanActivate {
   }
 
   async getPermissionForUser(userId) {
-    const permissions = await PermissionEntity.makeQueryBuilder()
-      .select([
-        'permission.id',
-        'permission.type'
-      ])
-      .addSelect([
-        'users.id',
-        'users.username',
-        'users.email',
-        'users.phone'
-      ])
-      .innerJoin('permission.users','users','users.id =:userId',{userId:userId})
-      .getOne();
-
-    return permissions;
+    return await PermissionEntity.makeQueryBuilder()
+        .select([
+          'permissions.id',
+          'permissions.type'
+        ])
+        .addSelect([
+          'users.id',
+          'users.username',
+          'users.email',
+          'users.phone'
+        ])
+        .innerJoin('permissions.users', 'users', 'users.id =:userId', {userId: userId})
+        .getOne();
   }
 }

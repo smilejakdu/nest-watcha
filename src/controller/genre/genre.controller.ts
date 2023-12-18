@@ -6,13 +6,13 @@ import { UpdateGenreRequestDto } from './genre.controller.dto/updateGenre.dto';
 import { DeleteGenreRequestDto } from './genre.controller.dto/deleteGenre.dto';
 import { UserAuthGuard } from '../../shared/auth/guard/user-auth.guard';
 import { PermissionsGuard } from '../../shared/common/permissions/permissionCheck';
-import { CreateGenreRequestDto } from "./genre.controller.dto/createGenre.dto";
+import {CreateGenreRequestDto, CreateMultiGenreRequestDto} from "./genre.controller.dto/createGenre.dto";
 import { Pagination } from 'src/shared/pagination';
 import {CoreResponseDto} from "../../shared/CoreResponse";
 
 @ApiInternalServerErrorResponse({ description: '서버 에러' })
 @ApiTags('GENRE')
-@Controller('genre')
+@Controller({ path: 'genre', version: '1' })
 export class GenreController {
 	constructor(
 		private readonly genreService: GenreService,
@@ -25,8 +25,20 @@ export class GenreController {
 	})
 	@UseGuards(UserAuthGuard, PermissionsGuard)
 	@Post()
-	async createGenre(@Req() req, @Body() body: CreateGenreRequestDto) {
+	async createGenre(@Body() body: CreateGenreRequestDto) {
 		return this.genreService.createGenre(body.genreName);
+	}
+
+	@ApiOperation({ summary: '여러개 장르 만들기' })
+	@ApiCreatedResponse({
+		description: '성공',
+		type: GetGenreDto,
+	})
+	@UseGuards(UserAuthGuard, PermissionsGuard)
+	@Post('/multi')
+	async createGenres(@Body() body: CreateMultiGenreRequestDto) {
+		const { genreNameList } = body;
+		return this.genreService.createMultiGenre(genreNameList);
 	}
 
 	@ApiOperation({ summary: '모든 장르 가져오기' })

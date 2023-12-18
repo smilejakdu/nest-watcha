@@ -60,7 +60,10 @@ export class BoardImageRepository extends Repository<BoardImageEntity> {
 			for (const imagePath of imagePathList) {
 				insertImagePathResult.push({ boardId: boardId, imagePath: imagePath });
 			}
-			const result = await this.makeQueryBuilder().insert().values(insertImagePathResult).execute();
+			const result = await this.makeQueryBuilder()
+				.insert()
+				.values(insertImagePathResult)
+				.execute();
 
 			return result.raw.insertId;
 		}

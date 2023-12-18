@@ -2,18 +2,23 @@ import {CACHE_MANAGER, HttpStatus, Inject, Injectable, NotFoundException } from 
 import {CoreResponseDto, SuccessFulResponse} from '../shared/CoreResponse';
 import { GenreRepository } from '../database/repository/MovieAndGenreRepository/genre.repository';
 import { transactionRunner } from "../shared/common/transaction/transaction";
-import {DataSource, QueryRunner } from "typeorm";
+import {DataSource, In, QueryRunner} from "typeorm";
 import { GenreEntity } from "../database/entities/MovieAndGenre/genre.entity";
 import {CreateGenreResponseDto} from "../controller/genre/genre.controller.dto/createGenre.dto";
 import {UpdateGenreResponseDto} from "../controller/genre/genre.controller.dto/updateGenre.dto";
 import {DeleteGenreResponseDto} from "../controller/genre/genre.controller.dto/deleteGenre.dto";
 import { Cache } from 'cache-manager';
+import {InjectQueue} from "@nestjs/bull";
+import {Queue} from "bull";
 
 @Injectable()
 export class GenreService {
   constructor(
     private readonly genreRepository: GenreRepository,
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheService: Cache,
+    @InjectQueue('genre-creation-queue')
+    private readonly genreQueue: Queue,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -35,6 +40,33 @@ export class GenreService {
     createdGenreResponseDto.genreName = createdGenre.name;
 
     return SuccessFulResponse(createdGenreResponseDto, HttpStatus.CREATED);
+  }
+
+  async createMultiGenre(genreNameList: string[]) {
+    const foundGenreList = await this.genreRepository.find({
+        where: {
+            name: In(genreNameList),
+        },
+    });
+
+    const foundGenreNameList = foundGenreList.map((genre) => genre.name);
+    const notFoundGenreNameList = genreNameList.filter((genreName) => !foundGenreNameList.includes(genreName));
+
+    const newGenreList = notFoundGenreNameList.map((genreName) => {
+        const newGenre = new GenreEntity();
+        newGenre.name = genreName;
+        return newGenre;
+    });
+
+    const createdGenreList = await transactionRunner<GenreEntity[]>(async (queryRunner:QueryRunner) => {
+        return await queryRunner.manager.save(GenreEntity, newGenreList);
+    },this.dataSource);
+
+    await this.genreQueue.add('create-genre', {
+      genreNameList,
+    });
+
+    return SuccessFulResponse(createdGenreList, HttpStatus.CREATED);
   }
 
   async findGenreWithMovieByName(

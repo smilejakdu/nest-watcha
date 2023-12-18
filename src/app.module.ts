@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import Joi from 'joi';
 import { HealthModule } from './module/health.module';
 import {typeormModule} from "./shared/typeorm/typeorm.module";
+import {BullModule} from "@nestjs/bull";
 
 @Module({
 	imports: [
@@ -33,13 +34,9 @@ import {typeormModule} from "./shared/typeorm/typeorm.module";
 				REDIS_HOST: Joi.string().required(),
 				REDIS_PORT: Joi.string().required(),
 				REDIS_PASSWORD: Joi.string().required(),
+				REDIS_CACHE_TTL: Joi.string().required(),
+				REDIS_CACHE_MAX: Joi.string().required(),
 			}),
-		}),
-		CacheModule.register({
-			isGlobal: true,
-			host: process.env.REDIS_HOST,
-			port: Number(process.env.REDIS_PORT),
-			password: process.env.REDIS_PASSWORD,
 		}),
 		TypeOrmModule.forRootAsync(typeormModule),
 		ScheduleModule.forRoot(),

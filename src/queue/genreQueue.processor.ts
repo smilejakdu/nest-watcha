@@ -2,7 +2,6 @@ import { Process, Processor } from '@nestjs/bull';
 import { GenreRepository } from "../database/repository/MovieAndGenreRepository/genre.repository";
 import { Job } from "bull";
 import { GenreEntity } from "../database/entities/MovieAndGenre/genre.entity";
-import { transactionRunner } from "../database/transactionRunner";
 import { QueryRunner } from "typeorm";
 
 @Processor('genre-creation-queue')

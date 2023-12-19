@@ -1,12 +1,13 @@
 version: "3"
 services:
-  redis:
-    container_name: redis
+  watcha-redis:
+    container_name: watcha-redis
     image: redis:alpine
     ports:
       - 6379:6379
     volumes:
-      - redis:/data
+      - watcha-redis:/data
+    command: redis-server --requirepass foobared
 
 volumes:
-  redis:
+  watcha-redis:

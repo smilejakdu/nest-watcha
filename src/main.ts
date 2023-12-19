@@ -13,7 +13,7 @@ declare const module: any;
 
 async function bootstrap() {
 	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
-	app.setGlobalPrefix('api/v1');
+	app.setGlobalPrefix('api');
 	const port = process.env.HOST || 13014;
 
 	app.useGlobalPipes(new ValidationPipe());

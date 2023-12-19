@@ -8,7 +8,7 @@ export class GetGenreDto {
     example:200,
     description:'statusCode'
   })
-  public statusCode: number;
+  statusCode: number;
 
   @IsString()
   @IsNotEmpty()
@@ -16,11 +16,11 @@ export class GetGenreDto {
     example:'SUCCESS',
     description:'message'
   })
-  public message: string;
+  message: string;
 
   @ApiProperty({
     example:'object',
     description:'object'
   })
-  public data?:any;
+  data?:any;
 }

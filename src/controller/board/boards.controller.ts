@@ -35,7 +35,7 @@ import { endPointPostDecorator} from "../../decorators/controllerDecorators/end-
 })
 @ApiBadRequestResponse({ description: '잘못된 요청 파라미터' })
 @ApiTags('BOARD')
-@Controller('boards')
+@Controller({ path: "boards", version: "1" })
 export class BoardsController {
 	constructor(
 		private readonly boardsService : BoardsService,

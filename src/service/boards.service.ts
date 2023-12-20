@@ -8,8 +8,8 @@ import { DataSource, QueryRunner } from "typeorm";
 import { transactionRunner } from "src/shared/common/transaction/transaction";
 import { BoardImageEntity } from "src/database/entities/Board/BoardImage.entity";
 import { UsersEntity } from "../database/entities/User/Users.entity";
-import {HashtagService} from "./hashtag.service";
-import {BoardImageService} from "./boardImage.service";
+import { HashtagService } from "./hashtag.service";
+import { BoardImageService } from "./boardImage.service";
 
 @Injectable()
 export class BoardsService {
@@ -31,16 +31,16 @@ export class BoardsService {
 	}
 
 	async createBoard(data: CreateBoardDto, userId: number): Promise<CoreResponseDto> {
-		const {boardHashTag, boardImages , ...boardData} = data;
+		const { boardHashTag, boardImages, ...boardData } = data;
 
 		const savedBoard = await this.saveBoard(boardData, userId);
 		const savedBoardHashTag = await this.hashTagService.saveBoardHashTags(boardHashTag, savedBoard.id);
 		const createdImagePath = await this.boardImageService.saveBoardImages(boardImages, savedBoard.id);
 
 		return SuccessFulResponse({
-			board : savedBoard,
+			board: savedBoard,
 			hashTag: savedBoardHashTag,
-			boardImages : createdImagePath,
+			boardImages: createdImagePath,
 		}, HttpStatus.CREATED);
 	}
 
@@ -65,13 +65,13 @@ export class BoardsService {
 				},
 				boardHashTag: {
 					id: true,
-					hashtag:{
+					hashtag: {
 						id: true,
 						name: true,
 					}
 				}
 			},
-			relations: ['User', 'boardHashTag','boardHashTag.hashtag'],
+			relations: ['User', 'boardHashTag', 'boardHashTag.hashtag'],
 			order: { createdAt: 'DESC' },
 			skip,
 			take,
@@ -90,28 +90,29 @@ export class BoardsService {
 		});
 	}
 
-	async updateBoard(boardId: number, data: UpdateBoardDto, user_entitiy:UsersEntity) {
+	async updateBoard(boardId: number, data: UpdateBoardDto, userEntity: UsersEntity) {
 		const { boardHashTag, boardImages, ...boardData } = data;
 		const foundBoard = await this.boardsRepository.findOneBy({
-			id:boardId,
-			user_id: user_entitiy.id,
+			id: boardId,
+			user_id: userEntity.id,
 		});
 
-		if(!foundBoard) {
+		if (!foundBoard) {
 			throw new NotFoundException('해당하는 게시판이 없습니다.');
 		}
 
 		Object.assign(foundBoard, boardData);
-		const updatedBoard = await transactionRunner(async (queryRunner:QueryRunner)=>{
-			return await queryRunner.manager.save(BoardsEntity,foundBoard);
+		const updatedBoard = await transactionRunner(async (queryRunner: QueryRunner) => {
+			return await queryRunner.manager.save(BoardsEntity, foundBoard);
 		}, this.dataSource);
 
-		if (boardImages.length > 0) {
-			await transactionRunner(async (queryRunner:QueryRunner) => {
-				return await queryRunner.manager.softDelete(BoardImageEntity,{board_id:foundBoard.id});
+		if (boardImages && boardImages.length > 0) {
+			await transactionRunner(async (queryRunner: QueryRunner) => {
+				return await queryRunner.manager.softDelete(BoardImageEntity, { board_id: foundBoard.id });
 			}, this.dataSource);
 
 			for (const boardImage of boardImages) {
+				// Existing code had no mutation for boardImage. Update here as necessary.
 				console.log(boardImage);
 			}
 		}
@@ -120,7 +121,8 @@ export class BoardsService {
 	}
 
 	async deleteBoardOne(boardId: number) {
-		const deletedBoard = await BoardsEntity.deleteBoardOne(boardId);
-		if (deletedBoard) return SuccessFulResponse(deletedBoard);
+		const deletedBoard = await this.boardsRepository.delete({ id: boardId });
+		if (deletedBoard.affected > 0) return SuccessFulResponse(deletedBoard);
+		else throw new NotFoundException('해당하는 게시판이 없습니다.');
 	}
 }

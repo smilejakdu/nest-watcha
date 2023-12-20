@@ -1,5 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException, Res } from "@nestjs/common";
-// Entity
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { SignUpRequestDto } from "../controller/users/users.controller.dto/signUpDto/signUp.request.dto";
 import { UserRepository } from "../database/repository/user.repository";
 import { CoreResponseDto, SuccessFulResponse } from "../shared/CoreResponse";
@@ -15,7 +14,6 @@ import { GoogleUserData, KakaoUserData } from "../types";
 import { BoardsRepository } from "../database/repository/BoardRepository/boards.repository";
 import { ConfigService } from "@nestjs/config";
 import { OneWeeks } from "../shared/dateFormat/dateFormat.service";
-
 
 @Injectable()
 export class UsersService {
@@ -40,7 +38,7 @@ export class UsersService {
 			ok: true,
 			user: foundUser,
 			statusCode: HttpStatus.OK,
-			myBoards: foundMyBoards,
+			boards: foundMyBoards,
 		}
 	}
 

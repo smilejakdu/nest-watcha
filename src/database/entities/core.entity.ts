@@ -1,25 +1,25 @@
 import {
-	BaseEntity,
-	CreateDateColumn,
-	DeleteDateColumn,
-	Index,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn
+       BaseEntity,
+       CreateDateColumn,
+       DeleteDateColumn,
+       Index,
+       PrimaryGeneratedColumn,
+       UpdateDateColumn
 } from 'typeorm';
 
 @Index('id', ['id'], { unique: true })
 export class CoreEntity extends BaseEntity{
-	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
+       @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+       id: number;
 
-	@CreateDateColumn()
-	createdAt: Date;
+       @CreateDateColumn()
+       createdAt: Date;
 
-	@UpdateDateColumn()
-	updatedAt: Date;
+       @UpdateDateColumn()
+       updatedAt: Date;
 
-	@DeleteDateColumn({
-		nullable: true,
-	})
-	deletedAt?: Date;
+       @DeleteDateColumn({
+               nullable: true,
+       })
+       deletedAt?: Date;
 }
